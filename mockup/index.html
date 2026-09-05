@@ -108,7 +108,7 @@
     color:var(--text-dim);background:var(--surface);cursor:pointer;
   }
   .dropzone:hover{border-color:var(--text-faint);}
-  .dropzone .glyph{width:34px;height:34px;margin:0 auto 8px;opacity:.7;stroke:var(--text-dim);}
+  .dropzone .glyph{display:block;width:34px;height:34px;margin:0 auto 8px;opacity:.7;stroke:var(--text-dim);}
   .dropzone b{color:var(--text);font-weight:500;font-size:12.5px;}
   .dropzone small{display:block;margin-top:5px;color:var(--text-faint);font-size:11px;}
 
@@ -130,6 +130,15 @@
   input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
 
   /* ---------- export groups ---------- */
+  .fmt-accordion-head{
+    width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:transparent;border:none;cursor:pointer;padding:0;margin-bottom:8px;
+    font-size:12.5px;font-weight:600;color:var(--text-dim);font-family:inherit;
+  }
+  .fmt-accordion-head:hover{color:var(--text);}
+  .fmt-chevron{flex:none;transition:transform .15s;}
+  .fmt-accordion-head[aria-expanded="false"] .fmt-chevron{transform:rotate(-90deg);}
+  .fmt-accordion-body.collapsed{display:none;}
   .fmt-group{margin-bottom:12px;}
   .fmt-group-title{
     font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-faint);
@@ -600,8 +609,12 @@
       </div>
 
       <div>
-        <div class="field-label">Export as</div>
+        <button class="fmt-accordion-head" id="fmt-toggle" aria-expanded="true" aria-controls="fmt-body">
+          <span>Export as</span>
+          <svg class="fmt-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
 
+        <div class="fmt-accordion-body" id="fmt-body">
         <div class="fmt-group">
           <div class="fmt-group-title">Web and Android AR</div>
           <label class="fmt-row"><span class="check-box checked" data-fmt=".glb">✓</span><span class="fmt-ext">.glb</span><span class="badge ar">AR Web</span></label>
@@ -642,6 +655,7 @@
         <div class="warn-note" id="loss-note" hidden>
           <span>⚠️</span>
           <span id="loss-text"></span>
+        </div>
         </div>
       </div>
 
@@ -1018,6 +1032,14 @@
   function selectedFormats(){
     return $$('.check-box[data-fmt].checked').map(c=>c.dataset.fmt);
   }
+
+  // ----- export as (collapsible, open by default) -----
+  $('#fmt-toggle').addEventListener('click',()=>{
+    const toggle = $('#fmt-toggle');
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    $('#fmt-body').classList.toggle('collapsed', expanded);
+  });
 
   // ----- honest loss warnings -----
   const NO_TEXTURE = ['.stl'];
