@@ -130,14 +130,17 @@
   input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
 
   /* ---------- export groups ---------- */
-  .fmt-accordion-head{
-    width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
-    background:transparent;border:none;cursor:pointer;padding:0;margin-bottom:8px;
-    font-size:12.5px;font-weight:600;color:var(--text-dim);font-family:inherit;
+  .fmt-summary{
+    width:100%;display:flex;align-items:center;gap:10px;
+    border:1px solid var(--border);border-radius:12px;background:var(--surface);
+    padding:10px 12px;cursor:pointer;text-align:left;font-family:inherit;
   }
-  .fmt-accordion-head:hover{color:var(--text);}
-  .fmt-chevron{flex:none;transition:transform .15s;}
-  .fmt-accordion-head[aria-expanded="false"] .fmt-chevron{transform:rotate(-90deg);}
+  .fmt-summary:hover{border-color:var(--text-faint);}
+  .fmt-summary .fmt-icon{flex:none;width:18px;height:18px;color:var(--text-dim);}
+  .fmt-summary-main{flex:1;min-width:0;display:flex;align-items:center;gap:8px;}
+  .fmt-chevron{flex:none;transition:transform .15s;color:var(--text-faint);}
+  .fmt-summary[aria-expanded="true"] .fmt-chevron{transform:rotate(180deg);}
+  .fmt-accordion-body{margin-top:8px;}
   .fmt-accordion-body.collapsed{display:none;}
   .fmt-list{
     border:1px solid var(--border);border-radius:12px;background:var(--surface);
@@ -158,6 +161,8 @@
   .badge{font-size:9.5px;padding:2px 6px;border-radius:999px;font-weight:600;letter-spacing:.02em;white-space:nowrap;}
   .badge.ar{background:#5eead41f;color:var(--agent);}
   .badge.beta{background:#f2c14e1f;color:var(--warn);}
+  .badge.standard{background:var(--agent-soft);color:var(--agent);}
+  .badge.count{background:var(--surface-3);color:var(--text-dim);}
   .badge.blender{background:var(--surface-3);color:var(--text-faint);margin-left:auto;}
 
   /* ---------- pose custom ---------- */
@@ -616,12 +621,17 @@
       </div>
 
       <div>
-        <button class="fmt-accordion-head" id="fmt-toggle" aria-expanded="true" aria-controls="fmt-body">
-          <span>Export as</span>
+        <div class="field-label">Export as</div>
+        <button class="fmt-summary" id="fmt-toggle" aria-expanded="false" aria-controls="fmt-body">
+          <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+          <span class="fmt-summary-main" id="fmt-summary-main">
+            <span class="fmt-ext">.glb</span>
+            <span class="badge standard">Standard</span>
+          </span>
           <svg class="fmt-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
 
-        <div class="fmt-accordion-body" id="fmt-body">
+        <div class="fmt-accordion-body collapsed" id="fmt-body">
         <div class="fmt-list">
           <label class="fmt-item checked" data-fmt=".glb">
             <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
@@ -1062,7 +1072,7 @@
     item.addEventListener('click',e=>{
       e.preventDefault();
       item.classList.toggle('checked');
-      updateLossNote(); syncSummary();
+      updateLossNote(); syncSummary(); updateFmtSummary();
     });
   });
 
@@ -1070,13 +1080,28 @@
     return $$('.fmt-item[data-fmt].checked').map(c=>c.dataset.fmt);
   }
 
-  // ----- export as (collapsible, open by default) -----
+  // ----- export as (collapsed by default, opens on click) -----
   $('#fmt-toggle').addEventListener('click',()=>{
     const toggle = $('#fmt-toggle');
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!expanded));
     $('#fmt-body').classList.toggle('collapsed', expanded);
   });
+
+  function updateFmtSummary(){
+    const selected = selectedFormats();
+    const main = $('#fmt-summary-main');
+    if(!selected.length){
+      main.innerHTML = '<span class="fmt-ext" style="color:var(--text-faint)">No format selected</span>';
+      return;
+    }
+    const first = selected[0];
+    const source = document.querySelector(`.fmt-item[data-fmt="${CSS.escape(first)}"] .fmt-ext`);
+    let html = `<span class="fmt-ext">${source ? source.textContent : first}</span>`;
+    html += first === '.glb' ? '<span class="badge standard">Standard</span>' : '';
+    if(selected.length > 1) html += `<span class="badge count">+${selected.length - 1}</span>`;
+    main.innerHTML = html;
+  }
 
   // ----- honest loss warnings -----
   const NO_TEXTURE = ['.stl'];
@@ -1349,4 +1374,5 @@
   renderBrain();
   updateLossNote();
   syncSummary();
+  updateFmtSummary();
 </script>
