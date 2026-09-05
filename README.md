@@ -4,11 +4,35 @@
 
 <h1 align="center">Espresso 3D</h1>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Espresso3D-Image%20to%203D-6F4E37?style=for-the-badge&logo=blender&logoColor=white">
+  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/PyTorch-AI-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white"><br>
+  <img src="https://img.shields.io/badge/NVIDIA-CUDA-76B900?style=for-the-badge&logo=nvidia&logoColor=white">
+  <img src="https://img.shields.io/badge/Blender-3D-F5792A?style=for-the-badge&logo=blender&logoColor=white">
+  <img src="https://img.shields.io/badge/Web-Interface-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white">
+</p>
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Image%20→%203D-Model-8A2BE2?style=flat-square">
+  <img src="https://img.shields.io/badge/Export-GLB-00A98F?style=flat-square">
+  <img src="https://img.shields.io/badge/Export-FBX-0696D7?style=flat-square">
+  <img src="https://img.shields.io/badge/PBR-Textures-E91E63?style=flat-square">
+  <img src="https://img.shields.io/badge/Rigging-Optional-FF9800?style=flat-square">
+  <img src="https://img.shields.io/badge/Local-GPU-76B900?style=flat-square">
+</p>
+
 Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
 modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
 imagens para servidor nenhum.
 
-<p align="center">
+
+
+## Interface
+
+<p align="left">
   <img src="assets/interface.jpg" alt="Interface do Espresso3D: painel de configuração à esquerda com motor, polígonos, textura, pose, licença e formatos de exportação; pré-visualização 3D à direita" width="420">
 </p>
 
