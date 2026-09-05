@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 720 520"
+     role="img"
+     aria-labelledby="title desc">
+  <title id="title">Xícara de café animada</title>
+  <desc id="desc">Ilustração vetorial de uma xícara sobre um pires, com vapor animado e cores adaptáveis ao tema claro ou escuro.</desc>
+
+  <style>
+    :root {
+      --accent: #ff7a45;
+      --accent-soft: #b96a48;
+      --surface: #24272d;
+      --surface-2: #2e323a;
+      --outline: #626975;
+      --coffee: #4a342b;
+      --steam: #8b6555;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --accent: #d95f2f;
+        --accent-soft: #a85335;
+        --surface: #f4f1ec;
+        --surface-2: #e9e4dc;
+        --outline: #7b746c;
+        --coffee: #6a4637;
+        --steam: #9a6d5a;
+      }
+    }
+
+    .line {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .accent { stroke: var(--accent); }
+    .accent-soft { stroke: var(--accent-soft); }
+    .outline { stroke: var(--outline); }
+
+    .steam {
+      fill: none;
+      stroke: var(--steam);
+      stroke-width: 8;
+      stroke-linecap: round;
+      opacity: .62;
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: steamFloat 2.8s ease-in-out infinite;
+    }
+
+    .steam.s2 { animation-delay: -.85s; animation-duration: 3.2s; }
+    .steam.s3 { animation-delay: -1.55s; animation-duration: 3.6s; }
+
+    @keyframes steamFloat {
+      0%   { transform: translateY(12px) translateX(0) scaleY(.94); opacity: 0; }
+      18%  { opacity: .58; }
+      50%  { transform: translateY(-7px) translateX(4px) scaleY(1.02); opacity: .78; }
+      82%  { opacity: .42; }
+      100% { transform: translateY(-28px) translateX(-3px) scaleY(1.08); opacity: 0; }
+    }
+
+    .coffee-rim {
+      fill: var(--surface);
+      stroke: var(--accent);
+      stroke-width: 7;
+    }
+
+    .coffee {
+      fill: var(--coffee);
+      stroke: var(--accent-soft);
+      stroke-width: 5;
+    }
+
+    .cup-body {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 7;
+    }
+
+    .handle {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 7;
+    }
+
+    .saucer {
+      fill: var(--surface-2);
+      stroke: var(--outline);
+      stroke-width: 6;
+    }
+
+    .saucer-inner {
+      fill: none;
+      stroke: var(--accent-soft);
+      stroke-width: 5;
+      opacity: .9;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .steam { animation: none; opacity: .58; }
+    }
+  </style>
+
+  <!-- Vapor -->
+  <g aria-hidden="true">
+    <path class="steam s1"
+      d="M294 154
+         C278 133 279 112 290 92
+         C302 70 302 50 292 31" />
+    <path class="steam s2"
+      d="M350 163
+         C334 142 335 121 347 101
+         C361 79 360 60 351 42" />
+    <path class="steam s3"
+      d="M404 147
+         C389 121 392 96 405 76
+         C419 54 418 34 412 16" />
+  </g>
+
+  <!-- Pires -->
+  <ellipse class="saucer" cx="355" cy="408" rx="260" ry="58"/>
+  <ellipse class="saucer-inner" cx="355" cy="394" rx="165" ry="36"/>
+
+  <!-- Xícara -->
+  <path class="cup-body"
+        d="M225 245
+           C228 315 270 365 355 370
+           C438 365 478 315 483 245" />
+
+  <!-- Aro superior -->
+  <ellipse class="coffee-rim" cx="354" cy="246" rx="129" ry="39"/>
+  <ellipse class="coffee" cx="354" cy="248" rx="92" ry="25"/>
+
+  <!-- Alça -->
+  <path class="handle"
+        d="M477 263
+           C540 249 574 276 579 313
+           C584 351 553 371 504 362" />
+</svg>
