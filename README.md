@@ -64,8 +64,12 @@ python -m espresso3d
 The interface opens at `http://localhost:7860`.
 
 This gives you the full UI, mesh post-processing, export to the lightweight
-formats, and the model library. **To actually generate 3D models**, install at
-least one engine below.
+formats, and the model library. **To actually generate 3D models**, install
+PyTorch with CUDA and at least one engine below.
+
+> **Step-by-step setup guide:** [`docs/SETUP.md`](docs/SETUP.md) — installation
+> order, per-component verification, and the common failure modes (written in
+> Portuguese).
 
 ### 3D generation engines
 
