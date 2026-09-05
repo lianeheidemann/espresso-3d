@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Espresso3D — abre a interface local no navegador.
 
-    python app.py                 # http://localhost:7860
-    python app.py --porta 8000
+    python -m espresso3d                 # http://localhost:7860
+    python -m espresso3d --porta 8000
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import logging
 
-from espresso3d.ui import rodar
+from .ui import rodar
 
 
 def main() -> None:

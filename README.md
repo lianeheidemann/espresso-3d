@@ -36,7 +36,7 @@ git clone https://github.com/lianeheidemann/espresso-3d.git
 cd espresso-3d
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python app.py
+python -m espresso3d
 ```
 
 Abre em `http://localhost:7860`.
@@ -166,7 +166,8 @@ redução de malha, exportação, interpretação de pedidos do agente, validaç
 das rotações de pose e a biblioteca de modelos.
 
 ```
-espresso3d/
+espresso3d/            # todo o código fica aqui dentro
+├── __main__.py        # entrypoint: python -m espresso3d
 ├── config.py          # PipelineConfig: tudo que o usuário escolhe
 ├── hardware.py        # detecta GPU, Blender e Ollama
 ├── engines/           # motores de geração 3D (registro plugável)
