@@ -32,9 +32,16 @@ and your images never leave your machine.
 
 ## Interface
 
+**Web**
+
 <p align="left">
   <img src="assets/interface-4.jpg" alt="Espresso3D interface: configuration panel on the left with engine, polygon count, texture, pose, license and export formats; 3D preview on the right">
 </p>
+
+**Mobile**
+
+<img width="300" alt="1000388251" src="https://github.com/user-attachments/assets/b25a8723-7838-4a06-b8b3-a9572951990a" />
+
 
 **[Live UI preview →](https://lianeheidemann.github.io/espresso-3d/)** *(interactive
 mockup of the screens, responsive on mobile; 3D generation itself runs locally)*
