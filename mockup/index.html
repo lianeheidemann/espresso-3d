@@ -139,15 +139,22 @@
   .fmt-chevron{flex:none;transition:transform .15s;}
   .fmt-accordion-head[aria-expanded="false"] .fmt-chevron{transform:rotate(-90deg);}
   .fmt-accordion-body.collapsed{display:none;}
-  .fmt-group{margin-bottom:12px;}
-  .fmt-group-title{
-    font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-faint);
-    font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;
+  .fmt-list{
+    border:1px solid var(--border);border-radius:12px;background:var(--surface);
+    padding:6px;display:flex;flex-direction:column;gap:1px;
   }
-  .fmt-row{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:12.5px;}
-  .check-box{width:16px;height:16px;border-radius:5px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;flex:none;font-size:10px;color:var(--accent-ink);}
-  .check-box.checked{background:var(--accent);border-color:var(--accent);}
-  .fmt-ext{font-family:'IBM Plex Mono';color:var(--text);}
+  .fmt-item{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;
+    cursor:pointer;border:1px solid transparent;
+  }
+  .fmt-item:hover{background:var(--surface-2);}
+  .fmt-item.checked{border-color:var(--accent);background:var(--accent-soft);}
+  .fmt-item .fmt-icon{flex:none;width:18px;height:18px;color:var(--text-faint);}
+  .fmt-item.checked .fmt-icon{color:var(--accent);}
+  .fmt-item .fmt-main{flex:1;min-width:0;display:flex;align-items:center;gap:8px;}
+  .fmt-ext{font-family:'IBM Plex Mono';font-size:13px;color:var(--text);flex:none;}
+  .fmt-item .fmt-check{flex:none;width:16px;text-align:center;color:var(--accent);opacity:0;font-size:13px;}
+  .fmt-item.checked .fmt-check{opacity:1;}
   .badge{font-size:9.5px;padding:2px 6px;border-radius:999px;font-weight:600;letter-spacing:.02em;white-space:nowrap;}
   .badge.ar{background:#5eead41f;color:var(--agent);}
   .badge.beta{background:#f2c14e1f;color:var(--warn);}
@@ -615,41 +622,72 @@
         </button>
 
         <div class="fmt-accordion-body" id="fmt-body">
-        <div class="fmt-group">
-          <div class="fmt-group-title">Web and Android AR</div>
-          <label class="fmt-row"><span class="check-box checked" data-fmt=".glb">✓</span><span class="fmt-ext">.glb</span><span class="badge ar">AR Web</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".gltf"></span><span class="fmt-ext">.gltf</span></label>
-        </div>
-
-        <div class="fmt-group">
-          <div class="fmt-group-title">iPhone / Vision Pro AR</div>
-          <label class="fmt-row"><span class="check-box" data-fmt=".usdz"></span><span class="fmt-ext">.usdz</span><span class="badge ar">AR iOS</span><span class="badge blender">Blender</span></label>
-        </div>
-
-        <div class="fmt-group">
-          <div class="fmt-group-title">Unity / Unreal / VR</div>
-          <label class="fmt-row"><span class="check-box" data-fmt=".fbx"></span><span class="fmt-ext">.fbx</span><span class="badge blender">Blender</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".vrm"></span><span class="fmt-ext">.vrm</span><span class="badge beta">avatar · beta</span></label>
-        </div>
-
-        <div class="fmt-group">
-          <div class="fmt-group-title">USD / Omniverse pipelines</div>
-          <label class="fmt-row"><span class="check-box" data-fmt=".usdc"></span><span class="fmt-ext">.usdc</span><span class="badge blender">Blender</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".usda"></span><span class="fmt-ext">.usda</span><span class="badge blender">Blender</span></label>
-        </div>
-
-        <div class="fmt-group">
-          <div class="fmt-group-title">Editing and general use</div>
-          <label class="fmt-row"><span class="check-box" data-fmt=".obj"></span><span class="fmt-ext">.obj</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".ply"></span><span class="fmt-ext">.ply</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".dae"></span><span class="fmt-ext">.dae</span><span class="badge blender">Blender</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".blend"></span><span class="fmt-ext">.blend</span><span class="badge blender">Blender</span></label>
-        </div>
-
-        <div class="fmt-group">
-          <div class="fmt-group-title">3D printing</div>
-          <label class="fmt-row"><span class="check-box" data-fmt=".stl"></span><span class="fmt-ext">.stl</span></label>
-          <label class="fmt-row"><span class="check-box" data-fmt=".3mf"></span><span class="fmt-ext">.3mf</span></label>
+        <div class="fmt-list">
+          <label class="fmt-item checked" data-fmt=".glb">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.glb</span><span class="badge ar">AR Web</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".gltf">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.gltf</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".usdz">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.usdz</span><span class="badge ar">AR iOS</span><span class="badge blender">Blender</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".usdc">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.usdc</span><span class="badge blender">Blender</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".usda">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.usda</span><span class="badge blender">Blender</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".fbx">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.fbx</span><span class="badge blender">Blender</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".vrm">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.vrm</span><span class="badge beta">avatar · beta</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".obj">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.obj</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".ply">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.ply</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".dae">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.dae</span><span class="badge blender">Blender</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".blend">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.blend</span><span class="badge blender">Blender</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".stl">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.stl</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
+          <label class="fmt-item" data-fmt=".3mf">
+            <svg class="fmt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/><path d="M14 3v5h5"/></svg>
+            <span class="fmt-main"><span class="fmt-ext">.3mf</span></span>
+            <span class="fmt-check">✓</span>
+          </label>
         </div>
 
         <div class="warn-note" id="loss-note" hidden>
@@ -1019,18 +1057,17 @@
     sw.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){e.preventDefault();flip();} });
   });
 
-  // ----- format checkboxes -----
-  $$('.check-box[data-fmt]').forEach(cb=>{
-    cb.addEventListener('click',e=>{
+  // ----- format list -----
+  $$('.fmt-item[data-fmt]').forEach(item=>{
+    item.addEventListener('click',e=>{
       e.preventDefault();
-      cb.classList.toggle('checked');
-      cb.textContent = cb.classList.contains('checked') ? '✓' : '';
+      item.classList.toggle('checked');
       updateLossNote(); syncSummary();
     });
   });
 
   function selectedFormats(){
-    return $$('.check-box[data-fmt].checked').map(c=>c.dataset.fmt);
+    return $$('.fmt-item[data-fmt].checked').map(c=>c.dataset.fmt);
   }
 
   // ----- export as (collapsible, open by default) -----
