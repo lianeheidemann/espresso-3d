@@ -119,7 +119,7 @@ def construir(estado: gr.State):
                     choices=list(_LICENCAS), value="Privado", label="Licença de uso"
                 )
 
-                with gr.Accordion("Exportar como", open=False):
+                with gr.Accordion("Exportar como", open=True):
                     grupos_fmt: list[gr.CheckboxGroup] = []
                     for grupo, formatos in formatos_por_grupo().items():
                         grupos_fmt.append(
