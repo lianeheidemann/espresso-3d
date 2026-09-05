@@ -26,6 +26,12 @@
   <img src="https://img.shields.io/badge/Local-GPU-76B900?style=flat-square">
 </p>
 
+<p align="center">
+  <a href="https://github.com/lianeheidemann/espresso-3d/actions/workflows/pages/pages-build-deployment">
+    <img src="https://github.com/lianeheidemann/espresso-3d/actions/workflows/pages/pages-build-deployment/badge.svg" alt="Pages build and deployment status">
+  </a>
+</p>
+
 Espresso3D is a self-hosted image-to-3D generator. It runs entirely on your
 own hardware using open-source models — no subscription, no credit system,
 and your images never leave your machine.
