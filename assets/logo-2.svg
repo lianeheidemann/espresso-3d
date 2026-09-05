@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Espresso3D animated logo</title>
+  <desc id="desc">Adaptive light and dark theme logo with animated coffee steam.</desc>
+
+  <style>
+    :root {
+      --bg: transparent;
+      --surface: #111827;
+      --surface-2: #1f2937;
+      --surface-3: #0b1220;
+      --text: #f8fafc;
+      --muted: #a7b0c0;
+      --outline: #46546b;
+      --shadow: rgba(0,0,0,.38);
+      --accent: #ff6a00;
+      --accent-2: #ff9a3d;
+      --accent-soft: rgba(255,106,0,.28);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --surface: #eef2f7;
+        --surface-2: #ffffff;
+        --surface-3: #dfe6ef;
+        --text: #111827;
+        --muted: #667085;
+        --outline: #aab6c7;
+        --shadow: rgba(15,23,42,.16);
+        --accent: #f25c00;
+        --accent-2: #ff8a26;
+        --accent-soft: rgba(242,92,0,.2);
+      }
+    }
+
+    .glow {
+      filter: drop-shadow(0 0 5px var(--accent)) drop-shadow(0 0 12px var(--accent-soft));
+    }
+
+    .soft-shadow { filter: drop-shadow(0 10px 12px var(--shadow)); }
+
+    .steam {
+      fill: none;
+      stroke: url(#steamGradient);
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 10px var(--accent-soft));
+      stroke-dasharray: 230;
+      stroke-dashoffset: 230;
+      opacity: .15;
+      animation: steamFlow 2.9s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center bottom;
+    }
+
+    .steam.s2 { animation-delay: .55s; animation-duration: 3.15s; }
+    .steam.s3 { animation-delay: 1.05s; animation-duration: 2.65s; }
+
+    @keyframes steamFlow {
+      0% { stroke-dashoffset: 230; opacity: 0; transform: translateY(10px) scaleY(.95); }
+      25% { opacity: 1; }
+      65% { stroke-dashoffset: 40; opacity: .95; }
+      100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-16px) scaleY(1.04); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .steam { animation: none; stroke-dashoffset: 0; opacity: 1; }
+    }
+
+    text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+  </style>
+
+  <defs>
+    <linearGradient id="cupFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--surface-2)"/>
+      <stop offset="1" stop-color="var(--surface-3)"/>
+    </linearGradient>
+    <linearGradient id="steamGradient" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="var(--accent)"/>
+      <stop offset=".55" stop-color="var(--accent-2)"/>
+      <stop offset="1" stop-color="var(--accent)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Steam -->
+  <g transform="translate(0,-10)">
+    <path class="steam s1" d="M515 290 C482 250 495 211 520 177 C547 141 544 104 525 75"/>
+    <path class="steam s2" d="M604 292 C582 255 589 225 613 194 C637 163 640 133 621 103"/>
+    <path class="steam s3" d="M678 294 C662 269 668 246 686 222 C704 199 703 178 691 158"/>
+  </g>
+
+  <!-- Saucer -->
+  <g class="soft-shadow">
+    <ellipse cx="600" cy="520" rx="270" ry="75" fill="var(--surface-3)" stroke="var(--outline)" stroke-width="8"/>
+    <ellipse cx="600" cy="516" rx="223" ry="48" fill="none" stroke="var(--accent)" stroke-width="7" class="glow"/>
+  </g>
+
+  <!-- Cup -->
+  <g class="soft-shadow">
+    <path d="M425 360 H790 V420 C790 500 720 560 607 560 C495 560 425 500 425 420 Z"
+          fill="url(#cupFill)" stroke="var(--accent)" stroke-width="8" class="glow"/>
+    <ellipse cx="607" cy="360" rx="182" ry="55" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="8" class="glow"/>
+    <ellipse cx="607" cy="360" rx="122" ry="36" fill="var(--surface)" stroke="var(--accent)" stroke-width="5" opacity=".96"/>
+
+    <path d="M790 394 C848 377 890 398 902 431 C916 468 888 507 847 508 C824 508 805 497 789 485"
+          fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" class="glow"/>
+  </g>
+
+  <!-- Brand -->
+  <g transform="translate(0,0)" class="soft-shadow">
+    <text x="245" y="705" font-size="118" font-weight="800" fill="var(--text)" letter-spacing="-6">Espresso</text>
+    <text x="810" y="705" font-size="118" font-weight="800" fill="var(--accent)" letter-spacing="-4" class="glow">3D</text>
+  </g>
+
+  <!-- Specs pill -->
+  <g transform="translate(210 755)" class="soft-shadow">
+    <rect x="0" y="0" width="780" height="88" rx="44" fill="var(--surface)" stroke="var(--outline)" stroke-width="5"/>
+
+    <text x="45" y="57" font-size="34" fill="var(--muted)">Faces</text>
+    <text x="160" y="57" font-size="34" font-weight="800" fill="var(--text)">4.000</text>
+
+    <line x1="300" y1="20" x2="300" y2="68" stroke="var(--outline)" stroke-width="3"/>
+
+    <text x="345" y="57" font-size="34" fill="var(--muted)">Textura</text>
+    <text x="490" y="57" font-size="34" font-weight="800" fill="var(--text)">2K</text>
+
+    <line x1="580" y1="20" x2="580" y2="68" stroke="var(--outline)" stroke-width="3"/>
+
+    <text x="620" y="57" font-size="34" fill="var(--muted)">Saída</text>
+    <text x="720" y="57" font-size="34" font-weight="800" fill="var(--text)">.glb</text>
+  </g>
+</svg>
