@@ -208,7 +208,7 @@ rotation validation, and the model library.
 
 ```
 espresso-3d/
-├── README.md · LICENSE · assets/ · docs/
+├── README.md · LICENSE · assets/ · docs/ · mockup/
 ├── requirements.txt · pyproject.toml
 ├── tests/
 └── src/
