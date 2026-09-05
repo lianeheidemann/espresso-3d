@@ -1,32 +1,32 @@
-"""InstantMesh — qualidade máxima do trio, via difusão multi-view."""
+"""InstantMesh — maximum quality of the trio, via multi-view diffusion."""
 
 from __future__ import annotations
 
 from ..config import PipelineConfig
-from .base import DependenciaFaltando, InfoMotor, Motor
+from .base import EngineInfo, Engine, MissingDependency
 
 
-class InstantMesh(Motor):
-    info = InfoMotor(
+class InstantMesh(Engine):
+    info = EngineInfo(
         id="instant_mesh",
-        nome="InstantMesh",
-        descricao="Máxima qualidade · multi-view",
+        name="InstantMesh",
+        description="Maximum quality · multi-view",
         vram_min_gb=8.0,
-        licenca_pesos="Apache 2.0",
-        uso_comercial=True,
+        weights_license="Apache 2.0",
+        commercial_use=True,
         pbr=True,
         repo="TencentARC/InstantMesh",
     )
 
-    _pipe = None
+    _pipeline = None
 
-    def _carregar(self):
-        if self._pipe is not None:
-            return self._pipe
+    def _load(self):
+        if self._pipeline is not None:
+            return self._pipeline
         try:
             import instantmesh  # type: ignore  # noqa: F401
-        except ImportError as exc:  # pragma: no cover - depende de download
-            raise DependenciaFaltando(
+        except ImportError as exc:  # pragma: no cover - depends on download
+            raise MissingDependency(
                 "instantmesh",
                 "git clone https://github.com/TencentARC/InstantMesh "
                 "&& pip install -r InstantMesh/requirements.txt",
@@ -34,13 +34,13 @@ class InstantMesh(Motor):
 
         from instantmesh.pipeline import InstantMeshPipeline  # type: ignore
 
-        InstantMesh._pipe = InstantMeshPipeline.from_pretrained(self.info.repo)
-        return InstantMesh._pipe
+        InstantMesh._pipeline = InstantMeshPipeline.from_pretrained(self.info.repo)
+        return InstantMesh._pipeline
 
-    def _gerar(self, imagem, cfg: PipelineConfig):  # pragma: no cover - precisa de GPU
-        pipe = self._carregar()
-        return pipe(
-            imagem,
-            texture=cfg.gerar_textura,
-            texture_resolution=cfg.resolucao_textura.pixels,
+    def _generate(self, image, cfg: PipelineConfig):  # pragma: no cover - needs a GPU
+        pipeline = self._load()
+        return pipeline(
+            image,
+            texture=cfg.generate_texture,
+            texture_resolution=cfg.texture_resolution.pixels,
         )

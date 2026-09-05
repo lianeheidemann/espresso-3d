@@ -1,4 +1,4 @@
-"""Pós-processamento da malha: limpeza e redução até a contagem alvo."""
+"""Mesh post-processing: cleanup and decimation down to the target count."""
 
 from __future__ import annotations
 
@@ -6,82 +6,83 @@ import logging
 
 import trimesh
 
-from ..config import Topologia
+from ..config import Topology
 
 log = logging.getLogger(__name__)
 
 
-def limpar(malha: trimesh.Trimesh) -> trimesh.Trimesh:
-    """Remove lixo geométrico que os geradores costumam deixar."""
-    malha.update_faces(malha.nondegenerate_faces())
-    malha.update_faces(malha.unique_faces())
-    malha.remove_unreferenced_vertices()
-    return malha
+def clean(mesh: trimesh.Trimesh) -> trimesh.Trimesh:
+    """Removes geometric junk that generators tend to leave behind."""
+    mesh.update_faces(mesh.nondegenerate_faces())
+    mesh.update_faces(mesh.unique_faces())
+    mesh.remove_unreferenced_vertices()
+    return mesh
 
 
-def ajustar_poly_count(
-    malha: trimesh.Trimesh,
-    alvo: int,
-    topologia: Topologia = Topologia.ALTO_DETALHE,
+def adjust_poly_count(
+    mesh: trimesh.Trimesh,
+    target: int,
+    topology: Topology = Topology.HIGH_DETAIL,
 ) -> trimesh.Trimesh:
-    """Reduz a malha até ~``alvo`` faces.
+    """Reduces the mesh down to ~``target`` faces.
 
-    "Smart topology" costura vértices duplicados antes de reduzir, o que
-    gera uma malha mais limpa para rig e animação; "alto detalhe" reduz
-    direto, preservando melhor a silhueta original.
+    "Smart topology" stitches duplicate vertices before reducing, which
+    produces a cleaner mesh for rigging and animation; "high detail"
+    reduces directly, preserving the original silhouette better.
 
-    Malha com menos faces que o alvo volta intacta — subdividir para
-    inflar a contagem só criaria geometria sem informação nenhuma.
+    A mesh with fewer faces than the target comes back untouched —
+    subdividing to inflate the count would only create geometry with no
+    information in it.
     """
-    if alvo <= 0:
-        raise ValueError("A contagem de polígonos alvo precisa ser positiva.")
+    if target <= 0:
+        raise ValueError("The target polygon count must be positive.")
 
-    if topologia is Topologia.SMART:
-        malha = limpar(malha.copy())
-        malha.merge_vertices()
+    if topology is Topology.SMART:
+        mesh = clean(mesh.copy())
+        mesh.merge_vertices()
     else:
-        malha = malha.copy()
+        mesh = mesh.copy()
 
-    if len(malha.faces) <= alvo:
-        return malha
+    if len(mesh.faces) <= target:
+        return mesh
 
     try:
-        return malha.simplify_quadric_decimation(face_count=alvo)
-    except Exception as exc:  # pragma: no cover - depende de dependência opcional
+        return mesh.simplify_quadric_decimation(face_count=target)
+    except Exception as exc:  # pragma: no cover - depends on an optional dependency
         log.warning(
-            "Não foi possível reduzir a malha (%s). "
-            "Instale 'fast-simplification' para respeitar a contagem de polígonos.",
+            "Couldn't reduce the mesh (%s). "
+            "Install 'fast-simplification' to honor the polygon count.",
             exc,
         )
-        return malha
+        return mesh
 
 
-def estatisticas(malha: trimesh.Trimesh) -> dict:
-    """Números que a interface mostra embaixo do modelo."""
+def stats(mesh: trimesh.Trimesh) -> dict:
+    """Numbers the UI shows below the model."""
     return {
-        "faces": len(malha.faces),
-        "vertices": len(malha.vertices),
-        "tem_uv": bool(
-            getattr(malha.visual, "uv", None) is not None
-            and len(getattr(malha.visual, "uv", []))
+        "faces": len(mesh.faces),
+        "vertices": len(mesh.vertices),
+        "has_uv": bool(
+            getattr(mesh.visual, "uv", None) is not None
+            and len(getattr(mesh.visual, "uv", []))
         ),
-        "watertight": bool(malha.is_watertight),
+        "watertight": bool(mesh.is_watertight),
     }
 
 
-def separar_partes(malha: trimesh.Trimesh) -> list[trimesh.Trimesh]:
-    """Separa corpos desconectados em malhas independentes.
+def split_parts(mesh: trimesh.Trimesh) -> list[trimesh.Trimesh]:
+    """Splits disconnected bodies into independent meshes.
 
-    Usado quando o usuário liga "Dividir em partes": a xícara e o pires
-    saem como dois objetos, não como um sólido único.
+    Used when the user turns on "Split into parts": the cup and the
+    saucer come out as two objects, not as a single fused solid.
     """
     try:
-        partes = malha.split(only_watertight=False)
+        parts = mesh.split(only_watertight=False)
     except ImportError:
-        # trimesh precisa de scipy (ou networkx) para achar componentes conexos.
+        # trimesh needs scipy (or networkx) to find connected components.
         log.warning(
-            "Separação de partes indisponível: falta scipy. "
-            "Instale com 'pip install scipy'. Seguindo com o objeto inteiro."
+            "Part splitting unavailable: scipy is missing. "
+            "Install with 'pip install scipy'. Continuing with the whole object."
         )
-        return [malha]
-    return list(partes) if len(partes) else [malha]
+        return [mesh]
+    return list(parts) if len(parts) else [mesh]

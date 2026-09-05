@@ -1,7 +1,8 @@
-"""Abas "Imagem → 3D" e "Lote".
+""""Image → 3D" and "Batch" tabs.
 
-O lote não tem painel de opções: ele lê a MESMA configuração da aba de
-imagem única, guardada num ``gr.State`` compartilhado. Mudou lá, mudou aqui.
+The batch tab has no options panel: it reads the SAME configuration
+from the single-image tab, stored in a shared ``gr.State``. Change it
+there, it changes here.
 """
 
 from __future__ import annotations
@@ -11,269 +12,269 @@ from pathlib import Path
 import gradio as gr
 
 from ..config import (
-    FORMATOS,
-    MAX_IMAGENS_LOTE,
+    FORMATS,
+    MAX_BATCH_IMAGES,
     POLY_MAX,
     POLY_MIN,
-    Licenca,
+    License,
     PipelineConfig,
     Pose,
-    ResolucaoTextura,
-    Topologia,
-    formatos_por_grupo,
+    TextureResolution,
+    Topology,
+    formats_by_group,
 )
-from ..engines import MOTORES
-from ..hardware import blender as achar_blender
-from ..pipeline import gerar, gerar_lote
+from ..engines import ENGINES
+from ..hardware import blender as find_blender
+from ..pipeline import generate, generate_batch
 
 _POSES = {
-    "Nenhum": Pose.NENHUM,
+    "None": Pose.NONE,
     "T-Pose": Pose.T_POSE,
     "A-Pose": Pose.A_POSE,
-    "Personalizada": Pose.CUSTOM,
+    "Custom": Pose.CUSTOM,
 }
-_TOPOLOGIAS = {"Alto Detalhe": Topologia.ALTO_DETALHE, "Smart Topology": Topologia.SMART}
-_LICENCAS = {"Privado": Licenca.PRIVADA, "Comercial": Licenca.COMERCIAL}
-_RESOLUCOES = {"Padrão": ResolucaoTextura.PADRAO, "Ultra 2K": ResolucaoTextura.ULTRA_2K}
+_TOPOLOGIES = {"High Detail": Topology.HIGH_DETAIL, "Smart Topology": Topology.SMART}
+_LICENSES = {"Private": License.PRIVATE, "Commercial": License.COMMERCIAL}
+_RESOLUTIONS = {"Standard": TextureResolution.STANDARD, "Ultra 2K": TextureResolution.ULTRA_2K}
 
-EXEMPLOS_POSE = [
-    "sentado de pernas cruzadas",
-    "acenando com a mão direita",
-    "correndo",
-    "braços abertos",
-    "agachado",
+POSE_EXAMPLES = [
+    "sitting cross-legged",
+    "waving with the right hand",
+    "running",
+    "arms open",
+    "crouching",
 ]
 
 
-def _rotulo_formato(ext: str) -> str:
-    fmt = FORMATOS[ext]
-    marcas = []
-    if fmt.nota:
-        marcas.append(fmt.nota)
+def _format_label(ext: str) -> str:
+    fmt = FORMATS[ext]
+    marks = []
+    if fmt.note:
+        marks.append(fmt.note)
     if fmt.backend == "blender":
-        marcas.append("requer Blender")
-    return f".{ext}" + (f"  ({' · '.join(marcas)})" if marcas else "")
+        marks.append("requires Blender")
+    return f".{ext}" + (f"  ({' · '.join(marks)})" if marks else "")
 
 
-def construir(estado: gr.State):
-    """Monta as duas abas e devolve os componentes que outras abas usam."""
-    tem_blender = achar_blender() is not None
+def build(state: gr.State):
+    """Assembles the two tabs and returns the components other tabs use."""
+    has_blender = find_blender() is not None
 
-    with gr.Tab("Imagem → 3D"):
+    with gr.Tab("Image → 3D"):
         with gr.Row():
             with gr.Column(scale=1, min_width=300):
-                motor = gr.Radio(
+                engine = gr.Radio(
                     choices=[
-                        (f"{m.info.nome} — {m.info.descricao} ({m.info.vram_min_gb:g}GB+)",
+                        (f"{m.info.name} — {m.info.description} ({m.info.vram_min_gb:g}GB+)",
                          m.info.id)
-                        for m in MOTORES.values()
+                        for m in ENGINES.values()
                     ],
                     value="stable_fast_3d",
-                    label="Motor de geração",
+                    label="Generation engine",
                 )
-                topologia = gr.Radio(
-                    choices=list(_TOPOLOGIAS), value="Alto Detalhe", label="Topologia"
+                topology = gr.Radio(
+                    choices=list(_TOPOLOGIES), value="High Detail", label="Topology"
                 )
-                imagem = gr.Image(
-                    label="Imagem", type="pil", height=220, sources=["upload", "clipboard"]
+                image = gr.Image(
+                    label="Image", type="pil", height=220, sources=["upload", "clipboard"]
                 )
                 poly = gr.Slider(
                     POLY_MIN, POLY_MAX, value=4000, step=100,
-                    label="Contagem de polígonos",
+                    label="Polygon count",
                 )
-                textura = gr.Checkbox(value=True, label="Textura")
-                resolucao = gr.Radio(
-                    choices=list(_RESOLUCOES), value="Padrão",
-                    label="Resolução de textura",
+                texture = gr.Checkbox(value=True, label="Texture")
+                resolution = gr.Radio(
+                    choices=list(_RESOLUTIONS), value="Standard",
+                    label="Texture resolution",
                 )
-                pose = gr.Radio(choices=list(_POSES), value="Nenhum", label="Pose")
+                pose = gr.Radio(choices=list(_POSES), value="None", label="Pose")
 
-                with gr.Group(visible=False) as painel_pose:
+                with gr.Group(visible=False) as pose_panel:
                     pose_prompt = gr.Textbox(
-                        label="Descreva a pose",
+                        label="Describe the pose",
                         lines=3,
                         placeholder=(
-                            "ex: de pé, braços cruzados na frente do peito, "
-                            "peso na perna esquerda"
+                            "e.g.: standing, arms crossed over the chest, "
+                            "weight on the left leg"
                         ),
                     )
                     gr.Examples(
-                        examples=[[e] for e in EXEMPLOS_POSE],
+                        examples=[[e] for e in POSE_EXAMPLES],
                         inputs=[pose_prompt],
-                        label="Sugestões",
+                        label="Suggestions",
                     )
                     pose_ref = gr.Image(
-                        label="ou envie uma foto de referência",
+                        label="or upload a reference photo",
                         type="filepath",
                         height=150,
                     )
                     gr.Markdown(
-                        "Só funciona em personagem humanoide com esqueleto detectado. "
-                        "Objetos (xícara, vaso) não têm pose.",
-                        elem_classes="e3d-aviso",
+                        "Only works on a humanoid character with a detected skeleton. "
+                        "Objects (cup, vase) don't have a pose.",
+                        elem_classes="e3d-warning",
                     )
 
-                dividir = gr.Checkbox(value=False, label="Dividir em partes")
-                melhorar = gr.Checkbox(value=True, label="Melhorar imagem")
-                licenca = gr.Radio(
-                    choices=list(_LICENCAS), value="Privado", label="Licença de uso"
+                split = gr.Checkbox(value=False, label="Split into parts")
+                enhance = gr.Checkbox(value=True, label="Enhance image")
+                license = gr.Radio(
+                    choices=list(_LICENSES), value="Private", label="Usage license"
                 )
 
-                with gr.Accordion("Exportar como", open=True):
-                    grupos_fmt: list[gr.CheckboxGroup] = []
-                    for grupo, formatos in formatos_por_grupo().items():
-                        grupos_fmt.append(
+                with gr.Accordion("Export as", open=True):
+                    format_groups: list[gr.CheckboxGroup] = []
+                    for group, formats in formats_by_group().items():
+                        format_groups.append(
                             gr.CheckboxGroup(
-                                choices=[(_rotulo_formato(f.ext), f.ext) for f in formatos],
-                                value=["glb"] if grupo.startswith("Web") else [],
-                                label=grupo,
-                                elem_classes="e3d-grupo-formato",
+                                choices=[(_format_label(f.ext), f.ext) for f in formats],
+                                value=["glb"] if group.startswith("Web") else [],
+                                label=group,
+                                elem_classes="e3d-format-group",
                             )
                         )
 
-                if not tem_blender:
+                if not has_blender:
                     gr.Markdown(
-                        "Blender não encontrado: os formatos marcados com "
-                        "*requer Blender* (.fbx, .usdz, .dae, .blend, .vrm) "
-                        "não podem ser exportados até você instalá-lo.",
-                        elem_classes="e3d-aviso",
+                        "Blender not found: formats marked "
+                        "*requires Blender* (.fbx, .usdz, .dae, .blend, .vrm) "
+                        "can't be exported until you install it.",
+                        elem_classes="e3d-warning",
                     )
 
-                avisos = gr.Markdown("", elem_classes="e3d-aviso")
-                botao = gr.Button("▶ Gerar modelo 3D", variant="primary")
+                warnings = gr.Markdown("", elem_classes="e3d-warning")
+                button = gr.Button("▶ Generate 3D model", variant="primary")
 
             with gr.Column(scale=2, min_width=380):
-                preview = gr.Model3D(label="Pré-visualização", height=460)
+                preview = gr.Model3D(label="Preview", height=460)
                 stats = gr.Markdown("")
-                arquivos = gr.File(label="Arquivos gerados", file_count="multiple")
+                files = gr.File(label="Generated files", file_count="multiple")
 
-    with gr.Tab("Lote (até 10)") as aba_lote:
+    with gr.Tab("Batch (up to 10)") as batch_tab:
         gr.Markdown(
-            f"As {MAX_IMAGENS_LOTE} imagens usam **as mesmas configurações da aba "
-            "Imagem → 3D**. Para mudar algo, volte lá."
+            f"The {MAX_BATCH_IMAGES} images use **the same settings as the "
+            "Image → 3D tab**. To change something, go back there."
         )
         with gr.Row():
             with gr.Column(scale=1, min_width=300):
-                imagens_lote = gr.File(
-                    label=f"Imagens (até {MAX_IMAGENS_LOTE})",
+                batch_images = gr.File(
+                    label=f"Images (up to {MAX_BATCH_IMAGES})",
                     file_count="multiple",
                     file_types=["image"],
                 )
-                resumo_lote = gr.HTML(elem_classes="e3d-herdado")
-                botao_lote = gr.Button("▶ Gerar em lote", variant="primary")
+                batch_summary = gr.HTML(elem_classes="e3d-inherited")
+                batch_button = gr.Button("▶ Generate batch", variant="primary")
             with gr.Column(scale=2, min_width=380):
-                progresso_lote = gr.Markdown("")
-                arquivos_lote = gr.File(
-                    label="Arquivos gerados", file_count="multiple"
+                batch_progress = gr.Markdown("")
+                batch_files = gr.File(
+                    label="Generated files", file_count="multiple"
                 )
 
-    controles = [
-        motor, topologia, poly, textura, resolucao, pose, pose_prompt,
-        pose_ref, dividir, melhorar, licenca, *grupos_fmt,
+    controls = [
+        engine, topology, poly, texture, resolution, pose, pose_prompt,
+        pose_ref, split, enhance, license, *format_groups,
     ]
 
-    def _montar(*valores) -> PipelineConfig:
-        (v_motor, v_topo, v_poly, v_tex, v_res, v_pose, v_prompt,
-         v_ref, v_div, v_melhor, v_lic, *v_formatos) = valores
-        formatos: list[str] = []
-        for grupo in v_formatos:
-            formatos += list(grupo or [])
+    def _build_config(*values) -> PipelineConfig:
+        (v_engine, v_topology, v_poly, v_tex, v_res, v_pose, v_prompt,
+         v_ref, v_split, v_enhance, v_license, *v_formats) = values
+        formats: list[str] = []
+        for group in v_formats:
+            formats += list(group or [])
         return PipelineConfig(
-            engine=v_motor,
-            topologia=_TOPOLOGIAS[v_topo],
-            poly_count_alvo=int(v_poly),
-            gerar_textura=bool(v_tex),
-            resolucao_textura=_RESOLUCOES[v_res],
+            engine=v_engine,
+            topology=_TOPOLOGIES[v_topology],
+            poly_count_target=int(v_poly),
+            generate_texture=bool(v_tex),
+            texture_resolution=_RESOLUTIONS[v_res],
             pose=_POSES[v_pose],
             pose_prompt=v_prompt or "",
-            pose_ref_imagem=v_ref,
-            dividir_partes=bool(v_div),
-            melhorar_imagem=bool(v_melhor),
-            licenca=_LICENCAS[v_lic],
-            formatos=formatos,
+            pose_ref_image=v_ref,
+            split_parts=bool(v_split),
+            enhance_image=bool(v_enhance),
+            license=_LICENSES[v_license],
+            formats=formats,
         )
 
-    def _sincronizar(*valores):
-        cfg = _montar(*valores)
-        texto = "\n\n".join(f"⚠️ {a}" for a in cfg.avisos())
-        return cfg.como_dict(), texto, _tabela_resumo(cfg), gr.update(
+    def _sync(*values):
+        cfg = _build_config(*values)
+        text = "\n\n".join(f"⚠️ {a}" for a in cfg.warnings())
+        return cfg.to_dict(), text, _summary_table(cfg), gr.update(
             visible=cfg.pose is Pose.CUSTOM
         )
 
-    saidas_sync = [estado, avisos, resumo_lote, painel_pose]
-    for controle in controles:
-        controle.change(_sincronizar, controles, saidas_sync)
+    sync_outputs = [state, warnings, batch_summary, pose_panel]
+    for control in controls:
+        control.change(_sync, controls, sync_outputs)
 
-    def _gerar_um(imagem_pil, cfg_dict, progresso=gr.Progress()):
-        if imagem_pil is None:
-            raise gr.Error("Escolha uma imagem primeiro.")
-        cfg = PipelineConfig.de_dict(cfg_dict)
-        resultado = gerar(imagem_pil, cfg, nome="modelo", progresso=progresso)
+    def _generate_one(image_pil, cfg_dict, progress=gr.Progress()):
+        if image_pil is None:
+            raise gr.Error("Choose an image first.")
+        cfg = PipelineConfig.from_dict(cfg_dict)
+        result = generate(image_pil, cfg, name="model", progress=progress)
         return (
-            str(resultado.preview) if resultado.preview else None,
-            _tabela_stats(resultado),
-            [str(a) for a in resultado.arquivos],
+            str(result.preview) if result.preview else None,
+            _stats_table(result),
+            [str(a) for a in result.files],
         )
 
-    botao.click(_gerar_um, [imagem, estado], [preview, stats, arquivos])
+    button.click(_generate_one, [image, state], [preview, stats, files])
 
-    def _gerar_lote(caminhos, cfg_dict, progresso=gr.Progress()):
-        if not caminhos:
-            raise gr.Error("Escolha pelo menos uma imagem.")
-        if len(caminhos) > MAX_IMAGENS_LOTE:
-            raise gr.Error(f"Máximo de {MAX_IMAGENS_LOTE} imagens por lote.")
+    def _generate_batch(paths, cfg_dict, progress=gr.Progress()):
+        if not paths:
+            raise gr.Error("Choose at least one image.")
+        if len(paths) > MAX_BATCH_IMAGES:
+            raise gr.Error(f"Maximum of {MAX_BATCH_IMAGES} images per batch.")
 
         from PIL import Image
 
-        cfg = PipelineConfig.de_dict(cfg_dict)
-        imagens = [Image.open(c).convert("RGB") for c in caminhos]
-        nomes = [Path(c).stem for c in caminhos]
-        resultados = gerar_lote(imagens, cfg, nomes=nomes, progresso=progresso)
+        cfg = PipelineConfig.from_dict(cfg_dict)
+        images = [Image.open(c).convert("RGB") for c in paths]
+        names = [Path(c).stem for c in paths]
+        results = generate_batch(images, cfg, names=names, progress=progress)
 
-        arquivos_todos = [str(a) for r in resultados for a in r.arquivos]
-        linhas = [
-            f"- **{n}** — {len(r.arquivos)} arquivo(s), {r.duracao_s}s"
-            for n, r in zip(nomes, resultados)
+        all_files = [str(a) for r in results for a in r.files]
+        lines = [
+            f"- **{n}** — {len(r.files)} file(s), {r.duration_s}s"
+            for n, r in zip(names, results)
         ]
-        return "\n".join(linhas), arquivos_todos
+        return "\n".join(lines), all_files
 
-    botao_lote.click(
-        _gerar_lote, [imagens_lote, estado], [progresso_lote, arquivos_lote]
+    batch_button.click(
+        _generate_batch, [batch_images, state], [batch_progress, batch_files]
     )
 
-    aba_lote.select(lambda cfg: _tabela_resumo(PipelineConfig.de_dict(cfg)),
-                    [estado], [resumo_lote])
+    batch_tab.select(lambda cfg: _summary_table(PipelineConfig.from_dict(cfg)),
+                    [state], [batch_summary])
 
-    return {"preview": preview, "estado": estado}
+    return {"preview": preview, "state": state}
 
 
-def _tabela_resumo(cfg: PipelineConfig) -> str:
-    linhas = {
-        "Motor": MOTORES[cfg.engine].info.nome if cfg.engine in MOTORES else cfg.engine,
-        "Topologia": cfg.topologia.value.replace("_", " "),
-        "Polígonos": f"{cfg.poly_count_alvo:,}".replace(",", "."),
-        "Textura": (
-            f"Sim · {cfg.resolucao_textura.pixels}px" if cfg.gerar_textura else "Não"
+def _summary_table(cfg: PipelineConfig) -> str:
+    lines = {
+        "Engine": ENGINES[cfg.engine].info.name if cfg.engine in ENGINES else cfg.engine,
+        "Topology": cfg.topology.value.replace("_", " "),
+        "Polygons": f"{cfg.poly_count_target:,}",
+        "Texture": (
+            f"Yes · {cfg.texture_resolution.pixels}px" if cfg.generate_texture else "No"
         ),
         "Pose": cfg.pose.value.replace("_", "-"),
-        "Dividir em partes": "Sim" if cfg.dividir_partes else "Não",
-        "Melhorar imagem": "Sim" if cfg.melhorar_imagem else "Não",
-        "Licença": cfg.licenca.value,
-        "Formatos": ", ".join(f".{f}" for f in cfg.formatos) or "—",
+        "Split into parts": "Yes" if cfg.split_parts else "No",
+        "Enhance image": "Yes" if cfg.enhance_image else "No",
+        "License": cfg.license.value,
+        "Formats": ", ".join(f".{f}" for f in cfg.formats) or "—",
     }
-    corpo = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in linhas.items())
-    return f"<b>Configurações aplicadas</b><table>{corpo}</table>"
+    body = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in lines.items())
+    return f"<b>Applied settings</b><table>{body}</table>"
 
 
-def _tabela_stats(resultado) -> str:
-    est = resultado.estatisticas
-    partes = [
-        f"**Faces** {est.get('faces', 0):,}".replace(",", "."),
-        f"**Partes** {resultado.partes}",
-        f"**Tempo** {resultado.duracao_s}s",
-        f"**Pasta** `{resultado.pasta}`",
+def _stats_table(result) -> str:
+    st = result.stats
+    parts = [
+        f"**Faces** {st.get('faces', 0):,}",
+        f"**Parts** {result.parts}",
+        f"**Time** {result.duration_s}s",
+        f"**Folder** `{result.folder}`",
     ]
-    texto = " · ".join(partes)
-    if resultado.avisos:
-        texto += "\n\n" + "\n\n".join(f"⚠️ {a}" for a in resultado.avisos)
-    return texto
+    text = " · ".join(parts)
+    if result.warnings:
+        text += "\n\n" + "\n\n".join(f"⚠️ {a}" for a in result.warnings)
+    return text

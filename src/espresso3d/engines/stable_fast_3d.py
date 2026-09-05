@@ -1,57 +1,57 @@
-"""Stable Fast 3D — equilíbrio entre qualidade e peso, já sai com UV e PBR básico."""
+"""Stable Fast 3D — balance of quality and weight, ships with UV and basic PBR."""
 
 from __future__ import annotations
 
 from ..config import PipelineConfig
-from .base import DependenciaFaltando, InfoMotor, Motor
+from .base import EngineInfo, Engine, MissingDependency
 
 
-class StableFast3D(Motor):
-    info = InfoMotor(
+class StableFast3D(Engine):
+    info = EngineInfo(
         id="stable_fast_3d",
-        nome="Stable Fast 3D",
-        descricao="Equilíbrio · UV e PBR básico",
+        name="Stable Fast 3D",
+        description="Balanced · UV and basic PBR",
         vram_min_gb=6.0,
-        licenca_pesos="Stability AI Community License",
-        # A licença da Stability permite uso pessoal e empresas com receita
-        # anual abaixo de US$1M. Para "uso comercial" sem ressalva, o app
-        # sugere outro motor.
-        uso_comercial=False,
+        weights_license="Stability AI Community License",
+        # Stability's license allows personal use and companies with annual
+        # revenue under US$1M. For "commercial use" without caveats, the app
+        # suggests a different engine.
+        commercial_use=False,
         pbr=True,
         repo="stabilityai/stable-fast-3d",
     )
 
-    _modelo = None
+    _model = None
 
-    def _carregar(self):
-        if self._modelo is not None:
-            return self._modelo
+    def _load(self):
+        if self._model is not None:
+            return self._model
         try:
             from sf3d.system import SF3D  # type: ignore
-        except ImportError as exc:  # pragma: no cover - depende de download
-            raise DependenciaFaltando(
+        except ImportError as exc:  # pragma: no cover - depends on download
+            raise MissingDependency(
                 "sf3d (Stable Fast 3D)",
                 "pip install git+https://github.com/Stability-AI/stable-fast-3d.git",
             ) from exc
 
         import torch
 
-        modelo = SF3D.from_pretrained(
+        model = SF3D.from_pretrained(
             self.info.repo, config_name="config.yaml", weight_name="model.safetensors"
         )
-        modelo.to("cuda" if torch.cuda.is_available() else "cpu")
-        modelo.eval()
-        StableFast3D._modelo = modelo
-        return modelo
+        model.to("cuda" if torch.cuda.is_available() else "cpu")
+        model.eval()
+        StableFast3D._model = model
+        return model
 
-    def _gerar(self, imagem, cfg: PipelineConfig):  # pragma: no cover - precisa de GPU
+    def _generate(self, image, cfg: PipelineConfig):  # pragma: no cover - needs a GPU
         import torch
 
-        modelo = self._carregar()
+        model = self._load()
         with torch.no_grad():
-            malha, _ = modelo.run_image(
-                imagem,
-                bake_resolution=cfg.resolucao_textura.pixels,
+            mesh, _ = model.run_image(
+                image,
+                bake_resolution=cfg.texture_resolution.pixels,
                 remesh="none",
             )
-        return malha
+        return mesh

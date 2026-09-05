@@ -1,3 +1,3 @@
-"""Biblioteca dos modelos gerados."""
+"""Library of generated models."""
 
-from .store import Item, apagar, listar, registrar  # noqa: F401
+from .store import Item, delete, list_items, register  # noqa: F401

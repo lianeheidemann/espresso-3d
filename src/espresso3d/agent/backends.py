@@ -1,8 +1,8 @@
-"""Cérebros do agente: Ollama local, nuvem grátis e o plano B sem LLM.
+"""Agent brains: local Ollama, free cloud, and the no-LLM fallback.
 
-Todos implementam ``completar(prompt) -> str``. O registro descreve o que
-cada um custa em download e se enxerga imagem, e a interface usa isso para
-mostrar o comando de instalação em vez de um erro.
+All of them implement ``complete(prompt) -> str``. The registry describes
+what each one costs to download and whether it can see images, and the UI
+uses this to show the install command instead of an error.
 """
 
 from __future__ import annotations
@@ -18,56 +18,56 @@ log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class InfoCerebro:
+class BrainInfo:
     id: str
-    nome: str
-    tamanho: str
-    onde_cabe: str
-    visao: bool
+    name: str
+    size: str
+    fits: str
+    vision: bool
     local: bool
-    instalar: str = ""
+    install: str = ""
 
 
-class Cerebro:
-    info: InfoCerebro
+class Brain:
+    info: BrainInfo
 
-    def disponivel(self) -> bool:
+    def available(self) -> bool:
         raise NotImplementedError
 
-    def completar(self, prompt: str) -> str:
+    def complete(self, prompt: str) -> str:
         raise NotImplementedError
 
 
-class Ollama(Cerebro):
-    """Modelo rodando na máquina, via Ollama. Offline e sem limite de uso."""
+class Ollama(Brain):
+    """Model running on the machine, via Ollama. Offline and with no usage limit."""
 
-    def __init__(self, info: InfoCerebro):
+    def __init__(self, info: BrainInfo):
         self.info = info
         self.url = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
-    def disponivel(self) -> bool:
-        from ..hardware import ollama_modelos
+    def available(self) -> bool:
+        from ..hardware import ollama_models
 
-        modelos = ollama_modelos()
-        if modelos is None:
+        models = ollama_models()
+        if models is None:
             return False
-        return any(m.split(":")[0] == self.info.id.split(":")[0] for m in modelos)
+        return any(m.split(":")[0] == self.info.id.split(":")[0] for m in models)
 
-    def completar(self, prompt: str, cpu: bool = True) -> str:
-        corpo = json.dumps(
+    def complete(self, prompt: str, cpu: bool = True) -> str:
+        body = json.dumps(
             {
                 "model": self.info.id,
                 "prompt": prompt,
                 "stream": False,
-                # num_gpu=0 mantém o LLM na CPU e deixa a VRAM inteira
-                # para o gerador 3D, que é onde ela faz falta.
+                # num_gpu=0 keeps the LLM on the CPU and leaves the whole
+                # VRAM budget for the 3D generator, which is where it's needed.
                 "options": {"temperature": 0.2, **({"num_gpu": 0} if cpu else {})},
             }
         ).encode()
 
         req = urllib.request.Request(
             f"{self.url}/api/generate",
-            data=corpo,
+            data=body,
             headers={"Content-Type": "application/json"},
         )
         try:
@@ -75,131 +75,131 @@ class Ollama(Cerebro):
                 return json.loads(resp.read().decode()).get("response", "")
         except urllib.error.URLError as exc:
             raise RuntimeError(
-                f"Ollama não respondeu em {self.url}.\n"
-                "Inicie com 'ollama serve' e baixe o modelo com "
+                f"Ollama didn't respond at {self.url}.\n"
+                "Start it with 'ollama serve' and download the model with "
                 f"'ollama pull {self.info.id}'."
             ) from exc
 
 
-class Nuvem(Cerebro):
-    """Serviço com plano gratuito. Precisa de chave e internet."""
+class Cloud(Brain):
+    """Service with a free tier. Needs an API key and internet."""
 
-    def __init__(self, info: InfoCerebro, env_chave: str, url: str, modelo: str):
+    def __init__(self, info: BrainInfo, env_key: str, url: str, model: str):
         self.info = info
-        self.env_chave = env_chave
+        self.env_key = env_key
         self.url = url
-        self.modelo = modelo
+        self.model = model
 
-    def disponivel(self) -> bool:
-        return bool(os.environ.get(self.env_chave))
+    def available(self) -> bool:
+        return bool(os.environ.get(self.env_key))
 
-    def completar(self, prompt: str) -> str:
-        chave = os.environ.get(self.env_chave)
-        if not chave:
+    def complete(self, prompt: str) -> str:
+        key = os.environ.get(self.env_key)
+        if not key:
             raise RuntimeError(
-                f"Defina {self.env_chave} no ambiente (ou num arquivo .env) "
-                f"para usar {self.info.nome}."
+                f"Set {self.env_key} in the environment (or in a .env file) "
+                f"to use {self.info.name}."
             )
-        corpo = json.dumps(
+        body = json.dumps(
             {
-                "model": self.modelo,
+                "model": self.model,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.2,
             }
         ).encode()
         req = urllib.request.Request(
             self.url,
-            data=corpo,
+            data=body,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {chave}",
+                "Authorization": f"Bearer {key}",
             },
         )
         with urllib.request.urlopen(req, timeout=120) as resp:
-            dados = json.loads(resp.read().decode())
-        return dados["choices"][0]["message"]["content"]
+            data = json.loads(resp.read().decode())
+        return data["choices"][0]["message"]["content"]
 
 
-class PalavrasChave(Cerebro):
-    """Plano B sem LLM nenhum.
+class Keywords(Brain):
+    """No-LLM-at-all fallback.
 
-    Existe para a aba Agente nunca ficar quebrada só porque a pessoa não
-    baixou um modelo. Interpreta o pedido por palavras conhecidas.
+    Exists so the Agent tab never breaks just because the person hasn't
+    downloaded a model. Interprets the request through known keywords.
     """
 
-    info = InfoCerebro(
-        id="palavras_chave",
-        nome="Modo básico (palavras-chave)",
-        tamanho="nada para baixar",
-        onde_cabe="não usa GPU nem internet",
-        visao=False,
+    info = BrainInfo(
+        id="keywords",
+        name="Basic mode (keywords)",
+        size="nothing to download",
+        fits="uses no GPU or internet",
+        vision=False,
         local=True,
     )
 
-    def disponivel(self) -> bool:
+    def available(self) -> bool:
         return True
 
-    def completar(self, prompt: str) -> str:
-        # Sem LLM não há texto livre para gerar; quem chama usa o parser
-        # por palavras-chave diretamente.
+    def complete(self, prompt: str) -> str:
+        # With no LLM there's no free text to generate; the caller uses
+        # the keyword parser directly instead.
         return ""
 
 
-CEREBROS: dict[str, Cerebro] = {}
+BRAINS: dict[str, Brain] = {}
 
 
-def _registrar(cerebro: Cerebro) -> None:
-    CEREBROS[cerebro.info.id] = cerebro
+def _register(brain: Brain) -> None:
+    BRAINS[brain.info.id] = brain
 
 
 for _info in [
-    InfoCerebro("gemma3:4b", "Gemma 3 4B", "3,3 GB", "qualquer GPU, ou CPU", True, True,
-                "ollama pull gemma3:4b"),
-    InfoCerebro("qwen2.5:3b", "Qwen 2.5 3B", "2,0 GB", "qualquer GPU, ou CPU", False, True,
-                "ollama pull qwen2.5:3b"),
-    InfoCerebro("qwen2.5:7b", "Qwen 2.5 7B", "4,7 GB", "8GB VRAM ou CPU", False, True,
-                "ollama pull qwen2.5:7b"),
-    InfoCerebro("llama3.1:8b", "Llama 3.1 8B", "4,9 GB", "8GB VRAM ou CPU", False, True,
-                "ollama pull llama3.1:8b"),
-    InfoCerebro("mistral:7b", "Mistral 7B", "4,4 GB", "6GB VRAM ou CPU", False, True,
-                "ollama pull mistral:7b"),
-    InfoCerebro("moondream", "Moondream 2B", "1,7 GB", "qualquer GPU, ou CPU", True, True,
-                "ollama pull moondream"),
+    BrainInfo("gemma3:4b", "Gemma 3 4B", "3.3 GB", "any GPU, or CPU", True, True,
+              "ollama pull gemma3:4b"),
+    BrainInfo("qwen2.5:3b", "Qwen 2.5 3B", "2.0 GB", "any GPU, or CPU", False, True,
+              "ollama pull qwen2.5:3b"),
+    BrainInfo("qwen2.5:7b", "Qwen 2.5 7B", "4.7 GB", "8GB VRAM or CPU", False, True,
+              "ollama pull qwen2.5:7b"),
+    BrainInfo("llama3.1:8b", "Llama 3.1 8B", "4.9 GB", "8GB VRAM or CPU", False, True,
+              "ollama pull llama3.1:8b"),
+    BrainInfo("mistral:7b", "Mistral 7B", "4.4 GB", "6GB VRAM or CPU", False, True,
+              "ollama pull mistral:7b"),
+    BrainInfo("moondream", "Moondream 2B", "1.7 GB", "any GPU, or CPU", True, True,
+               "ollama pull moondream"),
 ]:
-    _registrar(Ollama(_info))
+    _register(Ollama(_info))
 
-_registrar(
-    Nuvem(
-        InfoCerebro("groq", "Groq (plano gratuito)", "sem download",
-                    "precisa de chave e internet", False, False,
-                    "export GROQ_API_KEY=..."),
+_register(
+    Cloud(
+        BrainInfo("groq", "Groq (free tier)", "no download",
+                  "needs a key and internet", False, False,
+                  "export GROQ_API_KEY=..."),
         "GROQ_API_KEY",
         "https://api.groq.com/openai/v1/chat/completions",
         "llama-3.1-8b-instant",
     )
 )
-_registrar(
-    Nuvem(
-        InfoCerebro("openrouter", "OpenRouter (modelos :free)", "sem download",
-                    "precisa de chave e internet", False, False,
-                    "export OPENROUTER_API_KEY=..."),
+_register(
+    Cloud(
+        BrainInfo("openrouter", "OpenRouter (:free models)", "no download",
+                  "needs a key and internet", False, False,
+                  "export OPENROUTER_API_KEY=..."),
         "OPENROUTER_API_KEY",
         "https://openrouter.ai/api/v1/chat/completions",
         "meta-llama/llama-3.1-8b-instruct:free",
     )
 )
-_registrar(PalavrasChave())
+_register(Keywords())
 
 
-def obter(id_cerebro: str) -> Cerebro:
-    if id_cerebro not in CEREBROS:
-        raise KeyError(f"Cérebro '{id_cerebro}' não existe.")
-    return CEREBROS[id_cerebro]
+def get(brain_id: str) -> Brain:
+    if brain_id not in BRAINS:
+        raise KeyError(f"Brain '{brain_id}' doesn't exist.")
+    return BRAINS[brain_id]
 
 
-def padrao() -> Cerebro:
-    """O primeiro cérebro realmente utilizável, na ordem de preferência."""
-    for cerebro in CEREBROS.values():
-        if cerebro.info.local and cerebro.disponivel():
-            return cerebro
-    return CEREBROS["palavras_chave"]
+def default() -> Brain:
+    """The first genuinely usable brain, in order of preference."""
+    for brain in BRAINS.values():
+        if brain.info.local and brain.available():
+            return brain
+    return BRAINS["keywords"]

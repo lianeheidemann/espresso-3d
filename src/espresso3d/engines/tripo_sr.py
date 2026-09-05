@@ -1,54 +1,54 @@
-"""TripoSR — o motor mais leve, roda até em GPU de 4GB."""
+"""TripoSR — the lightest engine, runs even on a 4GB GPU."""
 
 from __future__ import annotations
 
 from ..config import PipelineConfig
-from .base import DependenciaFaltando, InfoMotor, Motor
+from .base import EngineInfo, Engine, MissingDependency
 
 
-class TripoSR(Motor):
-    info = InfoMotor(
+class TripoSR(Engine):
+    info = EngineInfo(
         id="tripo_sr",
-        nome="TripoSR",
-        descricao="Rápido · ~5s por imagem",
+        name="TripoSR",
+        description="Fast · ~5s per image",
         vram_min_gb=4.0,
-        licenca_pesos="MIT",
-        uso_comercial=True,
+        weights_license="MIT",
+        commercial_use=True,
         pbr=False,
         repo="stabilityai/TripoSR",
     )
 
-    _modelo = None
+    _model = None
 
-    def _carregar(self):
-        if self._modelo is not None:
-            return self._modelo
+    def _load(self):
+        if self._model is not None:
+            return self._model
         try:
             from tsr.system import TSR  # type: ignore
-        except ImportError as exc:  # pragma: no cover - depende de download
-            raise DependenciaFaltando(
+        except ImportError as exc:  # pragma: no cover - depends on download
+            raise MissingDependency(
                 "tsr (TripoSR)",
                 "pip install git+https://github.com/VAST-AI-Research/TripoSR.git",
             ) from exc
 
         import torch
 
-        modelo = TSR.from_pretrained(
+        model = TSR.from_pretrained(
             self.info.repo,
             config_name="config.yaml",
             weight_name="model.ckpt",
         )
-        modelo.renderer.set_chunk_size(8192)
-        modelo.to("cuda" if torch.cuda.is_available() else "cpu")
-        TripoSR._modelo = modelo
-        return modelo
+        model.renderer.set_chunk_size(8192)
+        model.to("cuda" if torch.cuda.is_available() else "cpu")
+        TripoSR._model = model
+        return model
 
-    def _gerar(self, imagem, cfg: PipelineConfig):  # pragma: no cover - precisa de GPU
+    def _generate(self, image, cfg: PipelineConfig):  # pragma: no cover - needs a GPU
         import torch
 
-        modelo = self._carregar()
-        dispositivo = "cuda" if torch.cuda.is_available() else "cpu"
+        model = self._load()
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         with torch.no_grad():
-            codigos = modelo([imagem], device=dispositivo)
-            malhas = modelo.extract_mesh(codigos, has_vertex_color=cfg.gerar_textura)
-        return malhas[0]
+            codes = model([image], device=device)
+            meshes = model.extract_mesh(codes, has_vertex_color=cfg.generate_texture)
+        return meshes[0]

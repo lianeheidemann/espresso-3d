@@ -1,4 +1,4 @@
-"""Espresso3D — gerador local de modelos 3D a partir de imagens."""
+"""Espresso3D — local generator of 3D models from images."""
 
 __version__ = "0.1.0"
-APP_NOME = "Espresso3D"
+APP_NAME = "Espresso3D"
