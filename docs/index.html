@@ -121,7 +121,11 @@
   .switch.agent.on{background:var(--agent-soft);border-color:var(--agent);}
   .switch.agent.on::after{background:var(--agent);}
 
-  input[type=range]{width:100%;height:4px;border-radius:999px;background:var(--surface-3);appearance:none;-webkit-appearance:none;}
+  input[type=range]{
+    width:100%;height:4px;border-radius:999px;appearance:none;-webkit-appearance:none;
+    background:linear-gradient(to right, var(--accent) var(--fill,0%), var(--surface-3) var(--fill,0%));
+  }
+  input[type=range]::-moz-range-track{background:transparent;}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
   input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
 
@@ -1042,7 +1046,13 @@
 
   // ----- poly slider -----
   const polySlider = $('#poly-slider');
+  function updateSliderFill(el){
+    const pct = (el.value - el.min) / (el.max - el.min) * 100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+  updateSliderFill(polySlider);
   polySlider.addEventListener('input',()=>{
+    updateSliderFill(polySlider);
     const v = Number(polySlider.value).toLocaleString('pt-BR');
     $('#poly-val').textContent = v;
     $('#stat-faces').textContent = v;
