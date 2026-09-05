@@ -20,3 +20,8 @@ env/
 .DS_Store
 Thumbs.db
 .env
+
+# Instalação editável (pip install -e .)
+*.egg-info/
+build/
+dist/

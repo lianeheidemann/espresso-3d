@@ -36,6 +36,7 @@ git clone https://github.com/lianeheidemann/espresso-3d.git
 cd espresso-3d
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+pip install -e .          # registra o pacote (layout src/)
 python -m espresso3d
 ```
 
@@ -166,18 +167,28 @@ redução de malha, exportação, interpretação de pedidos do agente, validaç
 das rotações de pose e a biblioteca de modelos.
 
 ```
-espresso3d/            # todo o código fica aqui dentro
-├── __main__.py        # entrypoint: python -m espresso3d
-├── config.py          # PipelineConfig: tudo que o usuário escolhe
-├── hardware.py        # detecta GPU, Blender e Ollama
-├── engines/           # motores de geração 3D (registro plugável)
-├── pipeline/          # melhoria → segmentação → geração → malha → rig → exportação
-├── agent/             # cérebros do agente + interpretação de pedidos
-├── library/           # biblioteca dos modelos gerados
-└── ui/                # as quatro abas em Gradio
+espresso-3d/
+├── README.md · LICENSE · assets/ · docs/    # ficam na raiz
+├── requirements.txt · pyproject.toml
+├── tests/
+└── src/
+    └── espresso3d/        # todo o código fica aqui dentro
+        ├── __main__.py    # entrypoint: python -m espresso3d
+        ├── config.py      # PipelineConfig: tudo que o usuário escolhe
+        ├── hardware.py    # detecta GPU, Blender e Ollama
+        ├── engines/       # motores de geração 3D (registro plugável)
+        ├── pipeline/      # melhoria → segmentação → geração → malha → rig → exportação
+        ├── agent/         # cérebros do agente + interpretação de pedidos
+        ├── library/       # biblioteca dos modelos gerados
+        └── ui/            # as quatro abas em Gradio
 ```
 
-Para adicionar um motor: crie o módulo em `engines/`, herde de `Motor` e
+O layout `src/` é a convenção do Python para separar o código do resto do
+repositório. `pytest` roda direto da raiz (o `pyproject.toml` cuida do
+caminho); para usar `python -m espresso3d` de qualquer pasta, o
+`pip install -e .` da instalação já resolve.
+
+Para adicionar um motor: crie o módulo em `src/espresso3d/engines/`, herde de `Motor` e
 acrescente uma linha em `MOTORES`. A interface se atualiza sozinha.
 
 ## Licença
