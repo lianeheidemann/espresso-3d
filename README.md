@@ -31,7 +31,7 @@ and your images never leave your machine.
 </p>
 
 **[Live UI preview →](https://lianeheidemann.github.io/espresso-3d/)** *(interactive
-mockup of the screens; 3D generation itself runs locally)*
+mockup of the screens, responsive on mobile; 3D generation itself runs locally)*
 
 ---
 
