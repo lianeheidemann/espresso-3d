@@ -1,5 +1,9 @@
 <p align="center">
-  <img width="380"  alt="1000387925" src="https://github.com/user-attachments/assets/afb351ce-d138-4d6d-aec4-af133e80534d" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.png">
+    <img width="380" alt="Espresso3D" src="assets/logo-light.png">
+  </picture>
 </p>
 
 <p align="center"><em>Turn a photo into a 3D model — on your own machine, with open-source models.</em></p>
