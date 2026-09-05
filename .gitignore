@@ -1,0 +1,22 @@
+# Saídas do app — os modelos gerados ficam aqui, não vão para o Git
+outputs/
+
+# Pesos de modelo baixados (vários GB)
+checkpoints/
+*.ckpt
+*.safetensors
+*.pth
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Sistema
+.DS_Store
+Thumbs.db
+.env

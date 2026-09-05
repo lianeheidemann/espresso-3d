@@ -1,0 +1,29 @@
+# ---------------------------------------------------------------------------
+# Espresso3D — dependências
+#
+# O básico aqui já dá um app funcional: interface, malha, exportação para
+# .glb/.gltf/.obj/.ply/.stl/.3mf e biblioteca de modelos.
+#
+# Os motores de geração 3D, o rig e o upscaler são instalados à parte
+# (veja o README) porque cada um tem seu próprio repositório e pesos de
+# vários GB — não faz sentido baixar tudo para quem só quer abrir o app.
+# ---------------------------------------------------------------------------
+
+gradio>=6.0                 # interface web local
+trimesh>=4.0                # malha, exportação glb/gltf/obj/ply/stl/3mf
+numpy>=1.24
+pillow>=10.0                # leitura das imagens
+scipy>=1.11                 # separar partes (componentes conexos da malha)
+fast-simplification>=0.1.7  # reduzir até a contagem de polígonos alvo
+send2trash>=1.8             # apagar modelos para a lixeira, não de vez
+
+# --- desenvolvimento -------------------------------------------------------
+pytest>=8.0
+
+# --- opcionais (instale só o que for usar) ---------------------------------
+# torch                     # necessário para QUALQUER motor de geração 3D
+# git+https://github.com/VAST-AI-Research/TripoSR.git      # motor TripoSR
+# git+https://github.com/Stability-AI/stable-fast-3d.git   # motor Stable Fast 3D
+# segment-anything          # dividir em partes (precisa do checkpoint vit_b)
+# realesrgan basicsr        # melhorar imagem antes de gerar
+# mediapipe                 # pose a partir de foto de referência

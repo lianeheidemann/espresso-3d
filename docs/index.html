@@ -1,0 +1,1287 @@
+<title>Espresso3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#0a0c0f;
+    --surface:#14171b;
+    --surface-2:#1b1f24;
+    --surface-3:#22262c;
+    --border:#282d33;
+    --border-soft:#1e2227;
+    --text:#e9ebee;
+    --text-dim:#98a1ab;
+    --text-faint:#5f6870;
+    --accent:#ff8a4c;
+    --accent-soft:#ff8a4c26;
+    --accent-ink:#241005;
+    --agent:#5eead4;
+    --agent-soft:#5eead41f;
+    --good:#7bd88f;
+    --warn:#f2c14e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;
+  }
+  ::selection{background:var(--accent-soft);color:var(--text);}
+  h1,h2,h3,h4{font-family:'Manrope',system-ui,sans-serif;text-wrap:balance;margin:0;}
+  .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  /* ---------- shell ---------- */
+  .shell{display:flex;flex-direction:column;height:100vh;}
+
+  .topbar{
+    display:flex;align-items:center;gap:16px;padding:12px 20px;
+    border-bottom:1px solid var(--border-soft);
+    background:linear-gradient(180deg,#101318,#0c0e12);flex-wrap:wrap;flex:none;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:30px;height:30px;border-radius:8px;flex:none;
+    background:linear-gradient(135deg,var(--accent),#c65a24);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Manrope';font-weight:800;color:var(--accent-ink);font-size:15px;
+  }
+  .brand h1{font-size:16px;font-weight:800;letter-spacing:.2px;}
+  .brand span{color:var(--text-faint);font-size:12px;display:block;margin-top:1px;}
+
+  .gpu-badge{
+    margin-left:auto;display:flex;align-items:center;gap:8px;
+    background:var(--surface-2);border:1px solid var(--border);
+    border-radius:999px;padding:6px 12px 6px 8px;font-size:12px;color:var(--text-dim);
+  }
+  .gpu-dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px #7bd88f22;flex:none;}
+  .gpu-badge b{color:var(--text);font-weight:600;}
+  .gpu-badge .mono{color:var(--agent);}
+
+  .top-tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;}
+  .top-tab{
+    display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;
+    border:none;background:transparent;color:var(--text-dim);cursor:pointer;
+    font-size:13px;font-weight:500;transition:background .15s,color .15s;
+  }
+  .top-tab:hover{color:var(--text);}
+  .top-tab.active{background:var(--surface-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--border);}
+  .top-tab .ico{width:15px;height:15px;flex:none;}
+  .top-tab[data-tab="agente"].active{color:var(--agent);}
+
+  .view{display:none;flex:1;min-height:0;}
+  .view.active{display:flex;}
+
+  /* ---------- config column ---------- */
+  .cfg-col{
+    width:312px;flex:none;border-right:1px solid var(--border-soft);
+    padding:18px 16px 0;overflow-y:auto;display:flex;flex-direction:column;gap:18px;
+  }
+  .field-label{
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;
+  }
+  .field-label .val{color:var(--text);font-family:'IBM Plex Mono';font-size:12px;}
+  .hint{width:14px;height:14px;border-radius:50%;border:1px solid var(--border);color:var(--text-faint);font-size:9.5px;display:inline-flex;align-items:center;justify-content:center;margin-left:5px;}
+
+  .seg{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
+  .seg button{
+    flex:1;border:none;background:transparent;color:var(--text-dim);padding:7px 6px;
+    border-radius:6px;font-size:12.5px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;
+  }
+  .seg button.active{background:var(--surface-3);color:var(--text);}
+  .seg.small button{font-size:11.5px;padding:6px 4px;}
+
+  .engine-pick{display:flex;flex-direction:column;gap:6px;}
+  .engine-opt{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    border:1px solid var(--border);border-radius:10px;padding:9px 11px;cursor:pointer;background:var(--surface);
+  }
+  .engine-opt.active{border-color:var(--accent);background:var(--accent-soft);}
+  .engine-opt .name{font-weight:600;font-size:13px;}
+  .engine-opt .desc{color:var(--text-faint);font-size:11.5px;margin-top:1px;}
+  .engine-opt .vram{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono';flex:none;}
+  .engine-opt.active .vram{color:var(--accent);}
+
+  .dropzone{
+    border:1.5px dashed var(--border);border-radius:12px;padding:22px 12px;text-align:center;
+    color:var(--text-dim);background:var(--surface);cursor:pointer;
+  }
+  .dropzone:hover{border-color:var(--text-faint);}
+  .dropzone .glyph{font-size:22px;margin-bottom:8px;opacity:.7;}
+  .dropzone b{color:var(--text);font-weight:500;font-size:12.5px;}
+  .dropzone small{display:block;margin-top:5px;color:var(--text-faint);font-size:11px;}
+
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .toggle-row .lbl{font-size:13px;color:var(--text);display:flex;align-items:center;}
+  .switch{width:34px;height:19px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border);position:relative;cursor:pointer;flex:none;transition:background .15s;}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--text-faint);transition:transform .15s,background .15s;}
+  .switch.on{background:var(--accent-soft);border-color:var(--accent);}
+  .switch.on::after{transform:translateX(15px);background:var(--accent);}
+  .switch.agent.on{background:var(--agent-soft);border-color:var(--agent);}
+  .switch.agent.on::after{background:var(--agent);}
+
+  input[type=range]{width:100%;height:4px;border-radius:999px;background:var(--surface-3);appearance:none;-webkit-appearance:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
+
+  /* ---------- export groups ---------- */
+  .fmt-group{margin-bottom:12px;}
+  .fmt-group-title{
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-faint);
+    font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;
+  }
+  .fmt-row{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:12.5px;}
+  .check-box{width:16px;height:16px;border-radius:5px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;flex:none;font-size:10px;color:var(--accent-ink);}
+  .check-box.checked{background:var(--accent);border-color:var(--accent);}
+  .fmt-ext{font-family:'IBM Plex Mono';color:var(--text);}
+  .badge{font-size:9.5px;padding:2px 6px;border-radius:999px;font-weight:600;letter-spacing:.02em;white-space:nowrap;}
+  .badge.ar{background:#5eead41f;color:var(--agent);}
+  .badge.beta{background:#f2c14e1f;color:var(--warn);}
+  .badge.blender{background:var(--surface-3);color:var(--text-faint);margin-left:auto;}
+
+  /* ---------- pose custom ---------- */
+  .pose-custom{display:none;margin-top:9px;border:1px solid var(--border);border-radius:11px;background:var(--surface);padding:11px;flex-direction:column;gap:9px;}
+  .pose-custom.show{display:flex;}
+  .pose-custom textarea{
+    width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:9px;
+    padding:9px 11px;color:var(--text);font-family:inherit;font-size:12.5px;line-height:1.5;
+    resize:vertical;min-height:58px;outline:none;
+  }
+  .pose-custom textarea:focus{border-color:var(--accent);}
+  .pose-custom textarea::placeholder{color:var(--text-faint);}
+  .pose-chips{display:flex;flex-wrap:wrap;gap:5px;}
+  .pose-chip{
+    border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim);
+    border-radius:999px;padding:4px 10px;font-size:11.5px;cursor:pointer;
+  }
+  .pose-chip:hover{border-color:var(--accent);color:var(--text);}
+  .pose-sub{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);font-weight:600;}
+  .pose-custom select{
+    width:100%;background:var(--surface-2);border:1px solid var(--border-soft);color:var(--text);
+    border-radius:8px;padding:7px 9px;font-size:12px;font-family:inherit;cursor:pointer;
+  }
+  .pose-ref{
+    display:flex;align-items:center;gap:9px;border:1px dashed var(--border);border-radius:9px;
+    padding:9px 11px;cursor:pointer;color:var(--text-dim);font-size:12px;background:var(--surface-2);
+  }
+  .pose-ref:hover{border-color:var(--text-faint);}
+  .pose-ref .g{font-size:17px;}
+  .pose-ref small{display:block;color:var(--text-faint);font-size:10.5px;margin-top:1px;}
+  .pose-divider{display:flex;align-items:center;gap:9px;color:var(--text-faint);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;}
+  .pose-divider::before,.pose-divider::after{content:"";flex:1;height:1px;background:var(--border-soft);}
+
+  .warn-note{
+    display:flex;gap:8px;background:#f2c14e14;border:1px solid #f2c14e33;border-radius:9px;
+    padding:9px 11px;font-size:11.5px;color:#e0c690;line-height:1.45;
+  }
+
+  .cfg-footer{
+    position:sticky;bottom:0;padding:14px 0 18px;margin-top:auto;
+    background:linear-gradient(180deg,transparent,var(--bg) 35%);
+  }
+  .primary-btn{
+    width:100%;padding:11px;border-radius:10px;border:none;
+    background:linear-gradient(180deg,#ff9d5f,var(--accent));
+    color:#2a1102;font-weight:700;font-size:13.5px;cursor:pointer;
+    box-shadow:0 6px 16px -6px #ff8a4c66;
+  }
+  .primary-btn:active{transform:translateY(1px);}
+  .primary-btn.busy{background:var(--surface-3);color:var(--text-dim);box-shadow:none;cursor:progress;}
+
+  /* ---------- stage ---------- */
+  .stage{flex:1;position:relative;display:flex;flex-direction:column;min-width:0;
+    background:radial-gradient(120% 90% at 50% 0%,#151a20 0%,var(--bg) 60%);}
+  .stage-top{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-soft);}
+  .stage-title{font-size:12.5px;color:var(--text-dim);}
+  .stage-title b{color:var(--text);font-weight:600;}
+  .stage-tools{display:flex;gap:6px;}
+  .tool-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .canvas-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:auto;}
+  .grid-floor{
+    position:absolute;inset:0;
+    background-image:linear-gradient(var(--border-soft) 1px,transparent 1px),linear-gradient(90deg,var(--border-soft) 1px,transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:radial-gradient(60% 55% at 50% 55%,#000 0%,transparent 75%);
+            mask-image:radial-gradient(60% 55% at 50% 55%,#000 0%,transparent 75%);
+  }
+  .model-hero{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .model-hero svg{filter:drop-shadow(0 22px 30px #00000080);}
+
+  .steam path{
+    fill:none;stroke-width:2.1;stroke-linecap:round;opacity:0;
+    transform-box:fill-box;transform-origin:50% 100%;
+    animation:steam 5s ease-in-out infinite;
+  }
+  .steam.warm path{stroke:#ffc39c;}
+  .steam.cool path{stroke:#9df3e5;}
+  .steam path:nth-child(2){animation-delay:1.6s;}
+  .steam path:nth-child(3){animation-delay:3.2s;}
+  @keyframes steam{
+    0%   {opacity:0;   transform:translateY(7px)   scaleY(.82);}
+    22%  {opacity:.55;}
+    62%  {opacity:.3;}
+    100% {opacity:0;   transform:translateY(-17px) scaleY(1.16);}
+  }
+  .stat-chip{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 16px;font-size:11.5px;color:var(--text-dim);}
+  .stat-chip b{color:var(--text);font-family:'IBM Plex Mono';font-weight:500;}
+
+  /* ---------- right column ---------- */
+  .side-col{width:236px;flex:none;border-left:1px solid var(--border-soft);padding:16px;overflow-y:auto;}
+  .side-col h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);margin-bottom:12px;font-weight:600;font-family:'IBM Plex Sans';}
+  .history-item{display:flex;gap:10px;padding:8px;border-radius:9px;margin-bottom:4px;}
+  .history-item:hover{background:var(--surface);}
+  .history-thumb{width:38px;height:38px;border-radius:7px;background:var(--surface-3);flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .history-meta b{display:block;font-size:12.5px;font-weight:500;}
+  .history-meta span{font-size:11px;color:var(--text-faint);}
+
+  /* ---------- batch ---------- */
+  .thumbs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+  .thumb-slot{
+    aspect-ratio:1;border-radius:9px;border:1px dashed var(--border);display:flex;align-items:center;
+    justify-content:center;color:var(--text-faint);font-size:18px;background:var(--surface);cursor:pointer;
+  }
+  .thumb-slot.filled{border-style:solid;background:var(--surface-3);}
+  .thumb-slot.add{font-size:20px;color:var(--text-dim);}
+
+  .inherit-card{border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden;}
+  .inherit-head{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:11px 13px;border-bottom:1px solid var(--border-soft);background:var(--surface-2);
+  }
+  .inherit-head b{font-size:12.5px;font-weight:600;}
+  .inherit-head span{font-size:11px;color:var(--text-faint);display:block;margin-top:2px;}
+  .link-btn{border:1px solid var(--border);background:var(--surface-3);color:var(--text-dim);border-radius:8px;padding:6px 10px;font-size:11.5px;cursor:pointer;white-space:nowrap;}
+  .link-btn:hover{color:var(--text);border-color:var(--text-faint);}
+  .inherit-list{padding:4px 13px 11px;}
+  .inherit-row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:12.5px;border-bottom:1px solid var(--border-soft);}
+  .inherit-row:last-child{border-bottom:none;}
+  .inherit-row span{color:var(--text-faint);}
+  .inherit-row b{font-weight:500;font-family:'IBM Plex Mono';font-size:12px;text-align:right;}
+
+  .queue-item{border:1px solid var(--border);border-radius:10px;padding:9px 11px;background:var(--surface);}
+  .queue-item .row1{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px;gap:10px;}
+  .queue-item .row1 b{font-weight:500;}
+  .queue-item .row1 span{color:var(--text-faint);font-family:'IBM Plex Mono';font-size:11px;white-space:nowrap;}
+  .bar{height:5px;border-radius:999px;background:var(--surface-3);overflow:hidden;}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:999px;}
+
+  /* ---------- agent view (novo layout) ---------- */
+  .chat-col{width:430px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--border-soft);min-height:0;}
+  .chat-head{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border-soft);flex:none;}
+  .chat-head .icon-btn{width:28px;height:28px;border-radius:7px;border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .chat-head .icon-btn:hover{background:var(--surface);color:var(--text);}
+  .chat-title{margin:0 auto;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);font-weight:500;cursor:pointer;}
+  .chat-title .caret{color:var(--text-faint);font-size:10px;}
+
+  .agent-cfg{padding:11px 14px;border-bottom:1px solid var(--border-soft);background:var(--surface-2);flex:none;display:flex;flex-direction:column;gap:9px;}
+  .agent-cfg-row{display:flex;align-items:center;gap:9px;}
+  .agent-cfg-row .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);font-weight:600;white-space:nowrap;}
+  .agent-cfg select{
+    flex:1;background:var(--surface-3);border:1px solid var(--border);color:var(--text);
+    border-radius:8px;padding:7px 9px;font-size:12.5px;font-family:'IBM Plex Sans';cursor:pointer;min-width:0;
+  }
+  .model-info{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px;color:var(--text-faint);}
+  .model-info .chip{background:var(--surface-3);border-radius:999px;padding:2px 8px;font-family:'IBM Plex Mono';font-size:10.5px;}
+  .model-info .chip.vision{background:var(--agent-soft);color:var(--agent);font-family:'IBM Plex Sans';font-weight:600;}
+  .model-info .chip.warn{background:#f2c14e1f;color:var(--warn);font-family:'IBM Plex Sans';font-weight:600;}
+  .pull-cmd{
+    display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);
+    border-radius:7px;padding:6px 9px;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-dim);
+  }
+  .pull-cmd .copy{margin-left:auto;border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:11px;}
+  .pull-cmd .copy:hover{color:var(--text);}
+  .cpu-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .cpu-row .txt{font-size:12px;color:var(--text-dim);}
+  .cpu-row .txt small{display:block;color:var(--text-faint);font-size:10.5px;margin-top:1px;}
+
+  .chat-scroll{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;min-height:0;}
+  .sent-img{align-self:flex-end;width:74px;height:74px;border-radius:12px;background:var(--surface-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:30px;}
+  .msg{font-size:13.5px;line-height:1.55;}
+  .msg.bot{color:var(--text);}
+  .msg.meta{color:var(--text-faint);font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;}
+
+  .tool-card{border:1px solid var(--border);border-radius:13px;background:var(--surface);overflow:hidden;}
+  .tool-card-head{padding:13px 14px 11px;}
+  .tool-card-head b{font-size:13.5px;font-weight:600;display:block;}
+  .tool-card-head span{font-size:12px;color:var(--text-faint);display:block;margin-top:2px;}
+  .tool-fields{padding:0 14px;display:flex;flex-direction:column;gap:7px;}
+  .tf{background:var(--surface-2);border:1px solid var(--border-soft);border-radius:9px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .tf label{font-size:12.5px;color:var(--text);}
+  .tf select{
+    background:var(--surface-3);border:1px solid var(--border);color:var(--text);
+    border-radius:7px;padding:6px 8px;font-size:12px;font-family:'IBM Plex Sans';cursor:pointer;min-width:132px;
+  }
+  .tf .thumb-mini{width:26px;height:26px;border-radius:6px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .tf.column{flex-direction:column;align-items:stretch;gap:6px;}
+  .tf.column .tf-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .tf.column p{margin:0;font-size:11.5px;color:var(--text-faint);line-height:1.45;}
+  .tool-est{padding:10px 14px 0;text-align:right;font-size:11.5px;color:var(--text-dim);font-family:'IBM Plex Mono';}
+  .tool-actions{display:flex;align-items:center;gap:6px;padding:12px 14px;flex-wrap:wrap;}
+  .ghost-btn{border:none;background:transparent;color:var(--text-dim);font-size:12px;cursor:pointer;padding:7px 9px;border-radius:7px;}
+  .ghost-btn:hover{background:var(--surface-2);color:var(--text);}
+  .approve-btn{margin-left:auto;border:none;background:var(--agent);color:#03211c;font-weight:600;font-size:12.5px;padding:8px 16px;border-radius:8px;cursor:pointer;}
+  .approve-btn:hover{filter:brightness(1.08);}
+  .tool-card.resolved{opacity:.55;}
+  .tool-card.resolved .tool-actions{display:none;}
+  .resolved-mark{display:none;padding:11px 14px;font-size:12px;color:var(--agent);border-top:1px solid var(--border-soft);}
+  .tool-card.resolved .resolved-mark{display:block;}
+
+  .chat-input{padding:12px 14px 14px;border-top:1px solid var(--border-soft);flex:none;}
+  .chat-field{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 13px;
+  }
+  .chat-field textarea{
+    width:100%;border:none;background:transparent;color:var(--text);resize:none;
+    font-family:inherit;font-size:13px;line-height:1.5;min-height:38px;outline:none;
+  }
+  .chat-field textarea::placeholder{color:var(--text-faint);}
+  .chat-field.locked{opacity:.6;}
+  .chat-icons{display:flex;align-items:center;gap:4px;margin-top:6px;}
+  .chat-icons .icon-btn{width:26px;height:26px;border-radius:6px;border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .chat-icons .icon-btn:hover{background:var(--surface-2);color:var(--text);}
+  .send-btn{margin-left:auto;width:30px;height:30px;border-radius:8px;border:none;background:var(--surface-3);color:var(--text-faint);cursor:pointer;font-size:13px;}
+  .send-btn.ready{background:var(--agent);color:#03211c;}
+
+  .agent-stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-width:0;
+    background:radial-gradient(120% 90% at 50% 0%,#12161b 0%,var(--bg) 65%);}
+  .agent-stage .empty-msg{color:var(--text-faint);font-size:13.5px;text-align:center;max-width:320px;padding:0 20px;}
+  .agent-result{display:none;flex-direction:column;align-items:center;gap:16px;}
+  .agent-result.show{display:flex;}
+  .agent-stage.has-result .empty-msg{display:none;}
+  .zoom-ctl{
+    position:absolute;right:16px;bottom:14px;display:flex;align-items:center;gap:10px;
+    color:var(--text-faint);font-size:11.5px;font-family:'IBM Plex Mono';
+  }
+  .zoom-ctl button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:14px;}
+  .stage-topright{position:absolute;right:16px;top:14px;display:flex;align-items:center;gap:12px;color:var(--text-faint);font-size:12px;}
+
+  /* ---------- biblioteca ---------- */
+  .lib{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .lib-top{
+    display:flex;align-items:center;gap:12px;padding:14px 20px;
+    border-bottom:1px solid var(--border-soft);flex-wrap:wrap;flex:none;
+  }
+  .lib-search{
+    flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);
+    border-radius:9px;padding:8px 12px;color:var(--text);font-size:13px;font-family:inherit;
+  }
+  .lib-search::placeholder{color:var(--text-faint);}
+  .lib-top select{
+    background:var(--surface);border:1px solid var(--border);color:var(--text-dim);
+    border-radius:9px;padding:8px 10px;font-size:12.5px;font-family:inherit;cursor:pointer;
+  }
+  .disk{display:flex;flex-direction:column;gap:5px;min-width:186px;}
+  .disk-line{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-dim);}
+  .disk-line b{font-family:'IBM Plex Mono';color:var(--text);font-weight:500;}
+  .disk-bar{height:5px;border-radius:999px;background:var(--surface-3);overflow:hidden;}
+  .disk-bar i{display:block;height:100%;width:34%;background:linear-gradient(90deg,var(--accent),#ffb383);}
+
+  .lib-bulkbar{
+    display:none;align-items:center;gap:12px;padding:10px 20px;
+    background:var(--accent-soft);border-bottom:1px solid #ff8a4c44;font-size:12.5px;color:var(--text);flex:none;
+  }
+  .lib-bulkbar.show{display:flex;}
+  .lib-bulkbar b{font-family:'IBM Plex Mono';}
+  .danger-btn{margin-left:auto;border:1px solid #e0666655;background:#e0666614;color:#f0a0a0;border-radius:8px;padding:7px 13px;font-size:12px;cursor:pointer;}
+  .danger-btn:hover{background:#e0666626;}
+
+  .lib-grid{
+    flex:1;overflow-y:auto;padding:18px 20px 28px;display:grid;gap:14px;
+    grid-template-columns:repeat(auto-fill,minmax(212px,1fr));align-content:start;
+  }
+  .lib-card{
+    border:1px solid var(--border);border-radius:12px;background:var(--surface);
+    overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s;
+  }
+  .lib-card:hover{border-color:var(--text-faint);}
+  .lib-card.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+  .lib-thumb{
+    position:relative;aspect-ratio:4/3;background:radial-gradient(90% 80% at 50% 35%,#1d2228,#111418);
+    display:flex;align-items:center;justify-content:center;font-size:40px;
+  }
+  .lib-check{
+    position:absolute;top:8px;left:8px;width:19px;height:19px;border-radius:5px;
+    border:1px solid var(--border);background:#0c0e12cc;display:flex;align-items:center;
+    justify-content:center;font-size:11px;color:var(--accent-ink);cursor:pointer;
+  }
+  .lib-check.on{background:var(--accent);border-color:var(--accent);}
+  .lib-badge-parts{
+    position:absolute;top:8px;right:8px;background:#0c0e12cc;border:1px solid var(--border);
+    border-radius:999px;padding:2px 8px;font-size:10px;color:var(--agent);
+  }
+  .lib-body{padding:10px 12px;display:flex;flex-direction:column;gap:5px;flex:1;}
+  .lib-body b{font-size:13px;font-weight:600;word-break:break-word;}
+  .lib-meta{font-size:11.5px;color:var(--text-faint);}
+  .lib-chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;}
+  .lib-chips span{
+    font-family:'IBM Plex Mono';font-size:10px;background:var(--surface-3);
+    color:var(--text-dim);border-radius:5px;padding:2px 6px;
+  }
+  .lib-foot{
+    display:flex;justify-content:space-between;font-size:11px;color:var(--text-faint);
+    border-top:1px solid var(--border-soft);padding:8px 12px;font-family:'IBM Plex Mono';
+  }
+  .lib-actions{display:flex;border-top:1px solid var(--border-soft);}
+  .lib-actions button{
+    flex:1;border:none;background:transparent;color:var(--text-dim);padding:9px 4px;
+    font-size:11.5px;cursor:pointer;border-right:1px solid var(--border-soft);
+  }
+  .lib-actions button:last-child{border-right:none;}
+  .lib-actions button:hover{background:var(--surface-2);color:var(--text);}
+  .lib-actions button.danger:hover{background:#e0666614;color:#f0a0a0;}
+
+  /* ---------- modal ---------- */
+  .modal-back{
+    position:fixed;inset:0;background:#05070ac9;display:none;align-items:center;
+    justify-content:center;padding:20px;z-index:30;
+  }
+  .modal-back.show{display:flex;}
+  .modal{
+    width:100%;max-width:430px;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:20px;box-shadow:0 24px 60px -16px #000000cc;
+  }
+  .modal h3{font-size:16px;margin-bottom:8px;}
+  .modal p{margin:0 0 14px;font-size:13px;color:var(--text-dim);line-height:1.55;}
+  .modal .path{
+    font-family:'IBM Plex Mono';font-size:11.5px;background:var(--surface-2);
+    border:1px solid var(--border-soft);border-radius:8px;padding:10px 12px;
+    color:var(--text-dim);margin-bottom:14px;word-break:break-all;
+  }
+  .modal .trash-opt{display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;cursor:pointer;}
+  .modal .trash-opt .txt{font-size:12.5px;color:var(--text);}
+  .modal .trash-opt .txt small{display:block;color:var(--text-faint);font-size:11px;margin-top:2px;}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+  .modal-actions .ghost-btn{border:1px solid var(--border);}
+
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--surface-3);border:1px solid var(--border);color:var(--text);
+    padding:11px 18px;border-radius:10px;font-size:12.5px;opacity:0;pointer-events:none;
+    transition:opacity .2s,transform .2s;box-shadow:0 10px 30px -8px #000000aa;max-width:360px;text-align:center;z-index:20;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important;}
+    .steam path{opacity:.3;}
+  }
+  @media (max-width:1100px){.side-col{display:none;}}
+  @media (max-width:820px){.chat-col{width:100%;border-right:none;}.agent-stage{display:none;}}
+</style>
+
+<div class="shell">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+          <path d="M4 8h12v6a5 5 0 01-5 5H9a5 5 0 01-5-5z"/>
+          <path d="M16 10h1.6a2.4 2.4 0 010 4.8H16"/>
+          <path d="M8 2.5v2M12 2.5v2"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Espresso3D</h1>
+        <span>gerador local de imagem → 3D, 100% seu</span>
+      </div>
+    </div>
+
+    <div class="top-tabs" role="tablist">
+      <button class="top-tab active" data-tab="single">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 15l-5-5-9 9"/></svg>
+        Imagem → 3D
+      </button>
+      <button class="top-tab" data-tab="batch">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Lote (até 10)
+      </button>
+      <button class="top-tab" data-tab="agente">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M5 8h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z"/><circle cx="9" cy="13" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="currentColor" stroke="none"/></svg>
+        Agente
+      </button>
+      <button class="top-tab" data-tab="lib">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.5l8 4.2v10.6l-8 4.2-8-4.2V6.7z"/><path d="M4 6.7l8 4.3 8-4.3M12 11v10.5"/></svg>
+        Meus modelos
+      </button>
+    </div>
+
+    <div class="gpu-badge">
+      <span class="gpu-dot"></span>
+      GPU: <b class="mono">6 GB VRAM</b> · Blender <b>encontrado</b>
+    </div>
+  </div>
+
+  <!-- ============ IMAGEM → 3D ============ -->
+  <div class="view active" id="view-single">
+    <div class="cfg-col">
+
+      <div>
+        <div class="field-label">Motor de geração</div>
+        <div class="engine-pick">
+          <div class="engine-opt" data-engine="TripoSR"><div><div class="name">TripoSR</div><div class="desc">Rápido · ~5s por imagem</div></div><div class="vram">4GB+</div></div>
+          <div class="engine-opt active" data-engine="Stable Fast 3D"><div><div class="name">Stable Fast 3D</div><div class="desc">Equilíbrio · PBR básico</div></div><div class="vram">6GB+</div></div>
+          <div class="engine-opt" data-engine="InstantMesh"><div><div class="name">InstantMesh</div><div class="desc">Máxima qualidade</div></div><div class="vram">8GB+</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Topologia</div>
+        <div class="seg" data-cfg="topologia"><button class="active">Alto Detalhe</button><button>Smart Topology</button></div>
+      </div>
+
+      <div>
+        <div class="field-label">Imagem</div>
+        <div class="dropzone">
+          <div class="glyph">🖼️</div>
+          <b>Clique / Arraste e Solte / Cole Imagem</b>
+          <small>.png · .jpg · .webp — máx. 20MB</small>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Contagem de polígonos <span class="hint">i</span><span class="val mono" id="poly-val">4000</span></div>
+        <input type="range" min="500" max="20000" step="100" value="4000" id="poly-slider" aria-label="Contagem de polígonos">
+      </div>
+
+      <div class="toggle-row"><span class="lbl">Textura</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
+
+      <div>
+        <div class="field-label">Resolução de textura</div>
+        <div class="seg" data-cfg="resolucao"><button class="active">Padrão</button><button>Ultra 2K</button></div>
+      </div>
+
+      <div>
+        <div class="field-label">Pose <span class="hint">i</span></div>
+        <div class="seg small" data-cfg="pose"><button class="active">Nenhum</button><button>T-Pose</button><button>A-Pose</button><button>Custom</button></div>
+
+        <div class="pose-custom" id="pose-custom">
+          <div class="pose-sub">Descreva a pose</div>
+          <textarea id="pose-prompt" placeholder="ex: de pé, braços cruzados na frente do peito, peso na perna esquerda, cabeça virada levemente para a direita"></textarea>
+          <div class="pose-chips">
+            <button class="pose-chip" type="button">sentado de pernas cruzadas</button>
+            <button class="pose-chip" type="button">acenando com a mão direita</button>
+            <button class="pose-chip" type="button">correndo</button>
+            <button class="pose-chip" type="button">braços abertos</button>
+            <button class="pose-chip" type="button">agachado</button>
+          </div>
+
+          <div>
+            <div class="pose-sub" style="margin-bottom:5px;">Interpretar com</div>
+            <select id="pose-engine">
+              <option value="llm">LLM local (já instalado) — rápido, aproximado</option>
+              <option value="posescript">PoseScript — texto → pose (+1,2 GB)</option>
+              <option value="momask">MoMask — texto → movimento (+2,4 GB)</option>
+            </select>
+          </div>
+
+          <div class="pose-divider">ou</div>
+
+          <div class="pose-ref" id="pose-ref">
+            <span class="g">🧍</span>
+            <span>Enviar foto de referência
+              <small>MediaPipe copia os ângulos do corpo da foto — mais preciso que texto</small>
+            </span>
+          </div>
+
+          <div class="warn-note">
+            <span>⚠️</span>
+            <span>Só funciona em personagem humanoide com esqueleto detectado. Objetos (xícara, vaso) não têm pose.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-row"><span class="lbl">Dividir em partes <span class="hint">i</span></span><div class="switch" data-toggle role="switch" tabindex="0"></div></div>
+      <div class="toggle-row"><span class="lbl">Melhorar imagem</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
+
+      <div>
+        <div class="field-label">Licença de uso</div>
+        <div class="seg" data-cfg="licenca"><button class="active">Privado</button><button>Comercial</button></div>
+      </div>
+
+      <div>
+        <div class="field-label">Exportar como</div>
+
+        <div class="fmt-group">
+          <div class="fmt-group-title">Web e AR no Android</div>
+          <label class="fmt-row"><span class="check-box checked" data-fmt=".glb">✓</span><span class="fmt-ext">.glb</span><span class="badge ar">AR Web</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".gltf"></span><span class="fmt-ext">.gltf</span></label>
+        </div>
+
+        <div class="fmt-group">
+          <div class="fmt-group-title">AR no iPhone / Vision Pro</div>
+          <label class="fmt-row"><span class="check-box" data-fmt=".usdz"></span><span class="fmt-ext">.usdz</span><span class="badge ar">AR iOS</span><span class="badge blender">Blender</span></label>
+        </div>
+
+        <div class="fmt-group">
+          <div class="fmt-group-title">Unity / Unreal / VR</div>
+          <label class="fmt-row"><span class="check-box" data-fmt=".fbx"></span><span class="fmt-ext">.fbx</span><span class="badge blender">Blender</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".vrm"></span><span class="fmt-ext">.vrm</span><span class="badge beta">avatar · beta</span></label>
+        </div>
+
+        <div class="fmt-group">
+          <div class="fmt-group-title">Pipelines USD / Omniverse</div>
+          <label class="fmt-row"><span class="check-box" data-fmt=".usdc"></span><span class="fmt-ext">.usdc</span><span class="badge blender">Blender</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".usda"></span><span class="fmt-ext">.usda</span><span class="badge blender">Blender</span></label>
+        </div>
+
+        <div class="fmt-group">
+          <div class="fmt-group-title">Edição e uso geral</div>
+          <label class="fmt-row"><span class="check-box" data-fmt=".obj"></span><span class="fmt-ext">.obj</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".ply"></span><span class="fmt-ext">.ply</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".dae"></span><span class="fmt-ext">.dae</span><span class="badge blender">Blender</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".blend"></span><span class="fmt-ext">.blend</span><span class="badge blender">Blender</span></label>
+        </div>
+
+        <div class="fmt-group">
+          <div class="fmt-group-title">Impressão 3D</div>
+          <label class="fmt-row"><span class="check-box" data-fmt=".stl"></span><span class="fmt-ext">.stl</span></label>
+          <label class="fmt-row"><span class="check-box" data-fmt=".3mf"></span><span class="fmt-ext">.3mf</span></label>
+        </div>
+
+        <div class="warn-note" id="loss-note" hidden>
+          <span>⚠️</span>
+          <span id="loss-text"></span>
+        </div>
+      </div>
+
+      <div class="cfg-footer">
+        <button class="primary-btn" id="gen-single">▶ Gerar modelo 3D</button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-top">
+        <div class="stage-title">Pré-visualização · <b>xicara_pires.png</b></div>
+        <div class="stage-tools"><div class="tool-btn">⟲</div><div class="tool-btn">⤢</div><div class="tool-btn">⇩</div></div>
+      </div>
+      <div class="canvas-wrap">
+        <div class="grid-floor"></div>
+        <div class="model-hero">
+          <svg width="220" height="200" viewBox="0 0 220 200" role="img" aria-label="Modelo 3D de xícara com pires, com vapor subindo">
+            <g class="steam warm">
+              <path d="M96 96C89 84 101 76 94 64C88 54 97 46 94 38"/>
+              <path d="M112 98C105 84 118 75 110 61C103 49 113 41 110 32"/>
+              <path d="M128 96C121 85 133 77 126 65C120 55 129 48 126 40"/>
+            </g>
+            <ellipse cx="110" cy="168" rx="92" ry="18" fill="#22262c" stroke="#3a4048" stroke-width="1.4"/>
+            <ellipse cx="110" cy="160" rx="70" ry="12" fill="none" stroke="#ff8a4c" stroke-width="1.4" opacity=".55"/>
+            <path d="M62 110c0 26 21.5 44 48 44s48-18 48-44" fill="none" stroke="#ff8a4c" stroke-width="1.6"/>
+            <ellipse cx="110" cy="110" rx="48" ry="14" fill="#1b1f24" stroke="#ff8a4c" stroke-width="1.6"/>
+            <path d="M158 118c16-2 26 6 26 16s-12 17-27 15" fill="none" stroke="#ff8a4c" stroke-width="1.6"/>
+            <ellipse cx="110" cy="110" rx="34" ry="9" fill="none" stroke="#ffb383" stroke-width="1" opacity=".6"/>
+          </svg>
+          <div class="stat-chip">
+            <span>Faces <b id="stat-faces">4.000</b></span>
+            <span>Textura <b>2K</b></span>
+            <span>Saída <b id="stat-fmt">.glb</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col">
+      <h3>Histórico</h3>
+      <div class="history-item"><div class="history-thumb">☕</div><div class="history-meta"><b>xicara_pires.png</b><span>Stable Fast 3D · 4k faces</span></div></div>
+      <div class="history-item"><div class="history-thumb">🪑</div><div class="history-meta"><b>banqueta.jpg</b><span>InstantMesh · 12k faces</span></div></div>
+      <div class="history-item"><div class="history-thumb">🧸</div><div class="history-meta"><b>mascote.png</b><span>TripoSR · rig T-Pose</span></div></div>
+    </div>
+  </div>
+
+  <!-- ============ LOTE ============ -->
+  <div class="view" id="view-batch">
+    <div class="cfg-col">
+      <div>
+        <div class="field-label">Imagens <span class="val mono">4/10</span></div>
+        <div class="thumbs-grid">
+          <div class="thumb-slot filled">☕</div>
+          <div class="thumb-slot filled">🪑</div>
+          <div class="thumb-slot filled">🧸</div>
+          <div class="thumb-slot filled">🏺</div>
+          <div class="thumb-slot add">+</div>
+          <div class="thumb-slot"></div>
+        </div>
+      </div>
+
+      <div class="inherit-card">
+        <div class="inherit-head">
+          <div>
+            <b>Configurações aplicadas</b>
+            <span>as mesmas da aba Imagem → 3D</span>
+          </div>
+          <button class="link-btn" id="goto-single">Editar</button>
+        </div>
+        <div class="inherit-list">
+          <div class="inherit-row"><span>Motor</span><b id="sum-engine">Stable Fast 3D</b></div>
+          <div class="inherit-row"><span>Topologia</span><b id="sum-topo">Alto Detalhe</b></div>
+          <div class="inherit-row"><span>Polígonos</span><b id="sum-poly">4.000</b></div>
+          <div class="inherit-row"><span>Textura</span><b id="sum-tex">Sim · Padrão</b></div>
+          <div class="inherit-row"><span>Pose</span><b id="sum-pose">Nenhum</b></div>
+          <div class="inherit-row"><span>Dividir em partes</span><b id="sum-split">Não</b></div>
+          <div class="inherit-row"><span>Melhorar imagem</span><b id="sum-enh">Sim</b></div>
+          <div class="inherit-row"><span>Licença</span><b id="sum-lic">Privado</b></div>
+          <div class="inherit-row"><span>Formatos</span><b id="sum-fmt">.glb</b></div>
+        </div>
+      </div>
+
+      <div class="cfg-footer">
+        <button class="primary-btn" id="gen-batch">▶ Gerar 4 modelos</button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-top"><div class="stage-title">Fila · uma imagem por vez (VRAM limitada)</div></div>
+      <div class="canvas-wrap" style="align-items:flex-start;justify-content:center;padding:22px;">
+        <div class="grid-floor"></div>
+        <div style="position:relative;width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px;">
+          <div class="queue-item"><div class="row1"><b>☕ xicara_pires.png</b><span>concluído</span></div><div class="bar"><i style="width:100%;background:#7bd88f"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>🪑 banqueta.jpg</b><span>gerando · 63%</span></div><div class="bar"><i style="width:63%"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>🧸 mascote.png</b><span>na fila</span></div><div class="bar"><i style="width:0%"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>🏺 vaso.png</b><span>na fila</span></div><div class="bar"><i style="width:0%"></i></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col">
+      <h3>Progresso</h3>
+      <div class="history-item"><div class="history-thumb">⏱️</div><div class="history-meta"><b>~9 min restantes</b><span>1 de 4 concluídos</span></div></div>
+      <h3 style="margin-top:18px;">Saída</h3>
+      <div class="history-item"><div class="history-thumb">📦</div><div class="history-meta"><b>lote_04.zip</b><span>pronto ao final</span></div></div>
+    </div>
+  </div>
+
+  <!-- ============ AGENTE ============ -->
+  <div class="view" id="view-agente">
+    <div class="chat-col">
+      <div class="chat-head">
+        <button class="icon-btn" title="Voltar">⬅</button>
+        <div class="chat-title">Novo chat <span class="caret">▾</span></div>
+        <button class="icon-btn" title="Histórico">⟲</button>
+        <button class="icon-btn" title="Compartilhar">↗</button>
+      </div>
+
+      <div class="agent-cfg">
+        <div class="agent-cfg-row">
+          <span class="lbl">Cérebro</span>
+          <select id="agent-model" aria-label="Modelo do agente">
+            <optgroup label="Instalados no Ollama">
+              <option value="gemma3:4b" selected>Gemma 3 4B — instalado</option>
+              <option value="qwen2.5:3b">Qwen 2.5 3B — instalado</option>
+            </optgroup>
+            <optgroup label="Baixar (grátis, offline)">
+              <option value="qwen2.5:7b">Qwen 2.5 7B</option>
+              <option value="llama3.1:8b">Llama 3.1 8B</option>
+              <option value="mistral:7b">Mistral 7B</option>
+              <option value="moondream">Moondream 2B</option>
+            </optgroup>
+            <optgroup label="Nuvem — plano gratuito">
+              <option value="gemini">Google Gemini (free tier)</option>
+              <option value="groq">Groq (free tier)</option>
+              <option value="openrouter">OpenRouter (modelos :free)</option>
+            </optgroup>
+            <optgroup label="Sem LLM">
+              <option value="keywords">Modo básico (palavras-chave)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="model-info" id="model-info"></div>
+        <div class="pull-cmd" id="pull-cmd" hidden>
+          <span id="pull-text"></span>
+          <button class="copy" id="pull-copy">copiar</button>
+        </div>
+
+        <div class="cpu-row" id="cpu-row">
+          <span class="txt">Rodar na CPU<small>deixa os 6GB de VRAM livres para o gerador 3D</small></span>
+          <div class="switch agent on" data-toggle role="switch" tabindex="0" id="cpu-switch"></div>
+        </div>
+      </div>
+
+      <div class="chat-scroll" id="chat-scroll">
+        <div class="sent-img">☕</div>
+        <div class="msg bot">Que xícara bonita! O que você quer fazer com ela?</div>
+        <div class="msg meta">Respondido ›</div>
+        <div class="msg bot">Beleza — fundo limpo e objeto nítido, dá para gerar direto. Como você pediu a xícara separada do pires, vou ligar a divisão em partes e exportar em FBX.</div>
+
+        <div class="tool-card" id="tool-card">
+          <div class="tool-card-head">
+            <b>Imagem para 3D</b>
+            <span>Converter a xícara com pires em modelo 3D</span>
+          </div>
+          <div class="tool-fields">
+            <div class="tf">
+              <label>Imagem de origem</label>
+              <div class="thumb-mini">☕</div>
+            </div>
+            <div class="tf">
+              <label>Motor</label>
+              <select id="tc-engine">
+                <option>Stable Fast 3D</option>
+                <option>TripoSR</option>
+                <option>InstantMesh</option>
+              </select>
+            </div>
+            <div class="tf">
+              <label>Qualidade</label>
+              <select id="tc-quality"><option>Alta</option><option>Padrão</option><option>Rápida</option></select>
+            </div>
+            <div class="tf column">
+              <div class="tf-top">
+                <label>Gerar textura</label>
+                <div class="switch agent on" data-toggle role="switch" tabindex="0"></div>
+              </div>
+              <p>Cria os mapas de cor do modelo. Desligue para gerar só a malha, bem mais rápido.</p>
+            </div>
+            <div class="tf">
+              <label>Tamanho da textura</label>
+              <select id="tc-texsize"><option>2048</option><option>1024</option><option>4096</option></select>
+            </div>
+            <div class="tf column">
+              <div class="tf-top">
+                <label>Dividir em partes</label>
+                <div class="switch agent on" data-toggle role="switch" tabindex="0"></div>
+              </div>
+              <p>Xícara e pires saem como dois objetos separados, não colados.</p>
+            </div>
+            <div class="tf">
+              <label>Formato de saída</label>
+              <select id="tc-format"><option>.fbx</option><option>.glb</option><option>.usdz</option><option>.obj</option></select>
+            </div>
+          </div>
+          <div class="tool-est">Est. ~40s · 6GB VRAM</div>
+          <div class="tool-actions">
+            <button class="ghost-btn" id="deny-btn">Negar</button>
+            <button class="ghost-btn" id="always-btn">Aprovar e não perguntar mais</button>
+            <button class="approve-btn" id="approve-btn">Aprovar</button>
+          </div>
+          <div class="resolved-mark" id="resolved-mark">✓ Aprovado — gerando…</div>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <div class="chat-field locked" id="chat-field">
+          <textarea id="chat-text" rows="2" disabled placeholder="Conclua a solicitação de ferramenta pendente para continuar"></textarea>
+          <div class="chat-icons">
+            <button class="icon-btn" title="Anexar">＋</button>
+            <button class="icon-btn" title="Imagem">🖼</button>
+            <button class="icon-btn" title="Opções">⚙</button>
+            <button class="icon-btn" title="Voz">🎤</button>
+            <button class="send-btn" id="send-btn">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="agent-stage" id="agent-stage">
+      <div class="stage-topright">⚙ &nbsp; Meus modelos</div>
+      <p class="empty-msg">Descreva sua ideia no chat.<br>Sua criação em 3D aparecerá aqui.</p>
+      <div class="agent-result" id="agent-result">
+        <svg width="230" height="200" viewBox="0 0 220 200" role="img" aria-label="Xícara e pires gerados como objetos separados, com vapor subindo">
+          <g class="steam cool">
+            <path d="M96 94C89 82 101 74 94 62C88 52 97 44 94 36"/>
+            <path d="M112 96C105 82 118 73 110 59C103 47 113 39 110 30"/>
+            <path d="M128 94C121 83 133 75 126 63C120 53 129 46 126 38"/>
+          </g>
+          <ellipse cx="110" cy="172" rx="88" ry="17" fill="#22262c" stroke="#3a4048" stroke-width="1.4"/>
+          <ellipse cx="110" cy="164" rx="66" ry="11" fill="none" stroke="#5eead4" stroke-width="1.4" opacity=".5"/>
+          <path d="M64 108c0 25 21 42 46 42s46-17 46-42" fill="none" stroke="#5eead4" stroke-width="1.6"/>
+          <ellipse cx="110" cy="108" rx="46" ry="13" fill="#12191d" stroke="#5eead4" stroke-width="1.6"/>
+          <path d="M156 116c15-2 25 6 25 15s-11 16-26 14" fill="none" stroke="#5eead4" stroke-width="1.6"/>
+        </svg>
+        <div class="stat-chip">
+          <span>Partes <b>2</b></span>
+          <span>Faces <b>8.000</b></span>
+          <span>Saída <b>.fbx</b></span>
+        </div>
+      </div>
+      <div class="zoom-ctl"><button aria-label="Diminuir zoom">⊝</button><span>100%</span><button aria-label="Aumentar zoom">⊕</button></div>
+    </div>
+  </div>
+
+  <!-- ============ MEUS MODELOS ============ -->
+  <div class="view" id="view-lib">
+    <div class="lib">
+      <div class="lib-top">
+        <input class="lib-search" id="lib-search" type="search" placeholder="Buscar por nome...">
+        <select id="filter-engine">
+          <option value="">Todos os motores</option>
+          <option>Stable Fast 3D</option>
+          <option>InstantMesh</option>
+          <option>TripoSR</option>
+        </select>
+        <select id="filter-fmt">
+          <option value="">Todos os formatos</option>
+          <option>.glb</option><option>.fbx</option><option>.usdz</option><option>.stl</option>
+        </select>
+        <div class="disk">
+          <div class="disk-line"><span id="disk-count">6 modelos</span><b id="disk-size">418 MB</b></div>
+          <div class="disk-bar"><i></i></div>
+          <div class="disk-line"><span style="color:var(--text-faint)">outputs/ no seu SSD</span></div>
+        </div>
+      </div>
+
+      <div class="lib-bulkbar" id="bulkbar">
+        <span><b id="sel-count">0</b> selecionados · <b id="sel-size">0 MB</b></span>
+        <button class="ghost-btn" id="clear-sel">Limpar seleção</button>
+        <button class="danger-btn" id="bulk-delete">Apagar selecionados</button>
+      </div>
+
+      <div class="lib-grid" id="lib-grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-back" id="modal-back">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="modal-title">Apagar modelo?</h3>
+    <p id="modal-text">A pasta inteira será removida — malha, texturas, imagem de origem e configurações.</p>
+    <div class="path" id="modal-path"></div>
+    <label class="trash-opt">
+      <span class="check-box checked" id="trash-check">✓</span>
+      <span class="txt">Mandar para a lixeira do sistema
+        <small>Desmarque para apagar de vez, sem possibilidade de recuperar.</small>
+      </span>
+    </label>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="modal-cancel">Cancelar</button>
+      <button class="danger-btn" style="margin-left:0" id="modal-confirm">Apagar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = (s,r=document)=>r.querySelector(s);
+  const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+
+  function toast(msg){
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window.__tt);
+    window.__tt = setTimeout(()=>t.classList.remove('show'),3400);
+  }
+
+  // ----- tabs -----
+  function goTab(name){
+    $$('.top-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    $$('.view').forEach(v=>v.classList.remove('active'));
+    $('#view-'+name).classList.add('active');
+    if(name==='batch') syncSummary();
+  }
+  $$('.top-tab').forEach(tab=>tab.addEventListener('click',()=>goTab(tab.dataset.tab)));
+  $('#goto-single').addEventListener('click',()=>goTab('single'));
+
+  // ----- segmented controls -----
+  $$('.seg').forEach(seg=>{
+    seg.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        seg.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        if(seg.dataset.cfg==='pose'){
+          $('#pose-custom').classList.toggle('show', btn.textContent.trim()==='Custom');
+        }
+        syncSummary();
+        updateLossNote();
+      });
+    });
+  });
+
+  // ----- engine picker -----
+  $$('#view-single .engine-opt').forEach(opt=>{
+    opt.addEventListener('click',()=>{
+      $$('#view-single .engine-opt').forEach(o=>o.classList.remove('active'));
+      opt.classList.add('active');
+      syncSummary();
+    });
+  });
+
+  // ----- toggles -----
+  $$('[data-toggle]').forEach(sw=>{
+    const flip = ()=>{ sw.classList.toggle('on'); syncSummary(); updateLossNote(); };
+    sw.addEventListener('click',flip);
+    sw.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){e.preventDefault();flip();} });
+  });
+
+  // ----- format checkboxes -----
+  $$('.check-box[data-fmt]').forEach(cb=>{
+    cb.addEventListener('click',e=>{
+      e.preventDefault();
+      cb.classList.toggle('checked');
+      cb.textContent = cb.classList.contains('checked') ? '✓' : '';
+      updateLossNote(); syncSummary();
+    });
+  });
+
+  function selectedFormats(){
+    return $$('.check-box[data-fmt].checked').map(c=>c.dataset.fmt);
+  }
+
+  // ----- honest loss warnings -----
+  const NO_TEXTURE = ['.stl'];
+  const NO_RIG = ['.stl','.obj','.ply','.3mf'];
+  function updateLossNote(){
+    const fmts = selectedFormats();
+    const poseOn = $('[data-cfg="pose"] button.active').textContent.trim() !== 'Nenhum';
+    const notes = [];
+    const noTex = fmts.filter(f=>NO_TEXTURE.includes(f));
+    if(noTex.length) notes.push(noTex.join(', ')+' não guarda textura nem cor.');
+    if(poseOn){
+      const noRig = fmts.filter(f=>NO_RIG.includes(f));
+      if(noRig.length) notes.push(noRig.join(', ')+' não carrega esqueleto — o rig será descartado nesses arquivos.');
+    }
+    if(fmts.includes('.obj')) notes.push('.obj sai zipado junto com o .mtl e as texturas.');
+    const box = $('#loss-note');
+    if(notes.length){ $('#loss-text').textContent = notes.join(' '); box.hidden = false; }
+    else box.hidden = true;
+
+    $('#stat-fmt').textContent = fmts.length ? (fmts.length>1 ? fmts.length+' formatos' : fmts[0]) : '—';
+  }
+
+  // ----- poly slider -----
+  const polySlider = $('#poly-slider');
+  polySlider.addEventListener('input',()=>{
+    const v = Number(polySlider.value).toLocaleString('pt-BR');
+    $('#poly-val').textContent = v;
+    $('#stat-faces').textContent = v;
+    syncSummary();
+  });
+
+  // ----- batch inherits everything from the single tab -----
+  function syncSummary(){
+    const engine = $('#view-single .engine-opt.active');
+    if(!engine) return;
+    const segVal = key => $('[data-cfg="'+key+'"] button.active').textContent.trim();
+    const toggles = $$('#view-single .toggle-row');
+    const texOn = toggles[0].querySelector('.switch').classList.contains('on');
+    const splitOn = toggles[1].querySelector('.switch').classList.contains('on');
+    const enhOn = toggles[2].querySelector('.switch').classList.contains('on');
+    const fmts = selectedFormats();
+
+    $('#sum-engine').textContent = engine.dataset.engine;
+    $('#sum-topo').textContent = segVal('topologia');
+    $('#sum-poly').textContent = Number(polySlider.value).toLocaleString('pt-BR');
+    $('#sum-tex').textContent = texOn ? 'Sim · '+segVal('resolucao') : 'Não';
+    $('#sum-pose').textContent = segVal('pose');
+    $('#sum-split').textContent = splitOn ? 'Sim' : 'Não';
+    $('#sum-enh').textContent = enhOn ? 'Sim' : 'Não';
+    $('#sum-lic').textContent = segVal('licenca');
+    $('#sum-fmt').textContent = fmts.length ? fmts.join(' ') : '—';
+  }
+
+  // ----- generate buttons (mockup only) -----
+  $('#gen-single').addEventListener('click',function(){
+    this.classList.add('busy'); this.textContent='Gerando…';
+    setTimeout(()=>{
+      this.classList.remove('busy'); this.textContent='▶ Gerar modelo 3D';
+      toast('Mockup — a geração real usaria o motor e os formatos escolhidos ao lado.');
+    },1300);
+  });
+  $('#gen-batch').addEventListener('click',()=>toast('Mockup — as 4 imagens entrariam na fila com as configurações herdadas da aba Imagem → 3D.'));
+
+  // ----- agent tool card -----
+  function unlockChat(){
+    $('#chat-field').classList.remove('locked');
+    const ta = $('#chat-text');
+    ta.disabled = false;
+    ta.placeholder = 'Escreva o que você quer gerar...';
+    $('#send-btn').classList.add('ready');
+  }
+  $('#approve-btn').addEventListener('click',()=>{
+    $('#tool-card').classList.add('resolved');
+    $('#agent-stage').classList.add('has-result');
+    $('#agent-result').classList.add('show');
+    unlockChat();
+    toast('Mockup — aqui a geração começaria com os parâmetros do card.');
+  });
+  $('#always-btn').addEventListener('click',()=>{
+    $('#tool-card').classList.add('resolved');
+    $('#resolved-mark').textContent = '✓ Aprovado — próximas gerações não vão mais perguntar';
+    $('#agent-stage').classList.add('has-result');
+    $('#agent-result').classList.add('show');
+    unlockChat();
+  });
+  $('#deny-btn').addEventListener('click',()=>{
+    $('#tool-card').classList.add('resolved');
+    $('#resolved-mark').textContent = '✕ Negado — nada foi gerado';
+    unlockChat();
+  });
+  $('#send-btn').addEventListener('click',()=>{
+    const ta = $('#chat-text');
+    if(ta.disabled) return;
+    if(ta.value.trim()){ toast('Mockup — o agente leria esse pedido e montaria um novo card de confirmação.'); ta.value=''; }
+  });
+
+  // ----- agent brain picker -----
+  const BRAINS = {
+    'gemma3:4b':   {size:'3,3 GB', vision:true,  local:true, installed:true,  fits:'cabe em qualquer GPU'},
+    'qwen2.5:3b':  {size:'2,0 GB', vision:false, local:true, installed:true,  fits:'cabe em qualquer GPU'},
+    'qwen2.5:7b':  {size:'4,7 GB', vision:false, local:true, installed:false, fits:'8GB VRAM ou CPU'},
+    'llama3.1:8b': {size:'4,9 GB', vision:false, local:true, installed:false, fits:'8GB VRAM ou CPU'},
+    'mistral:7b':  {size:'4,4 GB', vision:false, local:true, installed:false, fits:'6GB VRAM ou CPU'},
+    'moondream':   {size:'1,7 GB', vision:true,  local:true, installed:false, fits:'cabe em qualquer GPU'},
+    'gemini':      {size:'sem download', vision:true,  local:false, installed:true, fits:'precisa de chave e internet'},
+    'groq':        {size:'sem download', vision:false, local:false, installed:true, fits:'precisa de chave e internet'},
+    'openrouter':  {size:'sem download', vision:false, local:false, installed:true, fits:'precisa de chave e internet'},
+    'keywords':    {size:'nada para baixar', vision:false, local:true, installed:true, fits:'interpreta por palavras-chave'}
+  };
+
+  function renderBrain(){
+    const key = $('#agent-model').value;
+    const b = BRAINS[key];
+    const info = $('#model-info');
+    const chips = [`<span class="chip">${b.size}</span>`, `<span class="chip">${b.fits}</span>`];
+    if(b.vision) chips.push('<span class="chip vision">enxerga imagens</span>');
+    if(!b.local) chips.push('<span class="chip warn">nuvem</span>');
+    if(key==='keywords') chips.push('<span class="chip warn">modo básico</span>');
+    info.innerHTML = chips.join('');
+
+    const pull = $('#pull-cmd');
+    if(b.local && !b.installed){
+      $('#pull-text').textContent = 'ollama pull ' + key;
+      pull.hidden = false;
+    } else if(!b.local){
+      $('#pull-text').textContent = 'defina a chave em .env — nada roda na sua máquina';
+      pull.hidden = false;
+    } else {
+      pull.hidden = true;
+    }
+
+    $('#cpu-row').hidden = !b.local || key==='keywords';
+  }
+  $('#agent-model').addEventListener('change',renderBrain);
+  $('#pull-copy').addEventListener('click',()=>toast('Mockup — aqui o comando iria para a área de transferência.'));
+
+  // ----- pose custom por texto -----
+  $$('.pose-chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const ta = $('#pose-prompt');
+      ta.value = ta.value.trim() ? ta.value.trim().replace(/,\s*$/,'')+', '+chip.textContent : chip.textContent;
+      ta.focus();
+    });
+  });
+  $('#pose-ref').addEventListener('click',()=>toast('Mockup — aqui você escolheria a foto e o MediaPipe copiaria os ângulos do corpo dela.'));
+  $('#pose-engine').addEventListener('change',function(){
+    if(this.value!=='llm') toast('Mockup — o app baixaria esse modelo na primeira vez que você usasse.');
+  });
+
+  // ----- biblioteca de modelos -----
+  let MODELS = [
+    {id:1, nome:'xicara_pires',      icon:'☕', motor:'Stable Fast 3D', faces:'4.000',  fmts:['.glb','.fbx'],  mb:12.4, data:'hoje 14:30',  partes:2, pasta:'2026-09-05_143012_xicara_pires'},
+    {id:2, nome:'banqueta_madeira',  icon:'🪑', motor:'InstantMesh',    faces:'12.000', fmts:['.glb','.usdz'], mb:38.1, data:'hoje 11:05',  partes:0, pasta:'2026-09-05_110522_banqueta_madeira'},
+    {id:3, nome:'mascote_estudio',   icon:'🧸', motor:'TripoSR',        faces:'6.500',  fmts:['.glb','.fbx','.vrm'], mb:24.7, data:'ontem 19:42', partes:0, pasta:'2026-09-04_194208_mascote_estudio'},
+    {id:4, nome:'vaso_ceramica',     icon:'🏺', motor:'Stable Fast 3D', faces:'4.000',  fmts:['.glb'],         mb:9.8,  data:'ontem 16:18', partes:0, pasta:'2026-09-04_161803_vaso_ceramica'},
+    {id:5, nome:'caneca_logo',       icon:'🍵', motor:'Stable Fast 3D', faces:'8.000',  fmts:['.glb','.stl'],  mb:15.2, data:'3 set 09:11', partes:0, pasta:'2026-09-03_091140_caneca_logo'},
+    {id:6, nome:'luminaria_mesa',    icon:'💡', motor:'InstantMesh',    faces:'15.000', fmts:['.glb','.fbx','.usdz'], mb:41.6, data:'2 set 21:07', partes:3, pasta:'2026-09-02_210733_luminaria_mesa'}
+  ];
+  const selected = new Set();
+  let pendingDelete = null;
+
+  function renderLib(){
+    const q = $('#lib-search').value.trim().toLowerCase();
+    const fe = $('#filter-engine').value;
+    const ff = $('#filter-fmt').value;
+    const list = MODELS.filter(m =>
+      (!q || m.nome.toLowerCase().includes(q)) &&
+      (!fe || m.motor===fe) &&
+      (!ff || m.fmts.includes(ff))
+    );
+
+    $('#lib-grid').innerHTML = list.length ? list.map(m=>`
+      <div class="lib-card ${selected.has(m.id)?'selected':''}" data-id="${m.id}">
+        <div class="lib-thumb">
+          <span class="lib-check ${selected.has(m.id)?'on':''}" data-check="${m.id}">${selected.has(m.id)?'✓':''}</span>
+          ${m.partes>1?`<span class="lib-badge-parts">${m.partes} partes</span>`:''}
+          ${m.icon}
+        </div>
+        <div class="lib-body">
+          <b>${m.nome}</b>
+          <span class="lib-meta">${m.motor} · ${m.faces} faces</span>
+          <div class="lib-chips">${m.fmts.map(f=>`<span>${f}</span>`).join('')}</div>
+        </div>
+        <div class="lib-foot"><span>${m.data}</span><span>${m.mb.toLocaleString('pt-BR')} MB</span></div>
+        <div class="lib-actions">
+          <button data-act="ver" data-id="${m.id}">Ver</button>
+          <button data-act="baixar" data-id="${m.id}">Baixar</button>
+          <button data-act="pasta" data-id="${m.id}">Pasta</button>
+          <button class="danger" data-act="apagar" data-id="${m.id}">Apagar</button>
+        </div>
+      </div>`).join('')
+      : `<p style="color:var(--text-faint);grid-column:1/-1;padding:30px 0;text-align:center;">Nenhum modelo com esses filtros.</p>`;
+
+    const total = MODELS.reduce((s,m)=>s+m.mb,0);
+    $('#disk-count').textContent = MODELS.length+(MODELS.length===1?' modelo':' modelos');
+    $('#disk-size').textContent = total.toFixed(1).replace('.',',')+' MB';
+    renderBulk();
+  }
+
+  function renderBulk(){
+    const bar = $('#bulkbar');
+    bar.classList.toggle('show', selected.size>0);
+    if(selected.size){
+      const size = MODELS.filter(m=>selected.has(m.id)).reduce((s,m)=>s+m.mb,0);
+      $('#sel-count').textContent = selected.size;
+      $('#sel-size').textContent = size.toFixed(1).replace('.',',')+' MB';
+    }
+  }
+
+  $('#lib-grid').addEventListener('click',e=>{
+    const check = e.target.closest('[data-check]');
+    if(check){
+      const id = Number(check.dataset.check);
+      selected.has(id) ? selected.delete(id) : selected.add(id);
+      renderLib();
+      return;
+    }
+    const btn = e.target.closest('[data-act]');
+    if(!btn) return;
+    const m = MODELS.find(x=>x.id===Number(btn.dataset.id));
+    if(btn.dataset.act==='apagar') openDelete([m]);
+    else if(btn.dataset.act==='ver'){ goTab('single'); toast('Mockup — abriria '+m.nome+' no visualizador 3D.'); }
+    else if(btn.dataset.act==='pasta') toast('Mockup — abriria outputs/'+m.pasta+' no explorador de arquivos.');
+    else toast('Mockup — baixaria '+m.fmts.join(', ')+' de '+m.nome+'.');
+  });
+
+  $('#lib-search').addEventListener('input',renderLib);
+  $('#filter-engine').addEventListener('change',renderLib);
+  $('#filter-fmt').addEventListener('change',renderLib);
+  $('#clear-sel').addEventListener('click',()=>{selected.clear();renderLib();});
+  $('#bulk-delete').addEventListener('click',()=>openDelete(MODELS.filter(m=>selected.has(m.id))));
+
+  function openDelete(items){
+    pendingDelete = items;
+    const size = items.reduce((s,m)=>s+m.mb,0).toFixed(1).replace('.',',');
+    $('#modal-title').textContent = items.length===1 ? 'Apagar este modelo?' : `Apagar ${items.length} modelos?`;
+    $('#modal-text').textContent = `A pasta inteira será removida — malha, texturas, imagem de origem e configurações. Libera ${size} MB.`;
+    $('#modal-path').innerHTML = items.map(m=>'outputs/'+m.pasta+'/').join('<br>');
+    $('#modal-back').classList.add('show');
+  }
+  function closeDelete(){ $('#modal-back').classList.remove('show'); pendingDelete=null; }
+
+  $('#trash-check').addEventListener('click',function(){
+    this.classList.toggle('checked');
+    this.textContent = this.classList.contains('checked') ? '✓' : '';
+    $('#modal-confirm').textContent = this.classList.contains('checked') ? 'Apagar' : 'Apagar de vez';
+  });
+  $('#modal-cancel').addEventListener('click',closeDelete);
+  $('#modal-back').addEventListener('click',e=>{ if(e.target===$('#modal-back')) closeDelete(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDelete(); });
+
+  $('#modal-confirm').addEventListener('click',()=>{
+    const trash = $('#trash-check').classList.contains('checked');
+    const ids = pendingDelete.map(m=>m.id);
+    MODELS = MODELS.filter(m=>!ids.includes(m.id));
+    ids.forEach(id=>selected.delete(id));
+    closeDelete();
+    renderLib();
+    toast(trash ? 'Mockup — as pastas iriam para a lixeira do sistema (recuperável).'
+                : 'Mockup — as pastas seriam apagadas definitivamente.');
+  });
+
+  renderLib();
+  renderBrain();
+  updateLossNote();
+  syncSummary();
+</script>
