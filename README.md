@@ -4,7 +4,7 @@ Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
 modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
 imagens para servidor nenhum.
 
-**[Ver as telas →](https://lianeheidemann.github.io/default/)** *(prévia visual;
+**[Ver as telas →](https://lianeheidemann.github.io/espresso-3d/)** *(prévia visual;
 a geração 3D roda localmente)*
 
 ---
@@ -24,8 +24,8 @@ a geração 3D roda localmente)*
 ## Instalação
 
 ```bash
-git clone https://github.com/lianeheidemann/default.git espresso3d
-cd espresso3d
+git clone https://github.com/lianeheidemann/espresso-3d.git
+cd espresso-3d
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python app.py
