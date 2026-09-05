@@ -1,12 +1,14 @@
 <p align="center">
-  <img width="208" height="150" alt="1000387885" src="https://github.com/user-attachments/assets/d153123b-6073-4439-81a0-988ce0607588" />
+  <img width="208" height="150" alt="Espresso3D logo" src="https://github.com/user-attachments/assets/d153123b-6073-4439-81a0-988ce0607588" />
 </p>
 
 <h1 align="center">Espresso 3D</h1>
 
+<p align="center"><em>Turn a photo into a 3D model — on your own machine, with open-source models.</em></p>
+
 <p align="center">
   <img src="https://img.shields.io/badge/Espresso3D-Image%20to%203D-6F4E37?style=for-the-badge&logo=blender&logoColor=white">
-  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white">
   <img src="https://img.shields.io/badge/PyTorch-AI-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white"><br>
   <img src="https://img.shields.io/badge/NVIDIA-CUDA-76B900?style=for-the-badge&logo=nvidia&logoColor=white">
   <img src="https://img.shields.io/badge/Blender-3D-F5792A?style=for-the-badge&logo=blender&logoColor=white">
@@ -24,198 +26,215 @@
   <img src="https://img.shields.io/badge/Local-GPU-76B900?style=flat-square">
 </p>
 
-Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
-modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
-imagens para servidor nenhum.
-
-
+Espresso3D is a self-hosted image-to-3D generator. It runs entirely on your
+own hardware using open-source models — no subscription, no credit system,
+and your images never leave your machine.
 
 ## Interface
 
 <p align="left">
-  <img src="assets/interface.jpg" alt="Interface do Espresso3D: painel de configuração à esquerda com motor, polígonos, textura, pose, licença e formatos de exportação; pré-visualização 3D à direita" width="420">
+  <img src="assets/interface.jpg" alt="Espresso3D interface: configuration panel on the left with engine, polygon count, texture, pose, license and export formats; 3D preview on the right" width="420">
 </p>
 
-**[Ver as telas →](https://lianeheidemann.github.io/espresso-3d/)** *(prévia navegável;
-a geração 3D roda localmente)*
+**[Live UI preview →](https://lianeheidemann.github.io/espresso-3d/)** *(interactive
+mockup of the screens; 3D generation itself runs locally)*
 
 ---
 
-## O que ele faz
+## Features
 
-- **Imagem → 3D** com escolha de motor, contagem de polígonos, textura e PBR
-- **Lote de até 10 imagens**, todas com as mesmas configurações
-- **Dividir em partes**: uma foto de xícara com pires vira dois objetos separados
-- **Pose e esqueleto** para personagens — T-Pose, A-Pose ou descrita em texto
-- **Exportação para AR/VR**: `.glb`, `.usdz`, `.fbx`, `.vrm`, `.usdc` e mais
-- **Agente**: peça em português ("gera essa xícara separada do pires, em fbx")
-- **Biblioteca** dos modelos gerados, com exclusão para a lixeira
+| | |
+|---|---|
+| **Image → 3D** | Choose the engine, target polygon count, texture resolution and PBR output |
+| **Batch processing** | Up to 10 images per run, all sharing the same configuration |
+| **Part splitting** | A photo of a cup and saucer produces two separate objects instead of one fused mesh |
+| **Rigging and posing** | T-Pose, A-Pose, or a pose described in plain language |
+| **AR/VR export** | `.glb`, `.usdz`, `.fbx`, `.vrm`, `.usdc` and more, grouped by target platform |
+| **Natural-language agent** | Describe what you want; review the parsed configuration before it runs |
+| **Model library** | Browse, search and delete generated models, with safe deletion to the system trash |
 
 ---
 
-## Instalação
+## Quick start
+
+**Requirements:** Python 3.10 or newer. An NVIDIA GPU is required for 3D
+generation, but not to explore the interface.
 
 ```bash
 git clone https://github.com/lianeheidemann/espresso-3d.git
 cd espresso-3d
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-pip install -e .          # registra o pacote (layout src/)
+pip install -e .
 python -m espresso3d
 ```
 
-Abre em `http://localhost:7860`.
+The interface opens at `http://localhost:7860`.
 
-Isso já dá a interface completa, o pós-processamento de malha, a exportação
-para os formatos leves e a biblioteca. **Para gerar 3D de verdade**, instale
-pelo menos um motor abaixo.
+This gives you the full UI, mesh post-processing, export to the lightweight
+formats, and the model library. **To actually generate 3D models**, install at
+least one engine below.
 
-### Motores de geração 3D
+### 3D generation engines
 
-Precisam do PyTorch com CUDA. Instale o que couber na sua GPU:
+All engines require PyTorch with CUDA. Install whichever fits your GPU:
 
-| Motor | VRAM | Licença dos pesos | Uso comercial | PBR | Como instalar |
+| Engine | VRAM | Weights license | Commercial use | PBR | Installation |
 |---|---|---|---|---|---|
-| **TripoSR** | 4 GB+ | MIT | ✅ | ➖ | `pip install git+https://github.com/VAST-AI-Research/TripoSR.git` |
-| **Stable Fast 3D** | 6 GB+ | Stability AI Community | ⚠️ ¹ | ✅ | `pip install git+https://github.com/Stability-AI/stable-fast-3d.git` |
-| **InstantMesh** | 8 GB+ | Apache 2.0 | ✅ | ✅ | `git clone https://github.com/TencentARC/InstantMesh && pip install -r InstantMesh/requirements.txt` |
+| **TripoSR** | 4 GB+ | MIT | Yes | — | `pip install git+https://github.com/VAST-AI-Research/TripoSR.git` |
+| **Stable Fast 3D** | 6 GB+ | Stability AI Community | Conditional ¹ | Yes | `pip install git+https://github.com/Stability-AI/stable-fast-3d.git` |
+| **InstantMesh** | 8 GB+ | Apache 2.0 | Yes | Yes | `git clone https://github.com/TencentARC/InstantMesh && pip install -r InstantMesh/requirements.txt` |
 
-¹ A licença da Stability é gratuita para uso pessoal e para empresas com
-receita anual abaixo de US$ 1M. Escolhendo **Licença: Comercial** na
-interface, o app esconde os motores que não se encaixam.
+¹ The Stability AI Community License is free for personal use and for
+organizations under USD 1M in annual revenue. Selecting **License: Commercial**
+in the interface hides engines that do not qualify.
 
-Os pesos são baixados do Hugging Face na primeira geração (alguns GB) e
-ficam em cache — não vão para o Git.
+Model weights are downloaded from Hugging Face on first use (several GB) and
+cached locally. They are excluded from version control.
 
-### Recursos opcionais
+### Optional components
 
-| Recurso | O que instalar | Sem isso |
+| Feature | Requirement | Behavior without it |
 |---|---|---|
-| `.fbx` `.usdz` `.usdc` `.dae` `.blend` | [Blender](https://www.blender.org/download/) (grátis) | Só saem os formatos leves; a interface avisa |
-| `.vrm` (avatar VR) | Blender + addon VRM | Formato indisponível |
-| Dividir em partes | `pip install segment-anything` + checkpoint `vit_b` em `checkpoints/` | Gera o objeto inteiro |
-| Melhorar imagem | `pip install realesrgan basicsr` | Usa reamostragem simples |
-| Aba Agente | [Ollama](https://ollama.com) + `ollama pull gemma3:4b` | Modo básico por palavras-chave |
-| Pose e esqueleto | [UniRig](https://github.com/VAST-AI-Research/UniRig) | Pose fica indisponível |
-| Pose por foto | `pip install mediapipe` | Só pose por texto |
+| `.fbx` `.usdz` `.usdc` `.dae` `.blend` export | [Blender](https://www.blender.org/download/) | Only the lightweight formats are offered; the UI explains why |
+| `.vrm` avatar export | Blender + VRM add-on | Format unavailable |
+| Part splitting | `pip install segment-anything` + `vit_b` checkpoint in `checkpoints/` | Generates the object as a single mesh |
+| Image enhancement | `pip install realesrgan basicsr` | Falls back to Lanczos resampling |
+| Agent tab | [Ollama](https://ollama.com) + `ollama pull gemma3:4b` | Falls back to keyword parsing |
+| Rigging and pose | [UniRig](https://github.com/VAST-AI-Research/UniRig) | Pose options disabled |
+| Pose from reference photo | `pip install mediapipe` | Text-described poses only |
 
-Se o Blender não estiver no PATH, aponte: `export BLENDER_BIN=/caminho/blender`.
+If Blender is not on your `PATH`, point to it explicitly:
+`export BLENDER_BIN=/path/to/blender`.
 
 ---
 
-## Formatos de exportação
+## Export formats
 
-Agrupados por onde você vai usar o modelo:
+Formats are grouped by where the model is going, not alphabetically:
 
-| Grupo | Formatos | Precisa Blender | Carrega rig | Carrega textura |
+| Group | Formats | Needs Blender | Carries rig | Carries texture |
 |---|---|---|---|---|
-| Web e AR no Android | `.glb` `.gltf` | não | ✅ | ✅ |
-| AR no iPhone / Vision Pro | `.usdz` | sim | ✅ | ✅ |
-| Pipelines USD / Omniverse | `.usdc` `.usda` | sim | ✅ | ✅ |
-| Unity / Unreal / VR | `.fbx` | sim | ✅ | ✅ |
-| Avatares VR | `.vrm` | sim + addon | ✅ | ✅ |
-| Edição e uso geral | `.obj` `.ply` `.dae` `.blend` | parcial | parcial | parcial |
-| Impressão 3D | `.stl` `.3mf` | não | ❌ | `.stl` não |
+| Web and Android AR | `.glb` `.gltf` | No | Yes | Yes |
+| iOS / Vision Pro AR | `.usdz` | Yes | Yes | Yes |
+| USD / Omniverse pipelines | `.usdc` `.usda` | Yes | Yes | Yes |
+| Unity / Unreal / VR | `.fbx` | Yes | Yes | Yes |
+| VR avatars | `.vrm` | Yes + add-on | Yes | Yes |
+| General editing | `.obj` `.ply` `.dae` `.blend` | Partial | Partial | Partial |
+| 3D printing | `.stl` `.3mf` | No | No | `.stl` no |
 
-A interface avisa antes de exportar quando o formato escolhido descarta
-textura ou esqueleto. `.obj` sai zipado junto com o `.mtl` e as texturas.
-
----
-
-## Onde ficam os modelos gerados
-
-Uma pasta por geração, dentro de `outputs/`:
-
-```
-outputs/2026-09-05_143012_xicara_pires/
-├── xicara_pires.glb        # os formatos que você escolheu
-├── xicara_pires.fbx
-├── source.png              # a imagem original
-└── meta.json               # motor, polígonos, pose, licença, duração
-```
-
-**Não há banco de dados.** A biblioteca é montada varrendo `outputs/*/meta.json`,
-então você pode mover, copiar ou fazer backup da pasta à vontade — e apagar
-um modelo é só remover a pasta dele, sem deixar arquivo órfão.
-
-Apagar pela interface manda para a **lixeira do sistema** por padrão
-(recuperável); a exclusão permanente é uma opção explícita.
+The interface warns before exporting whenever the selected format discards
+texture or skeleton data. `.obj` is delivered zipped alongside its `.mtl` and
+texture files.
 
 ---
 
-## Agente
+## Output structure
 
-Escolha o cérebro na aba Agente. Todos são gratuitos:
+Each generation creates a self-contained folder under `outputs/`:
 
-| Modelo | Download | Onde cabe | Enxerga imagem |
+```
+outputs/2026-09-05_143012_cup_and_saucer/
+├── cup_and_saucer.glb      # the formats you selected
+├── cup_and_saucer.fbx
+├── source.png              # the original input image
+└── meta.json               # engine, polygon count, pose, license, duration
+```
+
+**There is no database.** The library is built by scanning
+`outputs/*/meta.json`, which means you can move, copy or back up the folder
+freely, and deleting a model is simply removing its directory — no orphaned
+files and no index to fall out of sync.
+
+Deleting through the interface sends the folder to the **system trash** by
+default; permanent deletion is an explicit opt-in.
+
+---
+
+## Agent
+
+The agent translates a plain-language request into a pipeline configuration.
+Pick its backend in the Agent tab — all options are free:
+
+| Backend | Download | Runs on | Vision |
 |---|---|---|---|
-| Gemma 3 4B | 3,3 GB | qualquer GPU, ou CPU | ✅ |
-| Qwen 2.5 3B | 2,0 GB | qualquer GPU, ou CPU | ❌ |
-| Qwen 2.5 7B | 4,7 GB | 8 GB VRAM, ou CPU | ❌ |
-| Llama 3.1 8B | 4,9 GB | 8 GB VRAM, ou CPU | ❌ |
-| Mistral 7B | 4,4 GB | 6 GB VRAM, ou CPU | ❌ |
-| Moondream 2B | 1,7 GB | qualquer GPU, ou CPU | ✅ |
-| Groq / OpenRouter | — | nuvem, precisa de chave | ❌ |
-| Modo básico | — | palavras-chave, sem LLM | ❌ |
+| Gemma 3 4B | 3.3 GB | Any GPU, or CPU | Yes |
+| Qwen 2.5 3B | 2.0 GB | Any GPU, or CPU | No |
+| Qwen 2.5 7B | 4.7 GB | 8 GB VRAM, or CPU | No |
+| Llama 3.1 8B | 4.9 GB | 8 GB VRAM, or CPU | No |
+| Mistral 7B | 4.4 GB | 6 GB VRAM, or CPU | No |
+| Moondream 2B | 1.7 GB | Any GPU, or CPU | Yes |
+| Groq / OpenRouter | — | Cloud, API key required | No |
+| Keyword mode | — | No LLM at all | No |
 
-**Deixe "Rodar na CPU" ligado** se sua GPU tiver 8 GB ou menos: o agente só
-precisa montar um JSON pequeno, e assim a VRAM inteira fica para o gerador 3D.
+**Keep "Run on CPU" enabled** if your GPU has 8 GB or less. The agent only has
+to produce a small JSON object, so leaving it on the CPU keeps the entire VRAM
+budget available for 3D generation.
 
-O agente **nunca gera nada sozinho** — ele monta a configuração, mostra o
-card de confirmação e espera você aprovar.
-
----
-
-## Limitações honestas
-
-- **Rig automático é melhor esforço**: funciona bem em humanoide claro, pode
-  falhar em formas estilizadas. A interface avisa em vez de entregar algo torto.
-- **PBR depende do motor** — TripoSR não gera mapas de metalness/roughness.
-- **Lote roda uma imagem por vez**: com 4-8 GB de VRAM, paralelizar faz as
-  duas gerações falharem.
-- **Qualidade não é a do Meshy pago.** Os modelos abertos chegam perto, mas
-  não empatam com pipelines proprietários treinados em datasets fechados.
-- **Pose por texto é aproximada**: acerta "sentado, braços cruzados", não o
-  ângulo exato do cotovelo. Para precisão, use a foto de referência.
+The agent **never generates anything on its own** — it builds the
+configuration, presents it for confirmation, and waits for approval.
 
 ---
 
-## Desenvolvimento
+## Known limitations
+
+These are stated up front rather than discovered later:
+
+- **Automatic rigging is best-effort.** It works well on clearly humanoid
+  characters and can fail on stylized shapes. The interface reports the
+  failure instead of producing a broken skeleton.
+- **PBR support depends on the engine.** TripoSR does not produce
+  metalness/roughness maps.
+- **Batch runs are sequential.** With 4–8 GB of VRAM, running generations in
+  parallel causes both to fail.
+- **Output quality does not match commercial services.** Open models come
+  close, but not to pipelines trained on proprietary datasets.
+- **Text-described poses are approximate.** They capture "seated, arms
+  crossed" reliably, not a specific elbow angle. Use a reference photo when
+  precision matters.
+
+---
+
+## Development
 
 ```bash
-python -m pytest tests/ -q
+python -m pytest -q
 ```
 
-Os testes cobrem a lógica que não precisa de GPU: validação de configuração,
-redução de malha, exportação, interpretação de pedidos do agente, validação
-das rotações de pose e a biblioteca de modelos.
+The test suite covers the logic that does not require a GPU: configuration
+validation, mesh decimation, export routing, agent request parsing, pose
+rotation validation, and the model library.
 
 ```
 espresso-3d/
-├── README.md · LICENSE · assets/ · docs/    # ficam na raiz
+├── README.md · LICENSE · assets/ · docs/
 ├── requirements.txt · pyproject.toml
 ├── tests/
 └── src/
-    └── espresso3d/        # todo o código fica aqui dentro
-        ├── __main__.py    # entrypoint: python -m espresso3d
-        ├── config.py      # PipelineConfig: tudo que o usuário escolhe
-        ├── hardware.py    # detecta GPU, Blender e Ollama
-        ├── engines/       # motores de geração 3D (registro plugável)
-        ├── pipeline/      # melhoria → segmentação → geração → malha → rig → exportação
-        ├── agent/         # cérebros do agente + interpretação de pedidos
-        ├── library/       # biblioteca dos modelos gerados
-        └── ui/            # as quatro abas em Gradio
+    └── espresso3d/
+        ├── __main__.py    # entry point: python -m espresso3d
+        ├── config.py      # PipelineConfig — every user-facing option
+        ├── hardware.py    # GPU, Blender and Ollama detection
+        ├── engines/       # 3D generation engines (pluggable registry)
+        ├── pipeline/      # enhance → segment → generate → mesh → rig → export
+        ├── agent/         # agent backends and request parsing
+        ├── library/       # generated model library
+        └── ui/            # the four Gradio tabs
 ```
 
-O layout `src/` é a convenção do Python para separar o código do resto do
-repositório. `pytest` roda direto da raiz (o `pyproject.toml` cuida do
-caminho); para usar `python -m espresso3d` de qualquer pasta, o
-`pip install -e .` da instalação já resolve.
+The `src/` layout is the standard Python convention for separating package
+code from repository metadata. `pytest` runs from the repository root
+(`pyproject.toml` handles the path); `pip install -e .` makes
+`python -m espresso3d` work from any directory.
 
-Para adicionar um motor: crie o módulo em `src/espresso3d/engines/`, herde de `Motor` e
-acrescente uma linha em `MOTORES`. A interface se atualiza sozinha.
+**Adding an engine:** create a module under `src/espresso3d/engines/`, subclass
+`Motor`, and register it in `MOTORES`. The interface picks it up automatically.
 
-## Licença
+---
 
-Código sob [MIT](LICENSE). Os modelos de IA têm licenças próprias — confira
-a tabela de motores antes de usar um resultado comercialmente.
+## License
+
+The Espresso3D source code is released under the [MIT License](LICENSE).
+
+The AI models it integrates carry their own licenses — review the engine table
+above before using generated assets commercially.
