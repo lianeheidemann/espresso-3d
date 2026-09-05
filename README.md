@@ -1,4 +1,8 @@
-# ☕ Espresso3D
+<p align="center">
+  <img width="208" height="150" alt="1000387885" src="https://github.com/user-attachments/assets/d153123b-6073-4439-81a0-988ce0607588" />
+</p>
+
+<h1 align="center">Espresso 3D</h1>
 
 Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
 modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
