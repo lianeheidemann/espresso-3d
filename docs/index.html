@@ -108,7 +108,7 @@
     color:var(--text-dim);background:var(--surface);cursor:pointer;
   }
   .dropzone:hover{border-color:var(--text-faint);}
-  .dropzone .glyph{font-size:22px;margin-bottom:8px;opacity:.7;}
+  .dropzone .glyph{width:34px;height:34px;margin:0 auto 8px;opacity:.7;stroke:var(--text-dim);}
   .dropzone b{color:var(--text);font-weight:500;font-size:12.5px;}
   .dropzone small{display:block;margin-top:5px;color:var(--text-faint);font-size:11px;}
 
@@ -533,7 +533,7 @@
       <div>
         <div class="field-label">Imagem</div>
         <div class="dropzone">
-          <div class="glyph">🖼️</div>
+          <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-2.5-2.5-5 5"/></svg>
           <b>Clique / Arraste e Solte / Cole Imagem</b>
           <small>.png · .jpg · .webp — máx. 20MB</small>
         </div>
