@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.png">
-    <img width="380" alt="Espresso3D" src="assets/logo-light.png">
+    <img width="320" alt="Espresso3D" src="assets/logo-light.png">
   </picture>
 </p>
 
