@@ -4,6 +4,9 @@
 
 <h1 align="center">Espresso 3D</h1>
 
+<p align="center"><img width="190" height="34" alt="1000387888" src="https://github.com/user-attachments/assets/45995e1d-b9f0-4eff-b953-8c300c7c50e3" />
+</p>
+
 <p align="center"><em>Turn a photo into a 3D model — on your own machine, with open-source models.</em></p>
 
 <p align="center">
