@@ -108,7 +108,7 @@
     color:var(--text-dim);background:var(--surface);cursor:pointer;
   }
   .dropzone:hover{border-color:var(--text-faint);}
-  .dropzone .glyph{font-size:22px;margin-bottom:8px;opacity:.7;}
+  .dropzone .glyph{width:34px;height:34px;margin:0 auto 8px;opacity:.7;stroke:var(--text-dim);}
   .dropzone b{color:var(--text);font-weight:500;font-size:12.5px;}
   .dropzone small{display:block;margin-top:5px;color:var(--text-faint);font-size:11px;}
 
@@ -121,7 +121,11 @@
   .switch.agent.on{background:var(--agent-soft);border-color:var(--agent);}
   .switch.agent.on::after{background:var(--agent);}
 
-  input[type=range]{width:100%;height:4px;border-radius:999px;background:var(--surface-3);appearance:none;-webkit-appearance:none;}
+  input[type=range]{
+    width:100%;height:4px;border-radius:999px;appearance:none;-webkit-appearance:none;
+    background:linear-gradient(to right, var(--accent) var(--fill,0%), var(--surface-3) var(--fill,0%));
+  }
+  input[type=range]::-moz-range-track{background:transparent;}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
   input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #0a0c0f;cursor:pointer;}
 
@@ -146,7 +150,7 @@
   .pose-custom textarea{
     width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:9px;
     padding:9px 11px;color:var(--text);font-family:inherit;font-size:12.5px;line-height:1.5;
-    resize:vertical;min-height:58px;outline:none;
+    resize:vertical;min-height:92px;outline:none;
   }
   .pose-custom textarea:focus{border-color:var(--accent);}
   .pose-custom textarea::placeholder{color:var(--text-faint);}
@@ -533,7 +537,7 @@
       <div>
         <div class="field-label">Imagem</div>
         <div class="dropzone">
-          <div class="glyph">🖼️</div>
+          <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-2.5-2.5-5 5"/></svg>
           <b>Clique / Arraste e Solte / Cole Imagem</b>
           <small>.png · .jpg · .webp — máx. 20MB</small>
         </div>
@@ -584,10 +588,6 @@
             </span>
           </div>
 
-          <div class="warn-note">
-            <span>⚠️</span>
-            <span>Só funciona em personagem humanoide com esqueleto detectado. Objetos (xícara, vaso) não têm pose.</span>
-          </div>
         </div>
       </div>
 
@@ -1042,7 +1042,13 @@
 
   // ----- poly slider -----
   const polySlider = $('#poly-slider');
+  function updateSliderFill(el){
+    const pct = (el.value - el.min) / (el.max - el.min) * 100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+  updateSliderFill(polySlider);
   polySlider.addEventListener('input',()=>{
+    updateSliderFill(polySlider);
     const v = Number(polySlider.value).toLocaleString('pt-BR');
     $('#poly-val').textContent = v;
     $('#stat-faces').textContent = v;
