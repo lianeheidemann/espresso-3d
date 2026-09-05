@@ -26,7 +26,7 @@ and your images never leave your machine.
 ## Interface
 
 <p align="left">
-  <img src="assets/interface.jpg" alt="Espresso3D interface: configuration panel on the left with engine, polygon count, texture, pose, license and export formats; 3D preview on the right" width="420">
+  <img width="450" src="assets/interface.jpg" alt="Espresso3D interface: configuration panel on the left with engine, polygon count, texture, pose, license and export formats; 3D preview on the right">
 </p>
 
 **[Live UI preview →](https://lianeheidemann.github.io/espresso-3d/)** *(interactive
