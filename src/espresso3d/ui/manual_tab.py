@@ -119,17 +119,17 @@ def construir(estado: gr.State):
                     choices=list(_LICENCAS), value="Privado", label="Licença de uso"
                 )
 
-                gr.Markdown("### Exportar como")
-                grupos_fmt: list[gr.CheckboxGroup] = []
-                for grupo, formatos in formatos_por_grupo().items():
-                    grupos_fmt.append(
-                        gr.CheckboxGroup(
-                            choices=[(_rotulo_formato(f.ext), f.ext) for f in formatos],
-                            value=["glb"] if grupo.startswith("Web") else [],
-                            label=grupo,
-                            elem_classes="e3d-grupo-formato",
+                with gr.Accordion("Exportar como", open=False):
+                    grupos_fmt: list[gr.CheckboxGroup] = []
+                    for grupo, formatos in formatos_por_grupo().items():
+                        grupos_fmt.append(
+                            gr.CheckboxGroup(
+                                choices=[(_rotulo_formato(f.ext), f.ext) for f in formatos],
+                                value=["glb"] if grupo.startswith("Web") else [],
+                                label=grupo,
+                                elem_classes="e3d-grupo-formato",
+                            )
                         )
-                    )
 
                 if not tem_blender:
                     gr.Markdown(
