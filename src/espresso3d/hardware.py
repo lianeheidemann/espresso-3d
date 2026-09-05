@@ -1,8 +1,9 @@
-"""Descoberta do que a máquina tem: GPU, Blender e Ollama.
+"""Discovery of what the machine has: GPU, Blender and Ollama.
 
-Tudo aqui degrada em silêncio: se a dependência não existe, a função
-devolve ``None`` ou lista vazia em vez de explodir. A interface usa isso
-para desabilitar opções com explicação, em vez de dar erro na hora de gerar.
+Everything here degrades silently: if the dependency doesn't exist, the
+function returns ``None`` or an empty list instead of blowing up. The UI
+uses this to disable options with an explanation, instead of erroring out
+at generation time.
 """
 
 from __future__ import annotations
@@ -18,8 +19,8 @@ from pathlib import Path
 
 OLLAMA_URL = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
-#: Caminhos onde o Blender costuma estar quando não está no PATH.
-_BLENDER_PROVAVEIS = [
+#: Paths where Blender usually lives when it's not on the PATH.
+_LIKELY_BLENDER_PATHS = [
     "/usr/bin/blender",
     "/usr/local/bin/blender",
     "/snap/bin/blender",
@@ -31,7 +32,7 @@ _BLENDER_PROVAVEIS = [
 
 @functools.lru_cache(maxsize=1)
 def vram_gb() -> float | None:
-    """VRAM da GPU em GB, ou ``None`` se não houver GPU CUDA utilizável."""
+    """GPU VRAM in GB, or ``None`` if there's no usable CUDA GPU."""
     try:
         import torch
     except ImportError:
@@ -46,7 +47,7 @@ def vram_gb() -> float | None:
 
 
 @functools.lru_cache(maxsize=1)
-def nome_gpu() -> str | None:
+def gpu_name() -> str | None:
     try:
         import torch
 
@@ -59,76 +60,76 @@ def nome_gpu() -> str | None:
 
 @functools.lru_cache(maxsize=1)
 def blender() -> str | None:
-    """Caminho do executável do Blender, ou ``None``."""
+    """Path to the Blender executable, or ``None``."""
     if env := os.environ.get("BLENDER_BIN"):
         if Path(env).exists():
             return env
-    if achado := shutil.which("blender"):
-        return achado
-    for caminho in _BLENDER_PROVAVEIS:
-        if Path(caminho).exists():
-            return caminho
+    if found := shutil.which("blender"):
+        return found
+    for path in _LIKELY_BLENDER_PATHS:
+        if Path(path).exists():
+            return path
     return None
 
 
-def versao_blender() -> str | None:
+def blender_version() -> str | None:
     exe = blender()
     if not exe:
         return None
     try:
-        saida = subprocess.run(
+        output = subprocess.run(
             [exe, "--version"], capture_output=True, text=True, timeout=20
         ).stdout
-        primeira = saida.strip().splitlines()[0] if saida.strip() else ""
-        return primeira or None
+        first_line = output.strip().splitlines()[0] if output.strip() else ""
+        return first_line or None
     except Exception:
         return None
 
 
-def ollama_ligado() -> bool:
-    return ollama_modelos() is not None
+def ollama_running() -> bool:
+    return ollama_models() is not None
 
 
-def ollama_modelos() -> list[str] | None:
-    """Modelos já baixados no Ollama.
+def ollama_models() -> list[str] | None:
+    """Models already downloaded in Ollama.
 
-    ``None`` significa "Ollama não está rodando"; lista vazia significa
-    "está rodando, mas sem modelo baixado" — são situações diferentes e a
-    interface mostra mensagens diferentes para cada uma.
+    ``None`` means "Ollama isn't running"; an empty list means "it's
+    running, but with no model downloaded" — these are different
+    situations and the UI shows a different message for each.
     """
     try:
         with urllib.request.urlopen(f"{OLLAMA_URL}/api/tags", timeout=2) as resp:
-            dados = json.loads(resp.read().decode())
-        return [m["name"] for m in dados.get("models", [])]
+            data = json.loads(resp.read().decode())
+        return [m["name"] for m in data.get("models", [])]
     except (urllib.error.URLError, OSError, ValueError, KeyError):
         return None
 
 
-def resumo() -> dict:
-    """Uma linha de status para o cabeçalho da interface."""
+def summary() -> dict:
+    """A one-line status for the UI header."""
     vram = vram_gb()
-    modelos = ollama_modelos()
+    models = ollama_models()
     return {
-        "gpu": nome_gpu(),
+        "gpu": gpu_name(),
         "vram_gb": vram,
         "blender": blender(),
-        "versao_blender": versao_blender(),
-        "ollama": modelos is not None,
-        "modelos_ollama": modelos or [],
+        "blender_version": blender_version(),
+        "ollama": models is not None,
+        "ollama_models": models or [],
     }
 
 
-def texto_resumo() -> str:
-    """Resumo curto do hardware, do jeito que aparece no topo da tela."""
-    r = resumo()
-    partes = []
+def summary_text() -> str:
+    """Short hardware summary, the way it appears at the top of the screen."""
+    r = summary()
+    parts = []
     if r["vram_gb"]:
-        partes.append(f"GPU: {r['vram_gb']:g} GB VRAM")
+        parts.append(f"GPU: {r['vram_gb']:g} GB VRAM")
     else:
-        partes.append("Sem GPU CUDA — vai rodar na CPU (bem mais lento)")
-    partes.append("Blender: encontrado" if r["blender"] else "Blender: não encontrado")
+        parts.append("No CUDA GPU — will run on CPU (much slower)")
+    parts.append("Blender: found" if r["blender"] else "Blender: not found")
     if r["ollama"]:
-        partes.append(f"Ollama: {len(r['modelos_ollama'])} modelo(s)")
+        parts.append(f"Ollama: {len(r['ollama_models'])} model(s)")
     else:
-        partes.append("Ollama: desligado")
-    return " · ".join(partes)
+        parts.append("Ollama: off")
+    return " · ".join(parts)

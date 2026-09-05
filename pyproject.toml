@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "espresso3d"
 version = "0.1.0"
-description = "Gerador local de modelos 3D a partir de imagens"
+description = "Local generator of 3D models from images"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
 
-# O básico para o app abrir e exportar os formatos leves. Os motores de
-# geração 3D, o rig e o upscaler ficam de fora de propósito: cada um tem
-# repositório e pesos próprios de vários GB (veja o README).
+# The basics for the app to open and export the lightweight formats. The
+# 3D generation engines, the rig and the upscaler are deliberately left
+# out: each has its own repository and weights of several GB (see the README).
 dependencies = [
     "gradio>=6.0",
     "trimesh>=4.0",
@@ -30,13 +30,13 @@ dev = ["pytest>=8.0"]
 espresso3d = "espresso3d.__main__:main"
 
 [tool.setuptools.packages.find]
-# É esta linha que faz o layout src/ funcionar: sem ela o setuptools
-# procuraria os pacotes na raiz e não acharia nada.
+# This is the line that makes the src/ layout work: without it setuptools
+# would look for packages at the root and find nothing.
 where = ["src"]
 
 [tool.pytest.ini_options]
-# Permite rodar `pytest` direto do repositório, sem precisar instalar o
-# pacote antes. Sem isso, os imports `from espresso3d...` dos testes
-# falhariam com ModuleNotFoundError no layout src/.
+# Lets `pytest` run straight from the repository, without installing the
+# package first. Without this, the tests' `from espresso3d...` imports
+# would fail with ModuleNotFoundError under the src/ layout.
 pythonpath = ["src"]
 testpaths = ["tests"]

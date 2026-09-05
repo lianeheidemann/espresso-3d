@@ -73,8 +73,7 @@ formats, and the model library. **To actually generate 3D models**, install
 PyTorch with CUDA and at least one engine below.
 
 > **Step-by-step setup guide:** [`docs/SETUP.md`](docs/SETUP.md) — installation
-> order, per-component verification, and the common failure modes (written in
-> Portuguese).
+> order, per-component verification, and the common failure modes.
 
 ### 3D generation engines
 

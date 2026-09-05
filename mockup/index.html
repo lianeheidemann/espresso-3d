@@ -67,7 +67,7 @@
   .top-tab:hover{color:var(--text);}
   .top-tab.active{background:var(--surface-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--border);}
   .top-tab .ico{width:15px;height:15px;flex:none;}
-  .top-tab[data-tab="agente"].active{color:var(--agent);}
+  .top-tab[data-tab="agent"].active{color:var(--agent);}
 
   .view{display:none;flex:1;min-height:0;}
   .view.active{display:flex;}
@@ -270,7 +270,7 @@
   .bar{height:5px;border-radius:999px;background:var(--surface-3);overflow:hidden;}
   .bar i{display:block;height:100%;background:var(--accent);border-radius:999px;}
 
-  /* ---------- agent view (novo layout) ---------- */
+  /* ---------- agent view (new layout) ---------- */
   .chat-col{width:430px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--border-soft);min-height:0;}
   .chat-head{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border-soft);flex:none;}
   .chat-head .icon-btn{width:28px;height:28px;border-radius:7px;border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
@@ -360,7 +360,7 @@
   .zoom-ctl button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:14px;}
   .stage-topright{position:absolute;right:16px;top:14px;display:flex;align-items:center;gap:12px;color:var(--text-faint);font-size:12px;}
 
-  /* ---------- biblioteca ---------- */
+  /* ---------- library ---------- */
   .lib{flex:1;display:flex;flex-direction:column;min-width:0;}
   .lib-top{
     display:flex;align-items:center;gap:12px;padding:14px 20px;
@@ -487,129 +487,129 @@
       </div>
       <div>
         <h1>Espresso3D</h1>
-        <span>gerador local de imagem → 3D, 100% seu</span>
+        <span>local image → 3D generator, 100% yours</span>
       </div>
     </div>
 
     <div class="top-tabs" role="tablist">
       <button class="top-tab active" data-tab="single">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 15l-5-5-9 9"/></svg>
-        Imagem → 3D
+        Image → 3D
       </button>
       <button class="top-tab" data-tab="batch">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        Lote (até 10)
+        Batch (up to 10)
       </button>
-      <button class="top-tab" data-tab="agente">
+      <button class="top-tab" data-tab="agent">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M5 8h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z"/><circle cx="9" cy="13" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="currentColor" stroke="none"/></svg>
-        Agente
+        Agent
       </button>
       <button class="top-tab" data-tab="lib">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.5l8 4.2v10.6l-8 4.2-8-4.2V6.7z"/><path d="M4 6.7l8 4.3 8-4.3M12 11v10.5"/></svg>
-        Meus modelos
+        My models
       </button>
     </div>
 
     <div class="gpu-badge">
       <span class="gpu-dot"></span>
-      GPU: <b class="mono">6 GB VRAM</b> · Blender <b>encontrado</b>
+      GPU: <b class="mono">6 GB VRAM</b> · Blender <b>found</b>
     </div>
   </div>
 
-  <!-- ============ IMAGEM → 3D ============ -->
+  <!-- ============ IMAGE → 3D ============ -->
   <div class="view active" id="view-single">
     <div class="cfg-col">
 
       <div>
-        <div class="field-label">Motor de geração</div>
+        <div class="field-label">Generation engine</div>
         <div class="engine-pick">
-          <div class="engine-opt" data-engine="TripoSR"><div><div class="name">TripoSR</div><div class="desc">Rápido · ~5s por imagem</div></div><div class="vram">4GB+</div></div>
-          <div class="engine-opt active" data-engine="Stable Fast 3D"><div><div class="name">Stable Fast 3D</div><div class="desc">Equilíbrio · PBR básico</div></div><div class="vram">6GB+</div></div>
-          <div class="engine-opt" data-engine="InstantMesh"><div><div class="name">InstantMesh</div><div class="desc">Máxima qualidade</div></div><div class="vram">8GB+</div></div>
+          <div class="engine-opt" data-engine="TripoSR"><div><div class="name">TripoSR</div><div class="desc">Fast · ~5s per image</div></div><div class="vram">4GB+</div></div>
+          <div class="engine-opt active" data-engine="Stable Fast 3D"><div><div class="name">Stable Fast 3D</div><div class="desc">Balanced · basic PBR</div></div><div class="vram">6GB+</div></div>
+          <div class="engine-opt" data-engine="InstantMesh"><div><div class="name">InstantMesh</div><div class="desc">Maximum quality</div></div><div class="vram">8GB+</div></div>
         </div>
       </div>
 
       <div>
-        <div class="field-label">Topologia</div>
-        <div class="seg" data-cfg="topologia"><button class="active">Alto Detalhe</button><button>Smart Topology</button></div>
+        <div class="field-label">Topology</div>
+        <div class="seg" data-cfg="topology"><button class="active">High Detail</button><button>Smart Topology</button></div>
       </div>
 
       <div>
-        <div class="field-label">Imagem</div>
+        <div class="field-label">Image</div>
         <div class="dropzone">
           <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.4" fill="currentColor" stroke="none"/><path d="M21 16l-5.5-5.5-4 4-2.5-2.5-5 5"/></svg>
-          <b>Clique / Arraste e Solte / Cole Imagem</b>
-          <small>.png · .jpg · .webp — máx. 20MB</small>
+          <b>Click / Drag & Drop / Paste Image</b>
+          <small>.png · .jpg · .webp — max. 20MB</small>
         </div>
       </div>
 
       <div>
-        <div class="field-label">Contagem de polígonos <span class="hint">i</span><span class="val mono" id="poly-val">4000</span></div>
-        <input type="range" min="500" max="20000" step="100" value="4000" id="poly-slider" aria-label="Contagem de polígonos">
+        <div class="field-label">Polygon count <span class="hint">i</span><span class="val mono" id="poly-val">4000</span></div>
+        <input type="range" min="500" max="20000" step="100" value="4000" id="poly-slider" aria-label="Polygon count">
       </div>
 
-      <div class="toggle-row"><span class="lbl">Textura</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
+      <div class="toggle-row"><span class="lbl">Texture</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
 
       <div>
-        <div class="field-label">Resolução de textura</div>
-        <div class="seg" data-cfg="resolucao"><button class="active">Padrão</button><button>Ultra 2K</button></div>
+        <div class="field-label">Texture resolution</div>
+        <div class="seg" data-cfg="resolution"><button class="active">Standard</button><button>Ultra 2K</button></div>
       </div>
 
       <div>
         <div class="field-label">Pose <span class="hint">i</span></div>
-        <div class="seg small" data-cfg="pose"><button class="active">Nenhum</button><button>T-Pose</button><button>A-Pose</button><button>Custom</button></div>
+        <div class="seg small" data-cfg="pose"><button class="active">None</button><button>T-Pose</button><button>A-Pose</button><button>Custom</button></div>
 
         <div class="pose-custom" id="pose-custom">
-          <div class="pose-sub">Descreva a pose</div>
-          <textarea id="pose-prompt" placeholder="ex: de pé, braços cruzados na frente do peito, peso na perna esquerda, cabeça virada levemente para a direita"></textarea>
+          <div class="pose-sub">Describe the pose</div>
+          <textarea id="pose-prompt" placeholder="e.g.: standing, arms crossed over the chest, weight on the left leg, head turned slightly to the right"></textarea>
           <div class="pose-chips">
-            <button class="pose-chip" type="button">sentado de pernas cruzadas</button>
-            <button class="pose-chip" type="button">acenando com a mão direita</button>
-            <button class="pose-chip" type="button">correndo</button>
-            <button class="pose-chip" type="button">braços abertos</button>
-            <button class="pose-chip" type="button">agachado</button>
+            <button class="pose-chip" type="button">sitting cross-legged</button>
+            <button class="pose-chip" type="button">waving with the right hand</button>
+            <button class="pose-chip" type="button">running</button>
+            <button class="pose-chip" type="button">arms open</button>
+            <button class="pose-chip" type="button">crouching</button>
           </div>
 
           <div>
-            <div class="pose-sub" style="margin-bottom:5px;">Interpretar com</div>
+            <div class="pose-sub" style="margin-bottom:5px;">Interpret with</div>
             <select id="pose-engine">
-              <option value="llm">LLM local (já instalado) — rápido, aproximado</option>
-              <option value="posescript">PoseScript — texto → pose (+1,2 GB)</option>
-              <option value="momask">MoMask — texto → movimento (+2,4 GB)</option>
+              <option value="llm">Local LLM (already installed) — fast, approximate</option>
+              <option value="posescript">PoseScript — text → pose (+1.2 GB)</option>
+              <option value="momask">MoMask — text → motion (+2.4 GB)</option>
             </select>
           </div>
 
-          <div class="pose-divider">ou</div>
+          <div class="pose-divider">or</div>
 
           <div class="pose-ref" id="pose-ref">
             <span class="g">🧍</span>
-            <span>Enviar foto de referência
-              <small>MediaPipe copia os ângulos do corpo da foto — mais preciso que texto</small>
+            <span>Upload a reference photo
+              <small>MediaPipe copies the body angles from the photo — more precise than text</small>
             </span>
           </div>
 
         </div>
       </div>
 
-      <div class="toggle-row"><span class="lbl">Dividir em partes <span class="hint">i</span></span><div class="switch" data-toggle role="switch" tabindex="0"></div></div>
-      <div class="toggle-row"><span class="lbl">Melhorar imagem</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
+      <div class="toggle-row"><span class="lbl">Split into parts <span class="hint">i</span></span><div class="switch" data-toggle role="switch" tabindex="0"></div></div>
+      <div class="toggle-row"><span class="lbl">Enhance image</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
 
       <div>
-        <div class="field-label">Licença de uso</div>
-        <div class="seg" data-cfg="licenca"><button class="active">Privado</button><button>Comercial</button></div>
+        <div class="field-label">Usage license</div>
+        <div class="seg" data-cfg="license"><button class="active">Private</button><button>Commercial</button></div>
       </div>
 
       <div>
-        <div class="field-label">Exportar como</div>
+        <div class="field-label">Export as</div>
 
         <div class="fmt-group">
-          <div class="fmt-group-title">Web e AR no Android</div>
+          <div class="fmt-group-title">Web and Android AR</div>
           <label class="fmt-row"><span class="check-box checked" data-fmt=".glb">✓</span><span class="fmt-ext">.glb</span><span class="badge ar">AR Web</span></label>
           <label class="fmt-row"><span class="check-box" data-fmt=".gltf"></span><span class="fmt-ext">.gltf</span></label>
         </div>
 
         <div class="fmt-group">
-          <div class="fmt-group-title">AR no iPhone / Vision Pro</div>
+          <div class="fmt-group-title">iPhone / Vision Pro AR</div>
           <label class="fmt-row"><span class="check-box" data-fmt=".usdz"></span><span class="fmt-ext">.usdz</span><span class="badge ar">AR iOS</span><span class="badge blender">Blender</span></label>
         </div>
 
@@ -620,13 +620,13 @@
         </div>
 
         <div class="fmt-group">
-          <div class="fmt-group-title">Pipelines USD / Omniverse</div>
+          <div class="fmt-group-title">USD / Omniverse pipelines</div>
           <label class="fmt-row"><span class="check-box" data-fmt=".usdc"></span><span class="fmt-ext">.usdc</span><span class="badge blender">Blender</span></label>
           <label class="fmt-row"><span class="check-box" data-fmt=".usda"></span><span class="fmt-ext">.usda</span><span class="badge blender">Blender</span></label>
         </div>
 
         <div class="fmt-group">
-          <div class="fmt-group-title">Edição e uso geral</div>
+          <div class="fmt-group-title">Editing and general use</div>
           <label class="fmt-row"><span class="check-box" data-fmt=".obj"></span><span class="fmt-ext">.obj</span></label>
           <label class="fmt-row"><span class="check-box" data-fmt=".ply"></span><span class="fmt-ext">.ply</span></label>
           <label class="fmt-row"><span class="check-box" data-fmt=".dae"></span><span class="fmt-ext">.dae</span><span class="badge blender">Blender</span></label>
@@ -634,7 +634,7 @@
         </div>
 
         <div class="fmt-group">
-          <div class="fmt-group-title">Impressão 3D</div>
+          <div class="fmt-group-title">3D printing</div>
           <label class="fmt-row"><span class="check-box" data-fmt=".stl"></span><span class="fmt-ext">.stl</span></label>
           <label class="fmt-row"><span class="check-box" data-fmt=".3mf"></span><span class="fmt-ext">.3mf</span></label>
         </div>
@@ -646,19 +646,19 @@
       </div>
 
       <div class="cfg-footer">
-        <button class="primary-btn" id="gen-single">▶ Gerar modelo 3D</button>
+        <button class="primary-btn" id="gen-single">▶ Generate 3D model</button>
       </div>
     </div>
 
     <div class="stage">
       <div class="stage-top">
-        <div class="stage-title">Pré-visualização · <b>xicara_pires.png</b></div>
+        <div class="stage-title">Preview · <b>cup_and_saucer.png</b></div>
         <div class="stage-tools"><div class="tool-btn">⟲</div><div class="tool-btn">⤢</div><div class="tool-btn">⇩</div></div>
       </div>
       <div class="canvas-wrap">
         <div class="grid-floor"></div>
         <div class="model-hero">
-          <svg width="220" height="200" viewBox="0 0 220 200" role="img" aria-label="Modelo 3D de xícara com pires, com vapor subindo">
+          <svg width="220" height="200" viewBox="0 0 220 200" role="img" aria-label="3D model of a cup with saucer, with steam rising">
             <g class="steam warm">
               <path d="M96 96C89 84 101 76 94 64C88 54 97 46 94 38"/>
               <path d="M112 98C105 84 118 75 110 61C103 49 113 41 110 32"/>
@@ -672,27 +672,27 @@
             <ellipse cx="110" cy="110" rx="34" ry="9" fill="none" stroke="#ffb383" stroke-width="1" opacity=".6"/>
           </svg>
           <div class="stat-chip">
-            <span>Faces <b id="stat-faces">4.000</b></span>
-            <span>Textura <b>2K</b></span>
-            <span>Saída <b id="stat-fmt">.glb</b></span>
+            <span>Faces <b id="stat-faces">4,000</b></span>
+            <span>Texture <b>2K</b></span>
+            <span>Output <b id="stat-fmt">.glb</b></span>
           </div>
         </div>
       </div>
     </div>
 
     <div class="side-col">
-      <h3>Histórico</h3>
-      <div class="history-item"><div class="history-thumb">☕</div><div class="history-meta"><b>xicara_pires.png</b><span>Stable Fast 3D · 4k faces</span></div></div>
-      <div class="history-item"><div class="history-thumb">🪑</div><div class="history-meta"><b>banqueta.jpg</b><span>InstantMesh · 12k faces</span></div></div>
-      <div class="history-item"><div class="history-thumb">🧸</div><div class="history-meta"><b>mascote.png</b><span>TripoSR · rig T-Pose</span></div></div>
+      <h3>History</h3>
+      <div class="history-item"><div class="history-thumb">☕</div><div class="history-meta"><b>cup_and_saucer.png</b><span>Stable Fast 3D · 4k faces</span></div></div>
+      <div class="history-item"><div class="history-thumb">🪑</div><div class="history-meta"><b>stool.jpg</b><span>InstantMesh · 12k faces</span></div></div>
+      <div class="history-item"><div class="history-thumb">🧸</div><div class="history-meta"><b>mascot.png</b><span>TripoSR · rig T-Pose</span></div></div>
     </div>
   </div>
 
-  <!-- ============ LOTE ============ -->
+  <!-- ============ BATCH ============ -->
   <div class="view" id="view-batch">
     <div class="cfg-col">
       <div>
-        <div class="field-label">Imagens <span class="val mono">4/10</span></div>
+        <div class="field-label">Images <span class="val mono">4/10</span></div>
         <div class="thumbs-grid">
           <div class="thumb-slot filled">☕</div>
           <div class="thumb-slot filled">🪑</div>
@@ -706,81 +706,81 @@
       <div class="inherit-card">
         <div class="inherit-head">
           <div>
-            <b>Configurações aplicadas</b>
-            <span>as mesmas da aba Imagem → 3D</span>
+            <b>Applied settings</b>
+            <span>the same as the Image → 3D tab</span>
           </div>
-          <button class="link-btn" id="goto-single">Editar</button>
+          <button class="link-btn" id="goto-single">Edit</button>
         </div>
         <div class="inherit-list">
-          <div class="inherit-row"><span>Motor</span><b id="sum-engine">Stable Fast 3D</b></div>
-          <div class="inherit-row"><span>Topologia</span><b id="sum-topo">Alto Detalhe</b></div>
-          <div class="inherit-row"><span>Polígonos</span><b id="sum-poly">4.000</b></div>
-          <div class="inherit-row"><span>Textura</span><b id="sum-tex">Sim · Padrão</b></div>
-          <div class="inherit-row"><span>Pose</span><b id="sum-pose">Nenhum</b></div>
-          <div class="inherit-row"><span>Dividir em partes</span><b id="sum-split">Não</b></div>
-          <div class="inherit-row"><span>Melhorar imagem</span><b id="sum-enh">Sim</b></div>
-          <div class="inherit-row"><span>Licença</span><b id="sum-lic">Privado</b></div>
-          <div class="inherit-row"><span>Formatos</span><b id="sum-fmt">.glb</b></div>
+          <div class="inherit-row"><span>Engine</span><b id="sum-engine">Stable Fast 3D</b></div>
+          <div class="inherit-row"><span>Topology</span><b id="sum-topo">High Detail</b></div>
+          <div class="inherit-row"><span>Polygons</span><b id="sum-poly">4,000</b></div>
+          <div class="inherit-row"><span>Texture</span><b id="sum-tex">Yes · Standard</b></div>
+          <div class="inherit-row"><span>Pose</span><b id="sum-pose">None</b></div>
+          <div class="inherit-row"><span>Split into parts</span><b id="sum-split">No</b></div>
+          <div class="inherit-row"><span>Enhance image</span><b id="sum-enh">Yes</b></div>
+          <div class="inherit-row"><span>License</span><b id="sum-lic">Private</b></div>
+          <div class="inherit-row"><span>Formats</span><b id="sum-fmt">.glb</b></div>
         </div>
       </div>
 
       <div class="cfg-footer">
-        <button class="primary-btn" id="gen-batch">▶ Gerar 4 modelos</button>
+        <button class="primary-btn" id="gen-batch">▶ Generate 4 models</button>
       </div>
     </div>
 
     <div class="stage">
-      <div class="stage-top"><div class="stage-title">Fila · uma imagem por vez (VRAM limitada)</div></div>
+      <div class="stage-top"><div class="stage-title">Queue · one image at a time (limited VRAM)</div></div>
       <div class="canvas-wrap" style="align-items:flex-start;justify-content:center;padding:22px;">
         <div class="grid-floor"></div>
         <div style="position:relative;width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px;">
-          <div class="queue-item"><div class="row1"><b>☕ xicara_pires.png</b><span>concluído</span></div><div class="bar"><i style="width:100%;background:#7bd88f"></i></div></div>
-          <div class="queue-item"><div class="row1"><b>🪑 banqueta.jpg</b><span>gerando · 63%</span></div><div class="bar"><i style="width:63%"></i></div></div>
-          <div class="queue-item"><div class="row1"><b>🧸 mascote.png</b><span>na fila</span></div><div class="bar"><i style="width:0%"></i></div></div>
-          <div class="queue-item"><div class="row1"><b>🏺 vaso.png</b><span>na fila</span></div><div class="bar"><i style="width:0%"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>☕ cup_and_saucer.png</b><span>done</span></div><div class="bar"><i style="width:100%;background:#7bd88f"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>🪑 stool.jpg</b><span>generating · 63%</span></div><div class="bar"><i style="width:63%"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>🧸 mascot.png</b><span>queued</span></div><div class="bar"><i style="width:0%"></i></div></div>
+          <div class="queue-item"><div class="row1"><b>🏺 vase.png</b><span>queued</span></div><div class="bar"><i style="width:0%"></i></div></div>
         </div>
       </div>
     </div>
 
     <div class="side-col">
-      <h3>Progresso</h3>
-      <div class="history-item"><div class="history-thumb">⏱️</div><div class="history-meta"><b>~9 min restantes</b><span>1 de 4 concluídos</span></div></div>
-      <h3 style="margin-top:18px;">Saída</h3>
-      <div class="history-item"><div class="history-thumb">📦</div><div class="history-meta"><b>lote_04.zip</b><span>pronto ao final</span></div></div>
+      <h3>Progress</h3>
+      <div class="history-item"><div class="history-thumb">⏱️</div><div class="history-meta"><b>~9 min remaining</b><span>1 of 4 done</span></div></div>
+      <h3 style="margin-top:18px;">Output</h3>
+      <div class="history-item"><div class="history-thumb">📦</div><div class="history-meta"><b>batch_04.zip</b><span>ready at the end</span></div></div>
     </div>
   </div>
 
-  <!-- ============ AGENTE ============ -->
-  <div class="view" id="view-agente">
+  <!-- ============ AGENT ============ -->
+  <div class="view" id="view-agent">
     <div class="chat-col">
       <div class="chat-head">
-        <button class="icon-btn" title="Voltar">⬅</button>
-        <div class="chat-title">Novo chat <span class="caret">▾</span></div>
-        <button class="icon-btn" title="Histórico">⟲</button>
-        <button class="icon-btn" title="Compartilhar">↗</button>
+        <button class="icon-btn" title="Back">⬅</button>
+        <div class="chat-title">New chat <span class="caret">▾</span></div>
+        <button class="icon-btn" title="History">⟲</button>
+        <button class="icon-btn" title="Share">↗</button>
       </div>
 
       <div class="agent-cfg">
         <div class="agent-cfg-row">
-          <span class="lbl">Cérebro</span>
-          <select id="agent-model" aria-label="Modelo do agente">
-            <optgroup label="Instalados no Ollama">
-              <option value="gemma3:4b" selected>Gemma 3 4B — instalado</option>
-              <option value="qwen2.5:3b">Qwen 2.5 3B — instalado</option>
+          <span class="lbl">Brain</span>
+          <select id="agent-model" aria-label="Agent model">
+            <optgroup label="Installed in Ollama">
+              <option value="gemma3:4b" selected>Gemma 3 4B — installed</option>
+              <option value="qwen2.5:3b">Qwen 2.5 3B — installed</option>
             </optgroup>
-            <optgroup label="Baixar (grátis, offline)">
+            <optgroup label="Download (free, offline)">
               <option value="qwen2.5:7b">Qwen 2.5 7B</option>
               <option value="llama3.1:8b">Llama 3.1 8B</option>
               <option value="mistral:7b">Mistral 7B</option>
               <option value="moondream">Moondream 2B</option>
             </optgroup>
-            <optgroup label="Nuvem — plano gratuito">
+            <optgroup label="Cloud — free tier">
               <option value="gemini">Google Gemini (free tier)</option>
               <option value="groq">Groq (free tier)</option>
-              <option value="openrouter">OpenRouter (modelos :free)</option>
+              <option value="openrouter">OpenRouter (:free models)</option>
             </optgroup>
-            <optgroup label="Sem LLM">
-              <option value="keywords">Modo básico (palavras-chave)</option>
+            <optgroup label="No LLM">
+              <option value="keywords">Basic mode (keywords)</option>
             </optgroup>
           </select>
         </div>
@@ -788,33 +788,33 @@
         <div class="model-info" id="model-info"></div>
         <div class="pull-cmd" id="pull-cmd" hidden>
           <span id="pull-text"></span>
-          <button class="copy" id="pull-copy">copiar</button>
+          <button class="copy" id="pull-copy">copy</button>
         </div>
 
         <div class="cpu-row" id="cpu-row">
-          <span class="txt">Rodar na CPU<small>deixa os 6GB de VRAM livres para o gerador 3D</small></span>
+          <span class="txt">Run on CPU<small>leaves the 6GB of VRAM free for the 3D generator</small></span>
           <div class="switch agent on" data-toggle role="switch" tabindex="0" id="cpu-switch"></div>
         </div>
       </div>
 
       <div class="chat-scroll" id="chat-scroll">
         <div class="sent-img">☕</div>
-        <div class="msg bot">Que xícara bonita! O que você quer fazer com ela?</div>
-        <div class="msg meta">Respondido ›</div>
-        <div class="msg bot">Beleza — fundo limpo e objeto nítido, dá para gerar direto. Como você pediu a xícara separada do pires, vou ligar a divisão em partes e exportar em FBX.</div>
+        <div class="msg bot">What a nice cup! What do you want to do with it?</div>
+        <div class="msg meta">Replied ›</div>
+        <div class="msg bot">Great — clean background and a sharp object, this can be generated directly. Since you asked for the cup separated from the saucer, I'll turn on part splitting and export as FBX.</div>
 
         <div class="tool-card" id="tool-card">
           <div class="tool-card-head">
-            <b>Imagem para 3D</b>
-            <span>Converter a xícara com pires em modelo 3D</span>
+            <b>Image to 3D</b>
+            <span>Convert the cup with saucer into a 3D model</span>
           </div>
           <div class="tool-fields">
             <div class="tf">
-              <label>Imagem de origem</label>
+              <label>Source image</label>
               <div class="thumb-mini">☕</div>
             </div>
             <div class="tf">
-              <label>Motor</label>
+              <label>Engine</label>
               <select id="tc-engine">
                 <option>Stable Fast 3D</option>
                 <option>TripoSR</option>
@@ -822,50 +822,50 @@
               </select>
             </div>
             <div class="tf">
-              <label>Qualidade</label>
-              <select id="tc-quality"><option>Alta</option><option>Padrão</option><option>Rápida</option></select>
+              <label>Quality</label>
+              <select id="tc-quality"><option>High</option><option>Standard</option><option>Fast</option></select>
             </div>
             <div class="tf column">
               <div class="tf-top">
-                <label>Gerar textura</label>
+                <label>Generate texture</label>
                 <div class="switch agent on" data-toggle role="switch" tabindex="0"></div>
               </div>
-              <p>Cria os mapas de cor do modelo. Desligue para gerar só a malha, bem mais rápido.</p>
+              <p>Creates the model's color maps. Turn it off to generate only the mesh, much faster.</p>
             </div>
             <div class="tf">
-              <label>Tamanho da textura</label>
+              <label>Texture size</label>
               <select id="tc-texsize"><option>2048</option><option>1024</option><option>4096</option></select>
             </div>
             <div class="tf column">
               <div class="tf-top">
-                <label>Dividir em partes</label>
+                <label>Split into parts</label>
                 <div class="switch agent on" data-toggle role="switch" tabindex="0"></div>
               </div>
-              <p>Xícara e pires saem como dois objetos separados, não colados.</p>
+              <p>Cup and saucer come out as two separate objects, not fused.</p>
             </div>
             <div class="tf">
-              <label>Formato de saída</label>
+              <label>Output format</label>
               <select id="tc-format"><option>.fbx</option><option>.glb</option><option>.usdz</option><option>.obj</option></select>
             </div>
           </div>
           <div class="tool-est">Est. ~40s · 6GB VRAM</div>
           <div class="tool-actions">
-            <button class="ghost-btn" id="deny-btn">Negar</button>
-            <button class="ghost-btn" id="always-btn">Aprovar e não perguntar mais</button>
-            <button class="approve-btn" id="approve-btn">Aprovar</button>
+            <button class="ghost-btn" id="deny-btn">Deny</button>
+            <button class="ghost-btn" id="always-btn">Approve and don't ask again</button>
+            <button class="approve-btn" id="approve-btn">Approve</button>
           </div>
-          <div class="resolved-mark" id="resolved-mark">✓ Aprovado — gerando…</div>
+          <div class="resolved-mark" id="resolved-mark">✓ Approved — generating…</div>
         </div>
       </div>
 
       <div class="chat-input">
         <div class="chat-field locked" id="chat-field">
-          <textarea id="chat-text" rows="2" disabled placeholder="Conclua a solicitação de ferramenta pendente para continuar"></textarea>
+          <textarea id="chat-text" rows="2" disabled placeholder="Finish the pending tool request to continue"></textarea>
           <div class="chat-icons">
-            <button class="icon-btn" title="Anexar">＋</button>
-            <button class="icon-btn" title="Imagem">🖼</button>
-            <button class="icon-btn" title="Opções">⚙</button>
-            <button class="icon-btn" title="Voz">🎤</button>
+            <button class="icon-btn" title="Attach">＋</button>
+            <button class="icon-btn" title="Image">🖼</button>
+            <button class="icon-btn" title="Options">⚙</button>
+            <button class="icon-btn" title="Voice">🎤</button>
             <button class="send-btn" id="send-btn">➤</button>
           </div>
         </div>
@@ -873,10 +873,10 @@
     </div>
 
     <div class="agent-stage" id="agent-stage">
-      <div class="stage-topright">⚙ &nbsp; Meus modelos</div>
-      <p class="empty-msg">Descreva sua ideia no chat.<br>Sua criação em 3D aparecerá aqui.</p>
+      <div class="stage-topright">⚙ &nbsp; My models</div>
+      <p class="empty-msg">Describe your idea in the chat.<br>Your 3D creation will appear here.</p>
       <div class="agent-result" id="agent-result">
-        <svg width="230" height="200" viewBox="0 0 220 200" role="img" aria-label="Xícara e pires gerados como objetos separados, com vapor subindo">
+        <svg width="230" height="200" viewBox="0 0 220 200" role="img" aria-label="Cup and saucer generated as separate objects, with steam rising">
           <g class="steam cool">
             <path d="M96 94C89 82 101 74 94 62C88 52 97 44 94 36"/>
             <path d="M112 96C105 82 118 73 110 59C103 47 113 39 110 30"/>
@@ -889,41 +889,41 @@
           <path d="M156 116c15-2 25 6 25 15s-11 16-26 14" fill="none" stroke="#5eead4" stroke-width="1.6"/>
         </svg>
         <div class="stat-chip">
-          <span>Partes <b>2</b></span>
-          <span>Faces <b>8.000</b></span>
-          <span>Saída <b>.fbx</b></span>
+          <span>Parts <b>2</b></span>
+          <span>Faces <b>8,000</b></span>
+          <span>Output <b>.fbx</b></span>
         </div>
       </div>
-      <div class="zoom-ctl"><button aria-label="Diminuir zoom">⊝</button><span>100%</span><button aria-label="Aumentar zoom">⊕</button></div>
+      <div class="zoom-ctl"><button aria-label="Zoom out">⊝</button><span>100%</span><button aria-label="Zoom in">⊕</button></div>
     </div>
   </div>
 
-  <!-- ============ MEUS MODELOS ============ -->
+  <!-- ============ MY MODELS ============ -->
   <div class="view" id="view-lib">
     <div class="lib">
       <div class="lib-top">
-        <input class="lib-search" id="lib-search" type="search" placeholder="Buscar por nome...">
+        <input class="lib-search" id="lib-search" type="search" placeholder="Search by name...">
         <select id="filter-engine">
-          <option value="">Todos os motores</option>
+          <option value="">All engines</option>
           <option>Stable Fast 3D</option>
           <option>InstantMesh</option>
           <option>TripoSR</option>
         </select>
         <select id="filter-fmt">
-          <option value="">Todos os formatos</option>
+          <option value="">All formats</option>
           <option>.glb</option><option>.fbx</option><option>.usdz</option><option>.stl</option>
         </select>
         <div class="disk">
-          <div class="disk-line"><span id="disk-count">6 modelos</span><b id="disk-size">418 MB</b></div>
+          <div class="disk-line"><span id="disk-count">6 models</span><b id="disk-size">418 MB</b></div>
           <div class="disk-bar"><i></i></div>
-          <div class="disk-line"><span style="color:var(--text-faint)">outputs/ no seu SSD</span></div>
+          <div class="disk-line"><span style="color:var(--text-faint)">outputs/ on your SSD</span></div>
         </div>
       </div>
 
       <div class="lib-bulkbar" id="bulkbar">
-        <span><b id="sel-count">0</b> selecionados · <b id="sel-size">0 MB</b></span>
-        <button class="ghost-btn" id="clear-sel">Limpar seleção</button>
-        <button class="danger-btn" id="bulk-delete">Apagar selecionados</button>
+        <span><b id="sel-count">0</b> selected · <b id="sel-size">0 MB</b></span>
+        <button class="ghost-btn" id="clear-sel">Clear selection</button>
+        <button class="danger-btn" id="bulk-delete">Delete selected</button>
       </div>
 
       <div class="lib-grid" id="lib-grid"></div>
@@ -934,18 +934,18 @@
 
 <div class="modal-back" id="modal-back">
   <div class="modal" role="dialog" aria-modal="true">
-    <h3 id="modal-title">Apagar modelo?</h3>
-    <p id="modal-text">A pasta inteira será removida — malha, texturas, imagem de origem e configurações.</p>
+    <h3 id="modal-title">Delete model?</h3>
+    <p id="modal-text">The whole folder will be removed — mesh, textures, source image and settings.</p>
     <div class="path" id="modal-path"></div>
     <label class="trash-opt">
       <span class="check-box checked" id="trash-check">✓</span>
-      <span class="txt">Mandar para a lixeira do sistema
-        <small>Desmarque para apagar de vez, sem possibilidade de recuperar.</small>
+      <span class="txt">Send to the system trash
+        <small>Uncheck to delete permanently, with no way to recover it.</small>
       </span>
     </label>
     <div class="modal-actions">
-      <button class="ghost-btn" id="modal-cancel">Cancelar</button>
-      <button class="danger-btn" style="margin-left:0" id="modal-confirm">Apagar</button>
+      <button class="ghost-btn" id="modal-cancel">Cancel</button>
+      <button class="danger-btn" style="margin-left:0" id="modal-confirm">Delete</button>
     </div>
   </div>
 </div>
@@ -1024,20 +1024,20 @@
   const NO_RIG = ['.stl','.obj','.ply','.3mf'];
   function updateLossNote(){
     const fmts = selectedFormats();
-    const poseOn = $('[data-cfg="pose"] button.active').textContent.trim() !== 'Nenhum';
+    const poseOn = $('[data-cfg="pose"] button.active').textContent.trim() !== 'None';
     const notes = [];
     const noTex = fmts.filter(f=>NO_TEXTURE.includes(f));
-    if(noTex.length) notes.push(noTex.join(', ')+' não guarda textura nem cor.');
+    if(noTex.length) notes.push(noTex.join(', ')+" doesn't store texture or color.");
     if(poseOn){
       const noRig = fmts.filter(f=>NO_RIG.includes(f));
-      if(noRig.length) notes.push(noRig.join(', ')+' não carrega esqueleto — o rig será descartado nesses arquivos.');
+      if(noRig.length) notes.push(noRig.join(', ')+" doesn't carry a skeleton — the rig will be discarded in these files.");
     }
-    if(fmts.includes('.obj')) notes.push('.obj sai zipado junto com o .mtl e as texturas.');
+    if(fmts.includes('.obj')) notes.push('.obj comes out zipped together with .mtl and the textures.');
     const box = $('#loss-note');
     if(notes.length){ $('#loss-text').textContent = notes.join(' '); box.hidden = false; }
     else box.hidden = true;
 
-    $('#stat-fmt').textContent = fmts.length ? (fmts.length>1 ? fmts.length+' formatos' : fmts[0]) : '—';
+    $('#stat-fmt').textContent = fmts.length ? (fmts.length>1 ? fmts.length+' formats' : fmts[0]) : '—';
   }
 
   // ----- poly slider -----
@@ -1049,7 +1049,7 @@
   updateSliderFill(polySlider);
   polySlider.addEventListener('input',()=>{
     updateSliderFill(polySlider);
-    const v = Number(polySlider.value).toLocaleString('pt-BR');
+    const v = Number(polySlider.value).toLocaleString('en-US');
     $('#poly-val').textContent = v;
     $('#stat-faces').textContent = v;
     syncSummary();
@@ -1067,32 +1067,32 @@
     const fmts = selectedFormats();
 
     $('#sum-engine').textContent = engine.dataset.engine;
-    $('#sum-topo').textContent = segVal('topologia');
-    $('#sum-poly').textContent = Number(polySlider.value).toLocaleString('pt-BR');
-    $('#sum-tex').textContent = texOn ? 'Sim · '+segVal('resolucao') : 'Não';
+    $('#sum-topo').textContent = segVal('topology');
+    $('#sum-poly').textContent = Number(polySlider.value).toLocaleString('en-US');
+    $('#sum-tex').textContent = texOn ? 'Yes · '+segVal('resolution') : 'No';
     $('#sum-pose').textContent = segVal('pose');
-    $('#sum-split').textContent = splitOn ? 'Sim' : 'Não';
-    $('#sum-enh').textContent = enhOn ? 'Sim' : 'Não';
-    $('#sum-lic').textContent = segVal('licenca');
+    $('#sum-split').textContent = splitOn ? 'Yes' : 'No';
+    $('#sum-enh').textContent = enhOn ? 'Yes' : 'No';
+    $('#sum-lic').textContent = segVal('license');
     $('#sum-fmt').textContent = fmts.length ? fmts.join(' ') : '—';
   }
 
   // ----- generate buttons (mockup only) -----
   $('#gen-single').addEventListener('click',function(){
-    this.classList.add('busy'); this.textContent='Gerando…';
+    this.classList.add('busy'); this.textContent='Generating…';
     setTimeout(()=>{
-      this.classList.remove('busy'); this.textContent='▶ Gerar modelo 3D';
-      toast('Mockup — a geração real usaria o motor e os formatos escolhidos ao lado.');
+      this.classList.remove('busy'); this.textContent='▶ Generate 3D model';
+      toast('Mockup — actual generation would use the engine and formats chosen on the side.');
     },1300);
   });
-  $('#gen-batch').addEventListener('click',()=>toast('Mockup — as 4 imagens entrariam na fila com as configurações herdadas da aba Imagem → 3D.'));
+  $('#gen-batch').addEventListener('click',()=>toast('Mockup — the 4 images would enter the queue with settings inherited from the Image → 3D tab.'));
 
   // ----- agent tool card -----
   function unlockChat(){
     $('#chat-field').classList.remove('locked');
     const ta = $('#chat-text');
     ta.disabled = false;
-    ta.placeholder = 'Escreva o que você quer gerar...';
+    ta.placeholder = 'Write what you want to generate...';
     $('#send-btn').classList.add('ready');
   }
   $('#approve-btn').addEventListener('click',()=>{
@@ -1100,38 +1100,38 @@
     $('#agent-stage').classList.add('has-result');
     $('#agent-result').classList.add('show');
     unlockChat();
-    toast('Mockup — aqui a geração começaria com os parâmetros do card.');
+    toast("Mockup — generation would start here with the card's parameters.");
   });
   $('#always-btn').addEventListener('click',()=>{
     $('#tool-card').classList.add('resolved');
-    $('#resolved-mark').textContent = '✓ Aprovado — próximas gerações não vão mais perguntar';
+    $('#resolved-mark').textContent = "✓ Approved — future generations won't ask again";
     $('#agent-stage').classList.add('has-result');
     $('#agent-result').classList.add('show');
     unlockChat();
   });
   $('#deny-btn').addEventListener('click',()=>{
     $('#tool-card').classList.add('resolved');
-    $('#resolved-mark').textContent = '✕ Negado — nada foi gerado';
+    $('#resolved-mark').textContent = '✕ Denied — nothing was generated';
     unlockChat();
   });
   $('#send-btn').addEventListener('click',()=>{
     const ta = $('#chat-text');
     if(ta.disabled) return;
-    if(ta.value.trim()){ toast('Mockup — o agente leria esse pedido e montaria um novo card de confirmação.'); ta.value=''; }
+    if(ta.value.trim()){ toast('Mockup — the agent would read this request and build a new confirmation card.'); ta.value=''; }
   });
 
   // ----- agent brain picker -----
   const BRAINS = {
-    'gemma3:4b':   {size:'3,3 GB', vision:true,  local:true, installed:true,  fits:'cabe em qualquer GPU'},
-    'qwen2.5:3b':  {size:'2,0 GB', vision:false, local:true, installed:true,  fits:'cabe em qualquer GPU'},
-    'qwen2.5:7b':  {size:'4,7 GB', vision:false, local:true, installed:false, fits:'8GB VRAM ou CPU'},
-    'llama3.1:8b': {size:'4,9 GB', vision:false, local:true, installed:false, fits:'8GB VRAM ou CPU'},
-    'mistral:7b':  {size:'4,4 GB', vision:false, local:true, installed:false, fits:'6GB VRAM ou CPU'},
-    'moondream':   {size:'1,7 GB', vision:true,  local:true, installed:false, fits:'cabe em qualquer GPU'},
-    'gemini':      {size:'sem download', vision:true,  local:false, installed:true, fits:'precisa de chave e internet'},
-    'groq':        {size:'sem download', vision:false, local:false, installed:true, fits:'precisa de chave e internet'},
-    'openrouter':  {size:'sem download', vision:false, local:false, installed:true, fits:'precisa de chave e internet'},
-    'keywords':    {size:'nada para baixar', vision:false, local:true, installed:true, fits:'interpreta por palavras-chave'}
+    'gemma3:4b':   {size:'3.3 GB', vision:true,  local:true, installed:true,  fits:'fits any GPU'},
+    'qwen2.5:3b':  {size:'2.0 GB', vision:false, local:true, installed:true,  fits:'fits any GPU'},
+    'qwen2.5:7b':  {size:'4.7 GB', vision:false, local:true, installed:false, fits:'8GB VRAM or CPU'},
+    'llama3.1:8b': {size:'4.9 GB', vision:false, local:true, installed:false, fits:'8GB VRAM or CPU'},
+    'mistral:7b':  {size:'4.4 GB', vision:false, local:true, installed:false, fits:'6GB VRAM or CPU'},
+    'moondream':   {size:'1.7 GB', vision:true,  local:true, installed:false, fits:'fits any GPU'},
+    'gemini':      {size:'no download', vision:true,  local:false, installed:true, fits:'needs a key and internet'},
+    'groq':        {size:'no download', vision:false, local:false, installed:true, fits:'needs a key and internet'},
+    'openrouter':  {size:'no download', vision:false, local:false, installed:true, fits:'needs a key and internet'},
+    'keywords':    {size:'nothing to download', vision:false, local:true, installed:true, fits:'interprets via keywords'}
   };
 
   function renderBrain(){
@@ -1139,9 +1139,9 @@
     const b = BRAINS[key];
     const info = $('#model-info');
     const chips = [`<span class="chip">${b.size}</span>`, `<span class="chip">${b.fits}</span>`];
-    if(b.vision) chips.push('<span class="chip vision">enxerga imagens</span>');
-    if(!b.local) chips.push('<span class="chip warn">nuvem</span>');
-    if(key==='keywords') chips.push('<span class="chip warn">modo básico</span>');
+    if(b.vision) chips.push('<span class="chip vision">sees images</span>');
+    if(!b.local) chips.push('<span class="chip warn">cloud</span>');
+    if(key==='keywords') chips.push('<span class="chip warn">basic mode</span>');
     info.innerHTML = chips.join('');
 
     const pull = $('#pull-cmd');
@@ -1149,7 +1149,7 @@
       $('#pull-text').textContent = 'ollama pull ' + key;
       pull.hidden = false;
     } else if(!b.local){
-      $('#pull-text').textContent = 'defina a chave em .env — nada roda na sua máquina';
+      $('#pull-text').textContent = 'set the key in .env — nothing runs on your machine';
       pull.hidden = false;
     } else {
       pull.hidden = true;
@@ -1158,9 +1158,9 @@
     $('#cpu-row').hidden = !b.local || key==='keywords';
   }
   $('#agent-model').addEventListener('change',renderBrain);
-  $('#pull-copy').addEventListener('click',()=>toast('Mockup — aqui o comando iria para a área de transferência.'));
+  $('#pull-copy').addEventListener('click',()=>toast('Mockup — the command would go to the clipboard here.'));
 
-  // ----- pose custom por texto -----
+  // ----- text-based custom pose -----
   $$('.pose-chip').forEach(chip=>{
     chip.addEventListener('click',()=>{
       const ta = $('#pose-prompt');
@@ -1168,19 +1168,19 @@
       ta.focus();
     });
   });
-  $('#pose-ref').addEventListener('click',()=>toast('Mockup — aqui você escolheria a foto e o MediaPipe copiaria os ângulos do corpo dela.'));
+  $('#pose-ref').addEventListener('click',()=>toast("Mockup — here you'd pick the photo and MediaPipe would copy the body angles from it."));
   $('#pose-engine').addEventListener('change',function(){
-    if(this.value!=='llm') toast('Mockup — o app baixaria esse modelo na primeira vez que você usasse.');
+    if(this.value!=='llm') toast('Mockup — the app would download this model the first time you used it.');
   });
 
-  // ----- biblioteca de modelos -----
+  // ----- model library -----
   let MODELS = [
-    {id:1, nome:'xicara_pires',      icon:'☕', motor:'Stable Fast 3D', faces:'4.000',  fmts:['.glb','.fbx'],  mb:12.4, data:'hoje 14:30',  partes:2, pasta:'2026-09-05_143012_xicara_pires'},
-    {id:2, nome:'banqueta_madeira',  icon:'🪑', motor:'InstantMesh',    faces:'12.000', fmts:['.glb','.usdz'], mb:38.1, data:'hoje 11:05',  partes:0, pasta:'2026-09-05_110522_banqueta_madeira'},
-    {id:3, nome:'mascote_estudio',   icon:'🧸', motor:'TripoSR',        faces:'6.500',  fmts:['.glb','.fbx','.vrm'], mb:24.7, data:'ontem 19:42', partes:0, pasta:'2026-09-04_194208_mascote_estudio'},
-    {id:4, nome:'vaso_ceramica',     icon:'🏺', motor:'Stable Fast 3D', faces:'4.000',  fmts:['.glb'],         mb:9.8,  data:'ontem 16:18', partes:0, pasta:'2026-09-04_161803_vaso_ceramica'},
-    {id:5, nome:'caneca_logo',       icon:'🍵', motor:'Stable Fast 3D', faces:'8.000',  fmts:['.glb','.stl'],  mb:15.2, data:'3 set 09:11', partes:0, pasta:'2026-09-03_091140_caneca_logo'},
-    {id:6, nome:'luminaria_mesa',    icon:'💡', motor:'InstantMesh',    faces:'15.000', fmts:['.glb','.fbx','.usdz'], mb:41.6, data:'2 set 21:07', partes:3, pasta:'2026-09-02_210733_luminaria_mesa'}
+    {id:1, name:'cup_and_saucer',   icon:'☕', engine:'Stable Fast 3D', faces:'4,000',  fmts:['.glb','.fbx'],  mb:12.4, date:'today 14:30',    parts:2, folder:'2026-09-05_143012_cup_and_saucer'},
+    {id:2, name:'wooden_stool',     icon:'🪑', engine:'InstantMesh',    faces:'12,000', fmts:['.glb','.usdz'], mb:38.1, date:'today 11:05',    parts:0, folder:'2026-09-05_110522_wooden_stool'},
+    {id:3, name:'studio_mascot',    icon:'🧸', engine:'TripoSR',        faces:'6,500',  fmts:['.glb','.fbx','.vrm'], mb:24.7, date:'yesterday 19:42', parts:0, folder:'2026-09-04_194208_studio_mascot'},
+    {id:4, name:'ceramic_vase',     icon:'🏺', engine:'Stable Fast 3D', faces:'4,000',  fmts:['.glb'],         mb:9.8,  date:'yesterday 16:18', parts:0, folder:'2026-09-04_161803_ceramic_vase'},
+    {id:5, name:'logo_mug',         icon:'🍵', engine:'Stable Fast 3D', faces:'8,000',  fmts:['.glb','.stl'],  mb:15.2, date:'Sep 3 09:11',    parts:0, folder:'2026-09-03_091140_logo_mug'},
+    {id:6, name:'table_lamp',       icon:'💡', engine:'InstantMesh',    faces:'15,000', fmts:['.glb','.fbx','.usdz'], mb:41.6, date:'Sep 2 21:07', parts:3, folder:'2026-09-02_210733_table_lamp'}
   ];
   const selected = new Set();
   let pendingDelete = null;
@@ -1190,8 +1190,8 @@
     const fe = $('#filter-engine').value;
     const ff = $('#filter-fmt').value;
     const list = MODELS.filter(m =>
-      (!q || m.nome.toLowerCase().includes(q)) &&
-      (!fe || m.motor===fe) &&
+      (!q || m.name.toLowerCase().includes(q)) &&
+      (!fe || m.engine===fe) &&
       (!ff || m.fmts.includes(ff))
     );
 
@@ -1199,27 +1199,27 @@
       <div class="lib-card ${selected.has(m.id)?'selected':''}" data-id="${m.id}">
         <div class="lib-thumb">
           <span class="lib-check ${selected.has(m.id)?'on':''}" data-check="${m.id}">${selected.has(m.id)?'✓':''}</span>
-          ${m.partes>1?`<span class="lib-badge-parts">${m.partes} partes</span>`:''}
+          ${m.parts>1?`<span class="lib-badge-parts">${m.parts} parts</span>`:''}
           ${m.icon}
         </div>
         <div class="lib-body">
-          <b>${m.nome}</b>
-          <span class="lib-meta">${m.motor} · ${m.faces} faces</span>
+          <b>${m.name}</b>
+          <span class="lib-meta">${m.engine} · ${m.faces} faces</span>
           <div class="lib-chips">${m.fmts.map(f=>`<span>${f}</span>`).join('')}</div>
         </div>
-        <div class="lib-foot"><span>${m.data}</span><span>${m.mb.toLocaleString('pt-BR')} MB</span></div>
+        <div class="lib-foot"><span>${m.date}</span><span>${m.mb.toLocaleString('en-US')} MB</span></div>
         <div class="lib-actions">
-          <button data-act="ver" data-id="${m.id}">Ver</button>
-          <button data-act="baixar" data-id="${m.id}">Baixar</button>
-          <button data-act="pasta" data-id="${m.id}">Pasta</button>
-          <button class="danger" data-act="apagar" data-id="${m.id}">Apagar</button>
+          <button data-act="view" data-id="${m.id}">View</button>
+          <button data-act="download" data-id="${m.id}">Download</button>
+          <button data-act="folder" data-id="${m.id}">Folder</button>
+          <button class="danger" data-act="delete" data-id="${m.id}">Delete</button>
         </div>
       </div>`).join('')
-      : `<p style="color:var(--text-faint);grid-column:1/-1;padding:30px 0;text-align:center;">Nenhum modelo com esses filtros.</p>`;
+      : `<p style="color:var(--text-faint);grid-column:1/-1;padding:30px 0;text-align:center;">No models match these filters.</p>`;
 
     const total = MODELS.reduce((s,m)=>s+m.mb,0);
-    $('#disk-count').textContent = MODELS.length+(MODELS.length===1?' modelo':' modelos');
-    $('#disk-size').textContent = total.toFixed(1).replace('.',',')+' MB';
+    $('#disk-count').textContent = MODELS.length+(MODELS.length===1?' model':' models');
+    $('#disk-size').textContent = total.toFixed(1)+' MB';
     renderBulk();
   }
 
@@ -1229,7 +1229,7 @@
     if(selected.size){
       const size = MODELS.filter(m=>selected.has(m.id)).reduce((s,m)=>s+m.mb,0);
       $('#sel-count').textContent = selected.size;
-      $('#sel-size').textContent = size.toFixed(1).replace('.',',')+' MB';
+      $('#sel-size').textContent = size.toFixed(1)+' MB';
     }
   }
 
@@ -1244,10 +1244,10 @@
     const btn = e.target.closest('[data-act]');
     if(!btn) return;
     const m = MODELS.find(x=>x.id===Number(btn.dataset.id));
-    if(btn.dataset.act==='apagar') openDelete([m]);
-    else if(btn.dataset.act==='ver'){ goTab('single'); toast('Mockup — abriria '+m.nome+' no visualizador 3D.'); }
-    else if(btn.dataset.act==='pasta') toast('Mockup — abriria outputs/'+m.pasta+' no explorador de arquivos.');
-    else toast('Mockup — baixaria '+m.fmts.join(', ')+' de '+m.nome+'.');
+    if(btn.dataset.act==='delete') openDelete([m]);
+    else if(btn.dataset.act==='view'){ goTab('single'); toast('Mockup — would open '+m.name+' in the 3D viewer.'); }
+    else if(btn.dataset.act==='folder') toast('Mockup — would open outputs/'+m.folder+' in the file explorer.');
+    else toast('Mockup — would download '+m.fmts.join(', ')+' from '+m.name+'.');
   });
 
   $('#lib-search').addEventListener('input',renderLib);
@@ -1258,10 +1258,10 @@
 
   function openDelete(items){
     pendingDelete = items;
-    const size = items.reduce((s,m)=>s+m.mb,0).toFixed(1).replace('.',',');
-    $('#modal-title').textContent = items.length===1 ? 'Apagar este modelo?' : `Apagar ${items.length} modelos?`;
-    $('#modal-text').textContent = `A pasta inteira será removida — malha, texturas, imagem de origem e configurações. Libera ${size} MB.`;
-    $('#modal-path').innerHTML = items.map(m=>'outputs/'+m.pasta+'/').join('<br>');
+    const size = items.reduce((s,m)=>s+m.mb,0).toFixed(1);
+    $('#modal-title').textContent = items.length===1 ? 'Delete this model?' : `Delete ${items.length} models?`;
+    $('#modal-text').textContent = `The whole folder will be removed — mesh, textures, source image and settings. Frees up ${size} MB.`;
+    $('#modal-path').innerHTML = items.map(m=>'outputs/'+m.folder+'/').join('<br>');
     $('#modal-back').classList.add('show');
   }
   function closeDelete(){ $('#modal-back').classList.remove('show'); pendingDelete=null; }
@@ -1269,7 +1269,7 @@
   $('#trash-check').addEventListener('click',function(){
     this.classList.toggle('checked');
     this.textContent = this.classList.contains('checked') ? '✓' : '';
-    $('#modal-confirm').textContent = this.classList.contains('checked') ? 'Apagar' : 'Apagar de vez';
+    $('#modal-confirm').textContent = this.classList.contains('checked') ? 'Delete' : 'Delete permanently';
   });
   $('#modal-cancel').addEventListener('click',closeDelete);
   $('#modal-back').addEventListener('click',e=>{ if(e.target===$('#modal-back')) closeDelete(); });
@@ -1282,8 +1282,8 @@
     ids.forEach(id=>selected.delete(id));
     closeDelete();
     renderLib();
-    toast(trash ? 'Mockup — as pastas iriam para a lixeira do sistema (recuperável).'
-                : 'Mockup — as pastas seriam apagadas definitivamente.');
+    toast(trash ? 'Mockup — the folders would go to the system trash (recoverable).'
+                : 'Mockup — the folders would be permanently deleted.');
   });
 
   renderLib();

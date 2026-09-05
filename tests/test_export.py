@@ -7,63 +7,63 @@ from espresso3d.pipeline import export
 
 
 @pytest.fixture
-def malha():
+def mesh():
     return trimesh.creation.icosphere(subdivisions=2)
 
 
-def test_exporta_glb(malha, tmp_path):
-    gerados = export.exportar(malha, tmp_path, ["glb"], nome="teste")
-    assert len(gerados) == 1
-    assert gerados[0].name == "teste.glb"
-    assert gerados[0].stat().st_size > 0
+def test_exports_glb(mesh, tmp_path):
+    generated = export.export(mesh, tmp_path, ["glb"], name="test")
+    assert len(generated) == 1
+    assert generated[0].name == "test.glb"
+    assert generated[0].stat().st_size > 0
 
 
-def test_exporta_varios_formatos_leves(malha, tmp_path):
-    gerados = export.exportar(malha, tmp_path, ["glb", "stl", "ply"], nome="m")
-    nomes = sorted(p.name for p in gerados)
-    assert nomes == ["m.glb", "m.ply", "m.stl"]
-    assert all(p.stat().st_size > 0 for p in gerados)
+def test_exports_several_light_formats(mesh, tmp_path):
+    generated = export.export(mesh, tmp_path, ["glb", "stl", "ply"], name="m")
+    names = sorted(p.name for p in generated)
+    assert names == ["m.glb", "m.ply", "m.stl"]
+    assert all(p.stat().st_size > 0 for p in generated)
 
 
-def test_obj_sai_zipado_com_o_mtl(malha, tmp_path):
-    gerados = export.exportar(malha, tmp_path, ["obj"], nome="m")
-    assert gerados[0].suffix == ".zip"
+def test_obj_comes_out_zipped_with_the_mtl(mesh, tmp_path):
+    generated = export.export(mesh, tmp_path, ["obj"], name="m")
+    assert generated[0].suffix == ".zip"
 
-    with zipfile.ZipFile(gerados[0]) as z:
+    with zipfile.ZipFile(generated[0]) as z:
         assert any(n.endswith(".obj") for n in z.namelist())
 
 
-def test_glb_reimportavel(malha, tmp_path):
-    caminho = export.exportar(malha, tmp_path, ["glb"], nome="m")[0]
-    cena = trimesh.load(caminho)
-    faces = sum(len(g.faces) for g in cena.geometry.values())
-    assert faces == len(malha.faces)
+def test_glb_is_reimportable(mesh, tmp_path):
+    path = export.export(mesh, tmp_path, ["glb"], name="m")[0]
+    scene = trimesh.load(path)
+    faces = sum(len(g.faces) for g in scene.geometry.values())
+    assert faces == len(mesh.faces)
 
 
-def test_formato_desconhecido(malha, tmp_path):
-    with pytest.raises(ValueError, match="desconhecido"):
-        export.exportar(malha, tmp_path, ["xyz"], nome="m")
+def test_unknown_format(mesh, tmp_path):
+    with pytest.raises(ValueError, match="Unknown"):
+        export.export(mesh, tmp_path, ["xyz"], name="m")
 
 
-def test_cria_a_pasta_de_destino(malha, tmp_path):
-    destino = tmp_path / "nova" / "pasta"
-    export.exportar(malha, destino, ["glb"], nome="m")
-    assert destino.exists()
+def test_creates_the_destination_folder(mesh, tmp_path):
+    destination = tmp_path / "new" / "folder"
+    export.export(mesh, destination, ["glb"], name="m")
+    assert destination.exists()
 
 
-def test_erro_de_blender_explica_o_que_fazer(malha, tmp_path, monkeypatch):
-    monkeypatch.setattr(export, "achar_blender", lambda: None)
+def test_blender_error_explains_what_to_do(mesh, tmp_path, monkeypatch):
+    monkeypatch.setattr(export, "find_blender", lambda: None)
 
-    with pytest.raises(export.BlenderNaoEncontrado) as exc:
-        export.exportar(malha, tmp_path, ["fbx"], nome="m")
+    with pytest.raises(export.BlenderNotFound) as exc:
+        export.export(mesh, tmp_path, ["fbx"], name="m")
 
-    mensagem = str(exc.value)
-    assert "blender.org" in mensagem
-    assert ".fbx" in mensagem
-    assert ".glb" in mensagem  # diz quais formatos funcionam sem ele
+    message = str(exc.value)
+    assert "blender.org" in message
+    assert ".fbx" in message
+    assert ".glb" in message  # says which formats work without it
 
 
-def test_formatos_leves_saem_mesmo_sem_blender(malha, tmp_path, monkeypatch):
-    monkeypatch.setattr(export, "achar_blender", lambda: None)
-    gerados = export.exportar(malha, tmp_path, ["glb"], nome="m")
-    assert gerados[0].exists()
+def test_light_formats_work_even_without_blender(mesh, tmp_path, monkeypatch):
+    monkeypatch.setattr(export, "find_blender", lambda: None)
+    generated = export.export(mesh, tmp_path, ["glb"], name="m")
+    assert generated[0].exists()

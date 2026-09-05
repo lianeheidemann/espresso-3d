@@ -1,10 +1,10 @@
-"""Orquestrador: liga os estágios conforme a configuração escolhida.
+"""Orchestrator: chains the stages according to the chosen configuration.
 
-    imagem → melhoria → segmentação → geração 3D → malha → rig → exportação
+    image → enhancement → segmentation → 3D generation → mesh → rig → export
 
-Cada estágio é opcional e falha de forma isolada: se o rig não estiver
-disponível, o modelo ainda é gerado e exportado, com o aviso registrado
-no resultado.
+Each stage is optional and fails in isolation: if rigging isn't
+available, the model is still generated and exported, with the warning
+recorded in the result.
 """
 
 from __future__ import annotations
@@ -16,147 +16,147 @@ from datetime import datetime
 from pathlib import Path
 
 from ..config import PipelineConfig, Pose
-from ..engines import obter as obter_motor
+from ..engines import get as get_engine
 from . import enhance, export, mesh_post, rigging, segment
 
 log = logging.getLogger(__name__)
 
-RAIZ_SAIDA = Path("outputs")
+OUTPUT_ROOT = Path("outputs")
 
 
 @dataclass
-class Resultado:
-    """O que uma geração produziu — inclusive o que deu errado no caminho."""
+class Result:
+    """What a generation produced — including whatever went wrong along the way."""
 
-    pasta: Path
-    arquivos: list[Path] = field(default_factory=list)
-    partes: int = 1
-    estatisticas: dict = field(default_factory=dict)
-    avisos: list[str] = field(default_factory=list)
-    duracao_s: float = 0.0
+    folder: Path
+    files: list[Path] = field(default_factory=list)
+    parts: int = 1
+    stats: dict = field(default_factory=dict)
+    warnings: list[str] = field(default_factory=list)
+    duration_s: float = 0.0
 
     @property
     def preview(self) -> Path | None:
-        """O .glb serve de preview no visualizador da interface."""
-        for arquivo in self.arquivos:
-            if arquivo.suffix == ".glb":
-                return arquivo
+        """The .glb is used as a preview in the UI's viewer."""
+        for file in self.files:
+            if file.suffix == ".glb":
+                return file
         return None
 
 
-def gerar(
-    imagem,
+def generate(
+    image,
     cfg: PipelineConfig,
-    nome: str = "modelo",
-    raiz: Path = RAIZ_SAIDA,
-    progresso=None,
+    name: str = "model",
+    root: Path = OUTPUT_ROOT,
+    progress=None,
     backend_llm=None,
-) -> Resultado:
-    """Roda o pipeline inteiro para uma imagem."""
-    cfg.validar()
-    inicio = time.monotonic()
-    avisos: list[str] = []
+) -> Result:
+    """Runs the whole pipeline for one image."""
+    cfg.validate()
+    start = time.monotonic()
+    warnings: list[str] = []
 
-    def aviso(passo: str, fracao: float) -> None:
-        if progresso is not None:
-            progresso(fracao, desc=passo)
+    def notify(step: str, fraction: float) -> None:
+        if progress is not None:
+            progress(fraction, desc=step)
 
-    pasta = _criar_pasta(raiz, nome)
-    imagem.save(pasta / "source.png")
+    folder = _create_folder(root, name)
+    image.save(folder / "source.png")
 
-    if cfg.melhorar_imagem:
-        aviso("Melhorando a imagem", 0.1)
-        imagem = enhance.melhorar(imagem)
+    if cfg.enhance_image:
+        notify("Enhancing the image", 0.1)
+        image = enhance.enhance(image)
 
-    aviso("Separando as partes" if cfg.dividir_partes else "Preparando", 0.2)
-    recortes = segment.separar_objetos(imagem) if cfg.dividir_partes else [imagem]
+    notify("Splitting the parts" if cfg.split_parts else "Preparing", 0.2)
+    crops = segment.separate_objects(image) if cfg.split_parts else [image]
 
-    motor = obter_motor(cfg.engine)
-    malhas = []
-    for i, recorte in enumerate(recortes, start=1):
-        aviso(f"Gerando 3D ({i}/{len(recortes)})", 0.2 + 0.5 * i / len(recortes))
-        malha = motor.gerar(recorte, cfg)
-        malha = mesh_post.ajustar_poly_count(malha, cfg.poly_count_alvo, cfg.topologia)
-        malhas.append(malha)
+    engine = get_engine(cfg.engine)
+    meshes = []
+    for i, crop in enumerate(crops, start=1):
+        notify(f"Generating 3D ({i}/{len(crops)})", 0.2 + 0.5 * i / len(crops))
+        mesh = engine.generate(crop, cfg)
+        mesh = mesh_post.adjust_poly_count(mesh, cfg.poly_count_target, cfg.topology)
+        meshes.append(mesh)
 
-    if cfg.pose is not Pose.NENHUM:
-        aviso("Aplicando esqueleto e pose", 0.8)
+    if cfg.pose is not Pose.NONE:
+        notify("Applying skeleton and pose", 0.8)
         try:
-            malhas = [rigging.aplicar_rig(m, cfg, backend_llm)[0] for m in malhas]
-        except rigging.RigIndisponivel as exc:
-            avisos.append(f"Sem rig: {exc}")
+            meshes = [rigging.apply_rig(m, cfg, backend_llm)[0] for m in meshes]
+        except rigging.RigUnavailable as exc:
+            warnings.append(f"No rig: {exc}")
 
-    aviso("Exportando", 0.9)
-    arquivos: list[Path] = []
-    for i, malha in enumerate(malhas, start=1):
-        sufixo = nome if len(malhas) == 1 else f"{nome}_parte{i}"
+    notify("Exporting", 0.9)
+    files: list[Path] = []
+    for i, mesh in enumerate(meshes, start=1):
+        suffix = name if len(meshes) == 1 else f"{name}_part{i}"
         try:
-            arquivos += export.exportar(malha, pasta, cfg.formatos, sufixo)
-        except export.BlenderNaoEncontrado as exc:
-            avisos.append(str(exc))
-            somente_leves = [
-                f for f in cfg.formatos if f not in cfg.precisa_blender
+            files += export.export(mesh, folder, cfg.formats, suffix)
+        except export.BlenderNotFound as exc:
+            warnings.append(str(exc))
+            light_only = [
+                f for f in cfg.formats if f not in cfg.needs_blender
             ] or ["glb"]
-            arquivos += export.exportar(malha, pasta, somente_leves, sufixo)
+            files += export.export(mesh, folder, light_only, suffix)
 
-    avisos += cfg.avisos()
-    resultado = Resultado(
-        pasta=pasta,
-        arquivos=arquivos,
-        partes=len(malhas),
-        estatisticas=mesh_post.estatisticas(malhas[0]) if malhas else {},
-        avisos=avisos,
-        duracao_s=round(time.monotonic() - inicio, 1),
+    warnings += cfg.warnings()
+    result = Result(
+        folder=folder,
+        files=files,
+        parts=len(meshes),
+        stats=mesh_post.stats(meshes[0]) if meshes else {},
+        warnings=warnings,
+        duration_s=round(time.monotonic() - start, 1),
     )
 
-    from ..library.store import registrar
+    from ..library.store import register
 
-    registrar(resultado, cfg, nome)
-    return resultado
+    register(result, cfg, name)
+    return result
 
 
-def gerar_lote(
-    imagens: list,
+def generate_batch(
+    images: list,
     cfg: PipelineConfig,
-    nomes: list[str] | None = None,
-    raiz: Path = RAIZ_SAIDA,
-    progresso=None,
+    names: list[str] | None = None,
+    root: Path = OUTPUT_ROOT,
+    progress=None,
     backend_llm=None,
-) -> list[Resultado]:
-    """Roda o pipeline para várias imagens, uma de cada vez.
+) -> list[Result]:
+    """Runs the pipeline for several images, one at a time.
 
-    Sequencial de propósito: com 4-8GB de VRAM, duas gerações em paralelo
-    estouram a memória da GPU e as duas falham.
+    Sequential on purpose: with 4-8GB of VRAM, two generations in
+    parallel blow up the GPU memory and both fail.
 
-    Todas usam a MESMA configuração da aba "Imagem → 3D" — o lote não tem
-    painel próprio.
+    All of them use the SAME configuration from the "Image → 3D" tab —
+    the batch tab has no panel of its own.
     """
-    nomes = nomes or [f"modelo_{i + 1}" for i in range(len(imagens))]
-    resultados: list[Resultado] = []
+    names = names or [f"model_{i + 1}" for i in range(len(images))]
+    results: list[Result] = []
 
-    for i, (imagem, nome) in enumerate(zip(imagens, nomes), start=1):
-        if progresso is not None:
-            progresso((i - 1) / len(imagens), desc=f"Imagem {i} de {len(imagens)}")
+    for i, (image, name) in enumerate(zip(images, names), start=1):
+        if progress is not None:
+            progress((i - 1) / len(images), desc=f"Image {i} of {len(images)}")
         try:
-            resultados.append(
-                gerar(imagem, cfg, nome=nome, raiz=raiz, backend_llm=backend_llm)
+            results.append(
+                generate(image, cfg, name=name, root=root, backend_llm=backend_llm)
             )
         except Exception as exc:
-            log.exception("Falha na imagem %s do lote", i)
-            resultados.append(
-                Resultado(pasta=raiz / nome, avisos=[f"Falhou: {exc}"])
+            log.exception("Failed on image %s of the batch", i)
+            results.append(
+                Result(folder=root / name, warnings=[f"Failed: {exc}"])
             )
 
-    return resultados
+    return results
 
 
-def _criar_pasta(raiz: Path, nome: str) -> Path:
-    carimbo = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-    pasta = Path(raiz) / f"{carimbo}_{_limpar_nome(nome)}"
-    pasta.mkdir(parents=True, exist_ok=True)
-    return pasta
+def _create_folder(root: Path, name: str) -> Path:
+    stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    folder = Path(root) / f"{stamp}_{_clean_name(name)}"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
 
 
-def _limpar_nome(nome: str) -> str:
-    seguro = "".join(c if c.isalnum() or c in "-_" else "_" for c in nome.strip())
-    return (seguro.strip("_") or "modelo")[:60]
+def _clean_name(name: str) -> str:
+    safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in name.strip())
+    return (safe.strip("_") or "model")[:60]

@@ -1,8 +1,9 @@
-"""Aba "Agente": descreve o que quer em português, confirma, gera.
+""""Agent" tab: describe what you want, confirm, generate.
 
-O agente nunca dispara a geração sozinho. Ele monta a configuração,
-mostra o card de confirmação, e só roda depois do "Aprovar" — evita
-gastar minutos de GPU numa interpretação errada.
+The agent never triggers generation on its own. It builds the
+configuration, shows the confirmation card, and only runs after
+"Approve" — this avoids burning minutes of GPU time on a wrong
+interpretation.
 """
 
 from __future__ import annotations
@@ -11,156 +12,155 @@ import gradio as gr
 
 from ..agent import backends, parser
 from ..config import PipelineConfig
-from ..hardware import ollama_modelos
-from ..pipeline import gerar
+from ..hardware import ollama_models
+from ..pipeline import generate
 
 
-def _opcoes_cerebro() -> list[tuple[str, str]]:
-    instalados = ollama_modelos() or []
-    nomes_base = {m.split(":")[0] for m in instalados}
-    opcoes = []
-    for cerebro in backends.CEREBROS.values():
-        info = cerebro.info
-        if info.id == "palavras_chave":
-            rotulo = f"{info.nome} — sem download"
+def _brain_options() -> list[tuple[str, str]]:
+    installed = ollama_models() or []
+    base_names = {m.split(":")[0] for m in installed}
+    options = []
+    for brain in backends.BRAINS.values():
+        info = brain.info
+        if info.id == "keywords":
+            label = f"{info.name} — no download"
         elif info.local:
-            marca = (
-                "instalado" if info.id.split(":")[0] in nomes_base
-                else f"baixar · {info.tamanho}"
+            mark = (
+                "installed" if info.id.split(":")[0] in base_names
+                else f"download · {info.size}"
             )
-            visao = " · enxerga imagens" if info.visao else ""
-            rotulo = f"{info.nome} ({marca}{visao})"
+            vision = " · sees images" if info.vision else ""
+            label = f"{info.name} ({mark}{vision})"
         else:
-            rotulo = f"{info.nome} — precisa de chave de API"
-        opcoes.append((rotulo, info.id))
-    return opcoes
+            label = f"{info.name} — needs an API key"
+        options.append((label, info.id))
+    return options
 
 
-def construir():
-    with gr.Tab("Agente"):
-        pendente = gr.State(None)
+def build():
+    with gr.Tab("Agent"):
+        pending = gr.State(None)
 
         with gr.Row():
             with gr.Column(scale=1, min_width=340):
-                cerebro = gr.Dropdown(
-                    choices=_opcoes_cerebro(),
-                    value=backends.padrao().info.id,
-                    label="Cérebro",
+                brain = gr.Dropdown(
+                    choices=_brain_options(),
+                    value=backends.default().info.id,
+                    label="Brain",
                 )
-                info_cerebro = gr.Markdown()
-                na_cpu = gr.Checkbox(
+                brain_info = gr.Markdown()
+                on_cpu = gr.Checkbox(
                     value=True,
-                    label="Rodar na CPU (deixa a VRAM livre para o gerador 3D)",
+                    label="Run on CPU (leaves VRAM free for the 3D generator)",
                 )
-                conversa = gr.Chatbot(label="Conversa", height=300)
-                imagem = gr.Image(label="Imagem", type="pil", height=170)
-                pedido = gr.Textbox(
-                    label="O que você quer gerar?",
-                    placeholder="ex: gera essa xícara separada do pires, alta qualidade, em fbx",
+                conversation = gr.Chatbot(label="Conversation", height=300)
+                image = gr.Image(label="Image", type="pil", height=170)
+                request = gr.Textbox(
+                    label="What do you want to generate?",
+                    placeholder="e.g.: generate this cup separated from the saucer, high quality, in fbx",
                     lines=2,
                 )
-                enviar = gr.Button("Enviar", variant="primary")
+                send = gr.Button("Send", variant="primary")
 
                 with gr.Group(visible=False) as card:
-                    gr.Markdown("### Confirmar geração")
-                    resumo = gr.HTML(elem_classes="e3d-herdado")
+                    gr.Markdown("### Confirm generation")
+                    summary = gr.HTML(elem_classes="e3d-inherited")
                     with gr.Row():
-                        negar = gr.Button("Negar")
-                        aprovar = gr.Button("Aprovar", variant="primary")
+                        deny = gr.Button("Deny")
+                        approve = gr.Button("Approve", variant="primary")
 
             with gr.Column(scale=2, min_width=380):
-                palco = gr.Model3D(label="Resultado", height=460)
-                saida = gr.Markdown("Descreva sua ideia no chat. "
-                                    "Sua criação em 3D aparecerá aqui.")
-                arquivos = gr.File(label="Arquivos gerados", file_count="multiple")
+                stage = gr.Model3D(label="Result", height=460)
+                output = gr.Markdown("Describe your idea in the chat. "
+                                    "Your 3D creation will show up here.")
+                files = gr.File(label="Generated files", file_count="multiple")
 
-    def _descrever(id_cerebro: str) -> str:
-        info = backends.obter(id_cerebro).info
-        disponivel = backends.obter(id_cerebro).disponivel()
-        partes = [info.tamanho, info.onde_cabe]
-        if info.visao:
-            partes.append("enxerga imagens")
-        texto = " · ".join(partes)
-        if not disponivel and info.instalar:
-            texto += f"\n\nPara usar: `{info.instalar}`"
-        return texto
+    def _describe(brain_id: str) -> str:
+        info = backends.get(brain_id).info
+        available = backends.get(brain_id).available()
+        parts = [info.size, info.fits]
+        if info.vision:
+            parts.append("sees images")
+        text = " · ".join(parts)
+        if not available and info.install:
+            text += f"\n\nTo use it: `{info.install}`"
+        return text
 
-    cerebro.change(_descrever, [cerebro], [info_cerebro])
+    brain.change(_describe, [brain], [brain_info])
 
-    def _interpretar(texto, id_cerebro, historico):
-        historico = list(historico or [])
-        if not texto.strip():
-            raise gr.Error("Escreva o que você quer gerar.")
+    def _interpret(text, brain_id, history):
+        history = list(history or [])
+        if not text.strip():
+            raise gr.Error("Write what you want to generate.")
 
-        historico.append({"role": "user", "content": texto})
-        motor = backends.obter(id_cerebro)
+        history.append({"role": "user", "content": text})
 
-        if id_cerebro == "palavras_chave":
-            cfg = parser.por_palavras_chave(texto)
-            nota = "Modo básico (sem LLM): interpretei por palavras-chave."
+        if brain_id == "keywords":
+            cfg = parser.by_keywords(text)
+            note = "Basic mode (no LLM): interpreted by keywords."
         else:
-            cfg = parser.do_llm(texto, motor)
-            nota = "Entendi assim — confira antes de aprovar:"
+            cfg = parser.do_llm(text, backends.get(brain_id))
+            note = "Here's what I understood — check it before approving:"
 
-        historico.append({"role": "assistant", "content": nota})
-        return historico, cfg.como_dict(), gr.update(visible=True), _card(cfg), ""
+        history.append({"role": "assistant", "content": note})
+        return history, cfg.to_dict(), gr.update(visible=True), _card(cfg), ""
 
-    enviar.click(
-        _interpretar,
-        [pedido, cerebro, conversa],
-        [conversa, pendente, card, resumo, pedido],
+    send.click(
+        _interpret,
+        [request, brain, conversation],
+        [conversation, pending, card, summary, request],
     )
 
-    def _negar(historico):
-        historico = list(historico or [])
-        historico.append({"role": "assistant", "content": "Ok, não gerei nada."})
-        return historico, gr.update(visible=False), None
+    def _deny(history):
+        history = list(history or [])
+        history.append({"role": "assistant", "content": "Ok, I didn't generate anything."})
+        return history, gr.update(visible=False), None
 
-    negar.click(_negar, [conversa], [conversa, card, pendente])
+    deny.click(_deny, [conversation], [conversation, card, pending])
 
-    def _aprovar(imagem_pil, cfg_dict, historico, progresso=gr.Progress()):
-        if imagem_pil is None:
-            raise gr.Error("Envie a imagem que deve virar 3D.")
+    def _approve(image_pil, cfg_dict, history, progress=gr.Progress()):
+        if image_pil is None:
+            raise gr.Error("Upload the image that should become 3D.")
         if not cfg_dict:
-            raise gr.Error("Nada para gerar — descreva o pedido primeiro.")
+            raise gr.Error("Nothing to generate — describe the request first.")
 
-        cfg = PipelineConfig.de_dict(cfg_dict)
-        resultado = gerar(imagem_pil, cfg, nome="agente", progresso=progresso)
+        cfg = PipelineConfig.from_dict(cfg_dict)
+        result = generate(image_pil, cfg, name="agent", progress=progress)
 
-        historico = list(historico or [])
-        historico.append(
+        history = list(history or [])
+        history.append(
             {
                 "role": "assistant",
                 "content": (
-                    f"Pronto — {resultado.partes} objeto(s), "
-                    f"{len(resultado.arquivos)} arquivo(s), {resultado.duracao_s}s."
+                    f"Done — {result.parts} object(s), "
+                    f"{len(result.files)} file(s), {result.duration_s}s."
                 ),
             }
         )
-        detalhes = f"Salvo em `{resultado.pasta}`"
-        if resultado.avisos:
-            detalhes += "\n\n" + "\n\n".join(f"⚠️ {a}" for a in resultado.avisos)
+        details = f"Saved to `{result.folder}`"
+        if result.warnings:
+            details += "\n\n" + "\n\n".join(f"⚠️ {a}" for a in result.warnings)
 
         return (
-            historico,
+            history,
             gr.update(visible=False),
-            str(resultado.preview) if resultado.preview else None,
-            detalhes,
-            [str(a) for a in resultado.arquivos],
+            str(result.preview) if result.preview else None,
+            details,
+            [str(a) for a in result.files],
         )
 
-    aprovar.click(
-        _aprovar,
-        [imagem, pendente, conversa],
-        [conversa, card, palco, saida, arquivos],
+    approve.click(
+        _approve,
+        [image, pending, conversation],
+        [conversation, card, stage, output, files],
     )
 
-    return {"palco": palco}
+    return {"stage": stage}
 
 
 def _card(cfg: PipelineConfig) -> str:
-    linhas = "".join(
-        f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in parser.resumo(cfg).items()
+    lines = "".join(
+        f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in parser.summary(cfg).items()
     )
-    avisos = "".join(f"<p>⚠️ {a}</p>" for a in cfg.avisos())
-    return f"<table>{linhas}</table>{avisos}"
+    warnings = "".join(f"<p>⚠️ {a}</p>" for a in cfg.warnings())
+    return f"<table>{lines}</table>{warnings}"

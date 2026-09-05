@@ -1,116 +1,116 @@
 from espresso3d.agent import parser
-from espresso3d.config import Licenca, PipelineConfig, Pose, ResolucaoTextura
+from espresso3d.config import License, PipelineConfig, Pose, TextureResolution
 
 
-class CerebroFalso:
-    """Devolve uma resposta fixa, para testar sem LLM nenhum."""
+class FakeBrain:
+    """Returns a fixed response, to test with no LLM at all."""
 
-    def __init__(self, resposta):
-        self.resposta = resposta
+    def __init__(self, response):
+        self.response = response
 
-    def completar(self, prompt):
-        return self.resposta
-
-
-def test_palavras_chave_detecta_divisao():
-    cfg = parser.por_palavras_chave("gera a xícara separada do pires")
-    assert cfg.dividir_partes is True
+    def complete(self, prompt):
+        return self.response
 
 
-def test_palavras_chave_alta_qualidade():
-    cfg = parser.por_palavras_chave("quero em alta qualidade")
+def test_keywords_detects_split():
+    cfg = parser.by_keywords("generate the cup separated from the saucer")
+    assert cfg.split_parts is True
+
+
+def test_keywords_high_quality():
+    cfg = parser.by_keywords("I want it in high quality")
     assert cfg.engine == "instant_mesh"
-    assert cfg.resolucao_textura is ResolucaoTextura.ULTRA_2K
+    assert cfg.texture_resolution is TextureResolution.ULTRA_2K
 
 
-def test_palavras_chave_rapido():
-    cfg = parser.por_palavras_chave("faz rápido, é só um rascunho")
+def test_keywords_fast():
+    cfg = parser.by_keywords("make it fast, it's just a draft")
     assert cfg.engine == "tripo_sr"
 
 
-def test_palavras_chave_formato():
-    cfg = parser.por_palavras_chave("exporta em .fbx e .usdz")
-    assert sorted(cfg.formatos) == ["fbx", "usdz"]
+def test_keywords_format():
+    cfg = parser.by_keywords("export as .fbx and .usdz")
+    assert sorted(cfg.formats) == ["fbx", "usdz"]
 
 
-def test_palavras_chave_sem_textura():
-    cfg = parser.por_palavras_chave("só a malha, sem textura")
-    assert cfg.gerar_textura is False
+def test_keywords_no_texture():
+    cfg = parser.by_keywords("just the mesh, no texture")
+    assert cfg.generate_texture is False
 
 
-def test_palavras_chave_pose():
-    assert parser.por_palavras_chave("em t-pose").pose is Pose.T_POSE
-    assert parser.por_palavras_chave("em a-pose").pose is Pose.A_POSE
+def test_keywords_pose():
+    assert parser.by_keywords("in t-pose").pose is Pose.T_POSE
+    assert parser.by_keywords("in a-pose").pose is Pose.A_POSE
 
 
-def test_palavras_chave_licenca_comercial():
-    assert parser.por_palavras_chave("uso comercial").licenca is Licenca.COMERCIAL
+def test_keywords_commercial_license():
+    assert parser.by_keywords("commercial use").license is License.COMMERCIAL
 
 
-def test_palavras_chave_contagem_de_poligonos():
-    cfg = parser.por_palavras_chave("com 8.000 polígonos")
-    assert cfg.poly_count_alvo == 8000
+def test_keywords_polygon_count():
+    cfg = parser.by_keywords("with 8,000 polygons")
+    assert cfg.poly_count_target == 8000
 
 
-def test_palavras_chave_preserva_o_resto():
-    base = PipelineConfig(melhorar_imagem=False, formatos=["glb"])
-    cfg = parser.por_palavras_chave("separado", base)
-    assert cfg.melhorar_imagem is False
-    assert cfg.formatos == ["glb"]
+def test_keywords_preserves_the_rest():
+    base = PipelineConfig(enhance_image=False, formats=["glb"])
+    cfg = parser.by_keywords("separated", base)
+    assert cfg.enhance_image is False
+    assert cfg.formats == ["glb"]
 
 
-def test_aplicar_ignora_motor_inexistente():
-    cfg = parser.aplicar({"engine": "motor_que_nao_existe"}, PipelineConfig())
+def test_apply_ignores_nonexistent_engine():
+    cfg = parser.apply({"engine": "engine_that_does_not_exist"}, PipelineConfig())
     assert cfg.engine == "stable_fast_3d"
 
 
-def test_aplicar_limita_poly_count():
-    assert parser.aplicar({"poly_count_alvo": 99_999}, PipelineConfig()).poly_count_alvo == 20_000
-    assert parser.aplicar({"poly_count_alvo": 1}, PipelineConfig()).poly_count_alvo == 500
+def test_apply_clamps_poly_count():
+    assert parser.apply({"poly_count_target": 99_999}, PipelineConfig()).poly_count_target == 20_000
+    assert parser.apply({"poly_count_target": 1}, PipelineConfig()).poly_count_target == 500
 
 
-def test_aplicar_ignora_enum_invalido():
-    cfg = parser.aplicar({"pose": "voando"}, PipelineConfig())
-    assert cfg.pose is Pose.NENHUM
+def test_apply_ignores_invalid_enum():
+    cfg = parser.apply({"pose": "flying"}, PipelineConfig())
+    assert cfg.pose is Pose.NONE
 
 
-def test_pose_prompt_liga_pose_customizada():
-    cfg = parser.aplicar({"pose_prompt": "sentado no chão"}, PipelineConfig())
+def test_pose_prompt_enables_custom_pose():
+    cfg = parser.apply({"pose_prompt": "sitting on the floor"}, PipelineConfig())
     assert cfg.pose is Pose.CUSTOM
 
 
-def test_llm_com_json_valido():
-    cerebro = CerebroFalso('{"engine": "tripo_sr", "dividir_partes": true}')
-    cfg = parser.do_llm("qualquer coisa", cerebro)
+def test_llm_with_valid_json():
+    brain = FakeBrain('{"engine": "tripo_sr", "split_parts": true}')
+    cfg = parser.do_llm("whatever", brain)
     assert cfg.engine == "tripo_sr"
-    assert cfg.dividir_partes is True
+    assert cfg.split_parts is True
 
 
-def test_llm_com_json_embrulhado_em_conversa():
-    cerebro = CerebroFalso(
-        'Claro! Aqui está:\n```json\n{"poly_count_alvo": 9000}\n```\nEspero ter ajudado.'
+def test_llm_with_json_wrapped_in_chatter():
+    brain = FakeBrain(
+        'Sure! Here it is:\n```json\n{"poly_count_target": 9000}\n```\nHope that helped.'
     )
-    cfg = parser.do_llm("...", cerebro)
-    assert cfg.poly_count_alvo == 9000
+    cfg = parser.do_llm("...", brain)
+    assert cfg.poly_count_target == 9000
 
 
-def test_llm_sem_json_cai_no_modo_basico():
-    cerebro = CerebroFalso("desculpe, não entendi")
-    cfg = parser.do_llm("quero separado do pires", cerebro)
-    assert cfg.dividir_partes is True
+def test_llm_without_json_falls_back_to_basic_mode():
+    brain = FakeBrain("sorry, I didn't understand")
+    cfg = parser.do_llm("I want it separated from the saucer", brain)
+    assert cfg.split_parts is True
 
 
-def test_llm_que_explode_cai_no_modo_basico():
-    class Quebrado:
-        def completar(self, prompt):
+def test_llm_that_blows_up_falls_back_to_basic_mode():
+    class Broken:
+        def complete(self, prompt):
             raise RuntimeError("ollama offline")
 
-    cfg = parser.do_llm("em alta qualidade", Quebrado())
+    cfg = parser.do_llm("in high quality", Broken())
     assert cfg.engine == "instant_mesh"
 
 
-def test_resumo_tem_as_chaves_do_card():
-    resumo = parser.resumo(PipelineConfig())
-    assert "Motor" in resumo
-    assert "Formatos" in resumo
-    assert resumo["Formatos"] == ".glb"
+def test_summary_has_the_cards_keys():
+    summary = parser.summary(PipelineConfig())
+    assert "Engine" in summary
+    assert "Formats" in summary
+    assert summary["Formats"] == ".glb"

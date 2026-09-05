@@ -1,38 +1,39 @@
-"""Montagem da interface Gradio."""
+"""Assembly of the Gradio UI."""
 
 from __future__ import annotations
 
 import gradio as gr
 
 from ..config import PipelineConfig
-from ..hardware import texto_resumo
+from ..hardware import summary_text
 from . import agent_tab, library_tab, manual_tab, theme
 
 
-def construir_app() -> gr.Blocks:
-    """Monta as quatro abas em cima de uma configuração compartilhada."""
+def build_app() -> gr.Blocks:
+    """Assembles the four tabs on top of a shared configuration."""
     with gr.Blocks(title="Espresso3D", fill_width=True) as app:
-        gr.HTML(theme.cabecalho(texto_resumo()))
+        gr.HTML(theme.header(summary_text()))
 
-        # Uma configuração só para as abas Imagem e Lote — é isso que faz o
-        # lote herdar tudo em vez de ter um formulário próprio.
-        estado = gr.State(PipelineConfig().como_dict())
+        # A single configuration for the Image and Batch tabs — this is
+        # what makes the batch tab inherit everything instead of having
+        # its own form.
+        state = gr.State(PipelineConfig().to_dict())
 
         with gr.Tabs():
-            manual_tab.construir(estado)
-            agent_tab.construir()
-            library_tab.construir()
+            manual_tab.build(state)
+            agent_tab.build()
+            library_tab.build()
 
     return app
 
 
-def rodar(porta: int = 7860, compartilhar: bool = False) -> None:
-    app = construir_app()
+def run(port: int = 7860, share: bool = False) -> None:
+    app = build_app()
     app.launch(
-        server_port=porta,
-        share=compartilhar,
+        server_port=port,
+        share=share,
         css=theme.CSS,
-        theme=theme.tema(),
+        theme=theme.theme(),
         show_error=True,
         inbrowser=True,
     )

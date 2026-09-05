@@ -1,4 +1,4 @@
-"""Aparência da interface — o mesmo tema escuro do mockup."""
+"""UI appearance — the same dark theme as the mockup."""
 
 from __future__ import annotations
 
@@ -7,14 +7,14 @@ import gradio as gr
 BG = "#0a0c0f"
 SURFACE = "#14171b"
 SURFACE_2 = "#1b1f24"
-BORDA = "#282d33"
-TEXTO = "#e9ebee"
+BORDER = "#282d33"
+TEXT = "#e9ebee"
 DIM = "#98a1ab"
 ACCENT = "#ff8a4c"
 
 
-def tema() -> gr.themes.Base:
-    """Tema escuro com o âmbar de café como cor de ação."""
+def theme() -> gr.themes.Base:
+    """Dark theme with coffee amber as the action color."""
     return gr.themes.Base(
         primary_hue=gr.themes.colors.orange,
         neutral_hue=gr.themes.colors.slate,
@@ -23,21 +23,21 @@ def tema() -> gr.themes.Base:
     ).set(
         body_background_fill=BG,
         body_background_fill_dark=BG,
-        body_text_color=TEXTO,
-        body_text_color_dark=TEXTO,
+        body_text_color=TEXT,
+        body_text_color_dark=TEXT,
         body_text_color_subdued=DIM,
         block_background_fill=SURFACE,
         block_background_fill_dark=SURFACE,
-        block_border_color=BORDA,
-        block_border_color_dark=BORDA,
+        block_border_color=BORDER,
+        block_border_color_dark=BORDER,
         block_label_background_fill=SURFACE_2,
         block_label_text_color=DIM,
-        block_title_text_color=TEXTO,
-        border_color_primary=BORDA,
-        border_color_primary_dark=BORDA,
+        block_title_text_color=TEXT,
+        border_color_primary=BORDER,
+        border_color_primary_dark=BORDER,
         input_background_fill=SURFACE_2,
         input_background_fill_dark=SURFACE_2,
-        input_border_color=BORDA,
+        input_border_color=BORDER,
         panel_background_fill=SURFACE,
         background_fill_secondary=SURFACE,
         background_fill_secondary_dark=SURFACE,
@@ -45,12 +45,12 @@ def tema() -> gr.themes.Base:
         button_primary_background_fill_dark=f"linear-gradient(180deg,#ff9d5f,{ACCENT})",
         button_primary_text_color="#2a1102",
         button_secondary_background_fill=SURFACE_2,
-        button_secondary_text_color=TEXTO,
+        button_secondary_text_color=TEXT,
         checkbox_background_color=SURFACE_2,
         checkbox_background_color_selected=ACCENT,
         checkbox_label_background_fill=SURFACE_2,
         checkbox_label_background_fill_selected=SURFACE_2,
-        checkbox_label_text_color=TEXTO,
+        checkbox_label_text_color=TEXT,
         slider_color=ACCENT,
     )
 
@@ -73,54 +73,54 @@ CSS = """
   max-width: 100% !important;
 }
 
-#e3d-topo {
+#e3d-topbar {
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
   padding: 12px 16px; margin-bottom: 6px;
   border-bottom: 1px solid var(--e3d-border);
   background: linear-gradient(180deg, #101318, #0c0e12);
   border-radius: 12px;
 }
-#e3d-topo .marca {
+#e3d-topbar .brand {
   display: flex; align-items: center; gap: 10px;
 }
-#e3d-topo .simbolo {
+#e3d-topbar .symbol {
   width: 32px; height: 32px; border-radius: 9px; flex: none;
   background: linear-gradient(135deg, #ff9d5f, #c65a24);
   display: flex; align-items: center; justify-content: center; font-size: 17px;
 }
-#e3d-topo h1 {
+#e3d-topbar h1 {
   font-size: 17px; margin: 0; font-weight: 800; letter-spacing: .2px;
   color: var(--e3d-text) !important;
 }
-#e3d-topo .sub { font-size: 12px; color: #7d868f; margin-top: 1px; }
-#e3d-topo .status {
+#e3d-topbar .sub { font-size: 12px; color: #7d868f; margin-top: 1px; }
+#e3d-topbar .status {
   margin-left: auto; font-size: 12px; color: var(--e3d-dim);
   background: var(--e3d-surface-2); border: 1px solid var(--e3d-border);
   border-radius: 999px; padding: 6px 14px;
 }
 
-.e3d-grupo-formato { border-left: 2px solid var(--e3d-border); padding-left: 10px; }
+.e3d-format-group { border-left: 2px solid var(--e3d-border); padding-left: 10px; }
 
-.e3d-aviso {
+.e3d-warning {
   background: #f2c14e14; border: 1px solid #f2c14e33; border-radius: 9px;
   padding: 10px 12px; font-size: 13px; color: #e0c690;
 }
-.e3d-aviso:empty { display: none; }
+.e3d-warning:empty { display: none; }
 
-.e3d-herdado {
+.e3d-inherited {
   background: var(--e3d-surface); border: 1px solid var(--e3d-border);
   border-radius: 11px; padding: 4px 14px;
 }
-.e3d-herdado table { width: 100%; font-size: 13px; }
-.e3d-herdado td { padding: 5px 0; border-bottom: 1px solid #1e2227; }
-.e3d-herdado td:last-child { text-align: right; font-family: ui-monospace, monospace; }
-.e3d-herdado tr:last-child td { border-bottom: none; }
+.e3d-inherited table { width: 100%; font-size: 13px; }
+.e3d-inherited td { padding: 5px 0; border-bottom: 1px solid #1e2227; }
+.e3d-inherited td:last-child { text-align: right; font-family: ui-monospace, monospace; }
+.e3d-inherited tr:last-child td { border-bottom: none; }
 
 button.primary, .primary button {
   background: linear-gradient(180deg, #ff9d5f, var(--e3d-accent)) !important;
   color: #2a1102 !important; font-weight: 700 !important; border: none !important;
 }
-.e3d-perigo button {
+.e3d-danger button {
   background: #e0666614 !important; color: #f0a0a0 !important;
   border: 1px solid #e0666655 !important;
 }
@@ -128,15 +128,15 @@ footer { display: none !important; }
 """
 
 
-def cabecalho(status: str) -> str:
-    """Barra superior com a marca e o status do hardware."""
+def header(status: str) -> str:
+    """Top bar with the brand and hardware status."""
     return f"""
-<div id="e3d-topo">
-  <div class="marca">
-    <div class="simbolo">☕</div>
+<div id="e3d-topbar">
+  <div class="brand">
+    <div class="symbol">☕</div>
     <div>
       <h1>Espresso3D</h1>
-      <div class="sub">gerador local de imagem → 3D, 100% seu</div>
+      <div class="sub">local image → 3D generator, 100% yours</div>
     </div>
   </div>
   <div class="status">{status}</div>

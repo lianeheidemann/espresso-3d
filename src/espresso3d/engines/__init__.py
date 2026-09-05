@@ -1,57 +1,57 @@
-"""Registro dos motores de geração 3D.
+"""Registry of the 3D generation engines.
 
-Adicionar um motor novo é criar o módulo e acrescentar uma linha em
-:data:`MOTORES` — a interface se atualiza sozinha a partir daqui.
+Adding a new engine means creating the module and adding a line to
+:data:`ENGINES` — the UI updates itself automatically from there.
 """
 
 from __future__ import annotations
 
-from ..config import Licenca
-from .base import DependenciaFaltando, InfoMotor, Motor
+from ..config import License
+from .base import EngineInfo, Engine, MissingDependency
 from .instant_mesh import InstantMesh
 from .stable_fast_3d import StableFast3D
 from .tripo_sr import TripoSR
 
-MOTORES: dict[str, Motor] = {
+ENGINES: dict[str, Engine] = {
     m.info.id: m
     for m in (TripoSR(), StableFast3D(), InstantMesh())
 }
 
 __all__ = [
-    "MOTORES",
-    "Motor",
-    "InfoMotor",
-    "DependenciaFaltando",
-    "obter",
-    "listar",
-    "sugerir",
+    "ENGINES",
+    "Engine",
+    "EngineInfo",
+    "MissingDependency",
+    "get",
+    "list_engines",
+    "suggest",
 ]
 
 
-def obter(id_motor: str) -> Motor:
-    if id_motor not in MOTORES:
-        conhecidos = ", ".join(MOTORES)
-        raise KeyError(f"Motor '{id_motor}' não existe. Disponíveis: {conhecidos}")
-    return MOTORES[id_motor]
+def get(engine_id: str) -> Engine:
+    if engine_id not in ENGINES:
+        known = ", ".join(ENGINES)
+        raise KeyError(f"Engine '{engine_id}' doesn't exist. Available: {known}")
+    return ENGINES[engine_id]
 
 
-def listar(licenca: Licenca | None = None, vram_gb: float | None = None) -> list[Motor]:
-    """Motores compatíveis com a licença pedida e com a GPU da máquina."""
-    motores = list(MOTORES.values())
-    if licenca is not None:
-        motores = [m for m in motores if m.compativel_com(licenca)]
+def list_engines(license: License | None = None, vram_gb: float | None = None) -> list[Engine]:
+    """Engines compatible with the requested license and the machine's GPU."""
+    engines = list(ENGINES.values())
+    if license is not None:
+        engines = [m for m in engines if m.compatible_with(license)]
     if vram_gb is not None:
-        motores = [m for m in motores if m.info.vram_min_gb <= vram_gb + 0.5]
-    return motores
+        engines = [m for m in engines if m.info.vram_min_gb <= vram_gb + 0.5]
+    return engines
 
 
-def sugerir(vram_gb: float | None = None, licenca: Licenca | None = None) -> Motor:
-    """O melhor motor que cabe na GPU disponível.
+def suggest(vram_gb: float | None = None, license: License | None = None) -> Engine:
+    """The best engine that fits the available GPU.
 
-    Sem GPU detectada, devolve o mais leve: é o único que roda na CPU em
-    tempo tolerável.
+    With no GPU detected, returns the lightest one: it's the only one that
+    runs on CPU in a tolerable time.
     """
-    candidatos = listar(licenca=licenca, vram_gb=vram_gb)
-    if not candidatos:
-        return obter("tripo_sr")
-    return max(candidatos, key=lambda m: m.info.vram_min_gb)
+    candidates = list_engines(license=license, vram_gb=vram_gb)
+    if not candidates:
+        return get("tripo_sr")
+    return max(candidates, key=lambda m: m.info.vram_min_gb)

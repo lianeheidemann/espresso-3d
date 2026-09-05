@@ -1,9 +1,9 @@
-"""Pedido em português → :class:`PipelineConfig`.
+"""Natural-language request → :class:`PipelineConfig`.
 
-Dois caminhos, mesma saída: o LLM devolve JSON, ou o modo básico procura
-palavras conhecidas. Em ambos, o resultado é sempre mostrado no card de
-confirmação antes de rodar — o agente nunca gera nada sem o usuário
-aprovar o que ele entendeu.
+Two paths, same output: the LLM returns JSON, or basic mode looks for
+known words. Either way, the result is always shown on the confirmation
+card before running — the agent never generates anything without the
+user approving what it understood.
 """
 
 from __future__ import annotations
@@ -13,169 +13,170 @@ import logging
 import re
 from dataclasses import replace
 
-from ..config import FORMATOS, Licenca, PipelineConfig, Pose, ResolucaoTextura, Topologia
+from ..config import FORMATS, License, PipelineConfig, Pose, TextureResolution, Topology
 
 log = logging.getLogger(__name__)
 
-PROMPT = """Você configura um gerador de modelos 3D a partir de imagens.
+PROMPT = """You configure a 3D model generator from images.
 
-Pedido do usuário: "{pedido}"
+User request: "{request}"
 
-Responda APENAS um objeto JSON com as chaves que o pedido mencionar:
-- "engine": "tripo_sr" (rápido), "stable_fast_3d" (equilíbrio) ou "instant_mesh" (máxima qualidade)
-- "poly_count_alvo": inteiro entre 500 e 20000
-- "gerar_textura": true/false
-- "resolucao_textura": "padrao" ou "ultra_2k"
-- "pose": "nenhum", "t_pose", "a_pose" ou "customizada"
-- "pose_prompt": descrição da pose, se houver
-- "dividir_partes": true/false (objetos separados)
-- "melhorar_imagem": true/false
-- "licenca": "privada" ou "comercial"
-- "formatos": lista entre {formatos}
+Respond with ONLY a JSON object containing the keys the request mentions:
+- "engine": "tripo_sr" (fast), "stable_fast_3d" (balanced) or "instant_mesh" (max quality)
+- "poly_count_target": integer between 500 and 20000
+- "generate_texture": true/false
+- "texture_resolution": "standard" or "ultra_2k"
+- "pose": "none", "t_pose", "a_pose" or "custom"
+- "pose_prompt": pose description, if any
+- "split_parts": true/false (separate objects)
+- "enhance_image": true/false
+- "license": "private" or "commercial"
+- "formats": list from among {formats}
 
-Omita o que o pedido não disser. Não invente valores."""
+Omit whatever the request doesn't say. Don't make up values."""
 
-#: Palavras que o modo básico reconhece, sem LLM nenhum.
-_QUALIDADE_ALTA = ("alta qualidade", "máxima", "maxima", "detalhad", "caprichad")
-_QUALIDADE_RAPIDA = ("rápido", "rapido", "simples", "leve", "rascunho")
-_DIVIDIR = ("separad", "dividir", "dividid", "partes", "peças", "pecas")
-_SEM_TEXTURA = ("sem textura", "sem cor", "só malha", "so malha", "apenas a malha")
+#: Words that basic mode recognizes, with no LLM at all.
+_HIGH_QUALITY = ("high quality", "highest", "maximum", "detailed", "fancy")
+_FAST_QUALITY = ("fast", "quick", "simple", "light", "draft")
+_SPLIT = ("separate", "split", "divided", "parts", "pieces")
+_NO_TEXTURE = ("no texture", "no color", "mesh only", "just the mesh", "without texture")
 
 
-def do_llm(pedido: str, backend, base: PipelineConfig | None = None) -> PipelineConfig:
-    """Usa o LLM. Se ele falhar ou devolver lixo, cai no modo básico."""
+def do_llm(request: str, backend, base: PipelineConfig | None = None) -> PipelineConfig:
+    """Uses the LLM. If it fails or returns garbage, falls back to basic mode."""
     base = base or PipelineConfig()
     try:
-        resposta = backend.completar(
-            PROMPT.format(pedido=pedido, formatos=", ".join(sorted(FORMATOS)))
+        response = backend.complete(
+            PROMPT.format(request=request, formats=", ".join(sorted(FORMATS)))
         )
-        dados = _extrair_json(resposta)
+        data = _extract_json(response)
     except Exception as exc:
-        log.info("LLM indisponível (%s) — usando o modo básico.", exc)
-        return por_palavras_chave(pedido, base)
+        log.info("LLM unavailable (%s) — using basic mode.", exc)
+        return by_keywords(request, base)
 
-    if not dados:
-        return por_palavras_chave(pedido, base)
-    return aplicar(dados, base)
+    if not data:
+        return by_keywords(request, base)
+    return apply(data, base)
 
 
-def aplicar(dados: dict, base: PipelineConfig) -> PipelineConfig:
-    """Aplica um dicionário à configuração, ignorando o que for inválido.
+def apply(data: dict, base: PipelineConfig) -> PipelineConfig:
+    """Applies a dict to the configuration, ignoring whatever is invalid.
 
-    Nunca levanta exceção por causa de um campo estranho: o usuário vê o
-    card de confirmação e corrige na mão o que o modelo errou.
+    Never raises an exception because of a weird field: the user sees
+    the confirmation card and corrects by hand whatever the model got
+    wrong.
     """
     cfg = replace(base)
 
-    if isinstance(dados.get("engine"), str):
-        from ..engines import MOTORES
+    if isinstance(data.get("engine"), str):
+        from ..engines import ENGINES
 
-        if dados["engine"] in MOTORES:
-            cfg.engine = dados["engine"]
+        if data["engine"] in ENGINES:
+            cfg.engine = data["engine"]
 
-    if isinstance(dados.get("poly_count_alvo"), (int, float)):
-        cfg.poly_count_alvo = max(500, min(20_000, int(dados["poly_count_alvo"])))
+    if isinstance(data.get("poly_count_target"), (int, float)):
+        cfg.poly_count_target = max(500, min(20_000, int(data["poly_count_target"])))
 
-    for campo in ("gerar_textura", "dividir_partes", "melhorar_imagem"):
-        if isinstance(dados.get(campo), bool):
-            setattr(cfg, campo, dados[campo])
+    for field in ("generate_texture", "split_parts", "enhance_image"):
+        if isinstance(data.get(field), bool):
+            setattr(cfg, field, data[field])
 
-    cfg.pose = _enum(dados.get("pose"), Pose, cfg.pose)
-    cfg.licenca = _enum(dados.get("licenca"), Licenca, cfg.licenca)
-    cfg.topologia = _enum(dados.get("topologia"), Topologia, cfg.topologia)
-    cfg.resolucao_textura = _enum(
-        dados.get("resolucao_textura"), ResolucaoTextura, cfg.resolucao_textura
+    cfg.pose = _enum(data.get("pose"), Pose, cfg.pose)
+    cfg.license = _enum(data.get("license"), License, cfg.license)
+    cfg.topology = _enum(data.get("topology"), Topology, cfg.topology)
+    cfg.texture_resolution = _enum(
+        data.get("texture_resolution"), TextureResolution, cfg.texture_resolution
     )
 
-    if isinstance(dados.get("pose_prompt"), str):
-        cfg.pose_prompt = dados["pose_prompt"].strip()
-        if cfg.pose_prompt and cfg.pose is Pose.NENHUM:
+    if isinstance(data.get("pose_prompt"), str):
+        cfg.pose_prompt = data["pose_prompt"].strip()
+        if cfg.pose_prompt and cfg.pose is Pose.NONE:
             cfg.pose = Pose.CUSTOM
 
-    formatos = [f for f in dados.get("formatos", []) if f in FORMATOS]
-    if formatos:
-        cfg.formatos = formatos
+    formats = [f for f in data.get("formats", []) if f in FORMATS]
+    if formats:
+        cfg.formats = formats
 
     return cfg
 
 
-def por_palavras_chave(pedido: str, base: PipelineConfig | None = None) -> PipelineConfig:
-    """Interpreta sem LLM. Cobre os pedidos mais comuns."""
+def by_keywords(request: str, base: PipelineConfig | None = None) -> PipelineConfig:
+    """Interprets without an LLM. Covers the most common requests."""
     cfg = replace(base or PipelineConfig())
-    texto = pedido.lower()
+    text = request.lower()
 
-    if any(p in texto for p in _QUALIDADE_ALTA):
+    if any(p in text for p in _HIGH_QUALITY):
         cfg.engine = "instant_mesh"
-        cfg.resolucao_textura = ResolucaoTextura.ULTRA_2K
-        cfg.poly_count_alvo = max(cfg.poly_count_alvo, 12_000)
-    elif any(p in texto for p in _QUALIDADE_RAPIDA):
+        cfg.texture_resolution = TextureResolution.ULTRA_2K
+        cfg.poly_count_target = max(cfg.poly_count_target, 12_000)
+    elif any(p in text for p in _FAST_QUALITY):
         cfg.engine = "tripo_sr"
-        cfg.poly_count_alvo = min(cfg.poly_count_alvo, 4_000)
+        cfg.poly_count_target = min(cfg.poly_count_target, 4_000)
 
-    if any(p in texto for p in _DIVIDIR):
-        cfg.dividir_partes = True
+    if any(p in text for p in _SPLIT):
+        cfg.split_parts = True
 
-    if any(p in texto for p in _SEM_TEXTURA):
-        cfg.gerar_textura = False
+    if any(p in text for p in _NO_TEXTURE):
+        cfg.generate_texture = False
 
-    if "t-pose" in texto or "t pose" in texto:
+    if "t-pose" in text or "t pose" in text:
         cfg.pose = Pose.T_POSE
-    elif "a-pose" in texto or "a pose" in texto:
+    elif "a-pose" in text or "a pose" in text:
         cfg.pose = Pose.A_POSE
 
-    if "comercial" in texto:
-        cfg.licenca = Licenca.COMERCIAL
+    if "commercial" in text:
+        cfg.license = License.COMMERCIAL
 
-    if numero := re.search(r"(\d[\d.]{2,})\s*(?:pol[íi]gonos|faces|tris)", texto):
-        bruto = int(numero.group(1).replace(".", ""))
-        cfg.poly_count_alvo = max(500, min(20_000, bruto))
+    if number := re.search(r"(\d[\d,]{2,})\s*(?:polygons|faces|tris)", text):
+        raw = int(number.group(1).replace(",", ""))
+        cfg.poly_count_target = max(500, min(20_000, raw))
 
-    achados = [f for f in FORMATOS if f".{f}" in texto]
-    if achados:
-        cfg.formatos = achados
+    found = [f for f in FORMATS if f".{f}" in text]
+    if found:
+        cfg.formats = found
 
     return cfg
 
 
-def resumo(cfg: PipelineConfig) -> dict[str, str]:
-    """O que o card de confirmação mostra antes de gerar."""
-    from ..engines import MOTORES
+def summary(cfg: PipelineConfig) -> dict[str, str]:
+    """What the confirmation card shows before generating."""
+    from ..engines import ENGINES
 
-    motor = MOTORES[cfg.engine].info.nome if cfg.engine in MOTORES else cfg.engine
+    engine = ENGINES[cfg.engine].info.name if cfg.engine in ENGINES else cfg.engine
     return {
-        "Motor": motor,
-        "Contagem de polígonos": f"{cfg.poly_count_alvo:,}".replace(",", "."),
-        "Textura": (
-            f"Sim · {cfg.resolucao_textura.pixels}px" if cfg.gerar_textura else "Não"
+        "Engine": engine,
+        "Polygon count": f"{cfg.poly_count_target:,}",
+        "Texture": (
+            f"Yes · {cfg.texture_resolution.pixels}px" if cfg.generate_texture else "No"
         ),
         "Pose": cfg.pose.value.replace("_", "-"),
-        "Dividir em partes": "Sim" if cfg.dividir_partes else "Não",
-        "Melhorar imagem": "Sim" if cfg.melhorar_imagem else "Não",
-        "Licença": cfg.licenca.value,
-        "Formatos": ", ".join(f".{f}" for f in cfg.formatos),
+        "Split into parts": "Yes" if cfg.split_parts else "No",
+        "Enhance image": "Yes" if cfg.enhance_image else "No",
+        "License": cfg.license.value,
+        "Formats": ", ".join(f".{f}" for f in cfg.formats),
     }
 
 
-def _enum(valor, tipo, atual):
-    if isinstance(valor, tipo):
-        return valor
-    if isinstance(valor, str):
+def _enum(value, kind, current):
+    if isinstance(value, kind):
+        return value
+    if isinstance(value, str):
         try:
-            return tipo(valor.strip().lower())
+            return kind(value.strip().lower())
         except ValueError:
-            log.debug("Valor ignorado para %s: %r", tipo.__name__, valor)
-    return atual
+            log.debug("Value ignored for %s: %r", kind.__name__, value)
+    return current
 
 
-def _extrair_json(texto: str) -> dict:
-    if not texto:
+def _extract_json(text: str) -> dict:
+    if not text:
         return {}
-    limpo = re.sub(r"^```(?:json)?|```$", "", texto.strip(), flags=re.MULTILINE).strip()
-    inicio, fim = limpo.find("{"), limpo.rfind("}")
-    if inicio == -1 or fim <= inicio:
+    clean = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE).strip()
+    start, end = clean.find("{"), clean.rfind("}")
+    if start == -1 or end <= start:
         return {}
     try:
-        dados = json.loads(limpo[inicio : fim + 1])
+        data = json.loads(clean[start : end + 1])
     except json.JSONDecodeError:
         return {}
-    return dados if isinstance(dados, dict) else {}
+    return data if isinstance(data, dict) else {}

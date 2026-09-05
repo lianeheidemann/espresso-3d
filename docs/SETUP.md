@@ -1,26 +1,23 @@
-# Guia de instalação — Espresso3D
+# Setup guide — Espresso3D
 
-O que fazer depois de clonar o repositório, na ordem, para sair de "código
-baixado" até "gerando 3D a partir de imagem".
-
-Este guia está em português porque é o seu roteiro de operação. O
-[README](../README.md) é a porta de entrada pública, em inglês.
+What to do after cloning the repository, in order, to get from "code
+downloaded" to "generating 3D from an image."
 
 ---
 
-## Ordem das etapas
+## Order of steps
 
-| Etapa | Obrigatória? | Sem ela |
+| Step | Required? | Without it |
 |---|---|---|
-| 1. Base (venv + dependências) | **Sim** | Nada roda |
-| 2. PyTorch com CUDA | **Sim para gerar** | A interface abre, mas nenhuma geração 3D funciona |
-| 3. Um motor de geração | **Sim para gerar** | Botão "Gerar" dá erro explicando o que falta |
-| 4. Blender | Opcional | Só exporta `.glb .gltf .obj .ply .stl .3mf` |
-| 5. Ollama (agente) | Opcional | Aba Agente cai no modo palavras-chave |
-| 6. Extras (SAM, ESRGAN, UniRig) | Opcional | Recursos correspondentes desligados |
+| 1. Base (venv + dependencies) | **Yes** | Nothing runs |
+| 2. PyTorch with CUDA | **Yes, to generate** | The UI opens, but no 3D generation works |
+| 3. A generation engine | **Yes, to generate** | The "Generate" button errors out explaining what's missing |
+| 4. Blender | Optional | Only exports `.glb .gltf .obj .ply .stl .3mf` |
+| 5. Ollama (agent) | Optional | The Agent tab falls back to keyword mode |
+| 6. Extras (SAM, ESRGAN, UniRig) | Optional | The corresponding features are turned off |
 
-**Para ver o primeiro modelo 3D sair, você precisa das etapas 1, 2 e 3.** O
-resto dá para deixar para depois.
+**To see the first 3D model come out, you need steps 1, 2 and 3.** The
+rest can be left for later.
 
 ---
 
@@ -38,68 +35,70 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-O `pip install -e .` não é opcional: o código vive em `src/`, e é ele que
-registra o pacote para o `python -m espresso3d` funcionar.
+`pip install -e .` isn't optional: the code lives in `src/`, and it's
+this step that registers the package so `python -m espresso3d` works.
 
-**Verificar:**
+**Verify:**
 
 ```bash
 python -m espresso3d
 ```
 
-Abre em `http://localhost:7860`. Olhe a **faixa de status no cabeçalho** — ela
-é o painel de diagnóstico do app e vai dizer, a cada etapa daqui pra frente,
-o que ele encontrou:
+Opens at `http://localhost:7860`. Look at the **status bar in the
+header** — it's the app's diagnostic panel and will tell you, at each
+step from here on, what it found:
 
 ```
-Sem GPU CUDA — vai rodar na CPU (bem mais lento) · Blender: não encontrado · Ollama: desligado
+No CUDA GPU — will run on CPU (much slower) · Blender: not found · Ollama: off
 ```
 
-Neste momento já funcionam: interface completa, redução de malha, exportação
-para os formatos leves e a biblioteca. **Ainda não gera 3D.**
+At this point the following already work: the full UI, mesh
+decimation, export to the lightweight formats, and the library.
+**It still doesn't generate 3D.**
 
 ---
 
-## 2. PyTorch com CUDA — a etapa que mais dá errado
+## 2. PyTorch with CUDA — the step most likely to go wrong
 
-`pip install torch` sozinho instala a **versão CPU** no Windows. Ela importa
-sem erro, mas nunca usa a sua GPU — e o app vai rodar absurdamente lento sem
-dizer o motivo. Instale apontando o índice do CUDA:
+`pip install torch` on its own installs the **CPU version** on Windows.
+It imports without error, but never uses your GPU — and the app will
+run absurdly slowly without saying why. Install it pointing at the CUDA
+index:
 
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 ```
 
-Se sua placa for antiga e o driver não suportar CUDA 12.4, troque para
-`cu121`. Confira a versão do driver com `nvidia-smi`.
+If your card is older and the driver doesn't support CUDA 12.4, switch
+to `cu121`. Check your driver version with `nvidia-smi`.
 
-**Verificar (faça isso, não pule):**
+**Verify (do this, don't skip it):**
 
 ```bash
 python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 ```
 
-Precisa imprimir `True` e o nome da sua placa. Se imprimir `False`,
-desinstale (`pip uninstall torch torchvision`) e instale de novo com o
+It needs to print `True` and your card's name. If it prints `False`,
+uninstall (`pip uninstall torch torchvision`) and reinstall with the
 `--index-url`.
 
-Reabra o app: a faixa deve passar a mostrar `GPU: 6 GB VRAM` (ou o que for a
-sua).
+Reopen the app: the bar should now show `GPU: 6 GB VRAM` (or whatever
+yours is).
 
 ---
 
-## 3. Motor de geração 3D
+## 3. 3D generation engine
 
-Escolha pela VRAM que a faixa de status mostrou. Instale **pelo menos um**:
+Pick based on the VRAM the status bar showed. Install **at least one**:
 
-### TripoSR — 4 GB+ (comece por aqui)
+### TripoSR — 4 GB+ (start here)
 
 ```bash
 pip install git+https://github.com/VAST-AI-Research/TripoSR.git
 ```
 
-Mais leve e mais rápido. Cabe em qualquer uma das GPUs da sua faixa. Licença
-MIT, uso comercial liberado. Textura mais simples, sem PBR.
+Lightest and fastest. Fits on any of the GPUs in your range. MIT
+license, commercial use allowed. Simpler texture, no PBR.
 
 ### Stable Fast 3D — 6 GB+
 
@@ -107,13 +106,14 @@ MIT, uso comercial liberado. Textura mais simples, sem PBR.
 pip install git+https://github.com/Stability-AI/stable-fast-3d.git
 ```
 
-**Atenção:** os pesos são *gated* no Hugging Face. Antes do primeiro uso:
+**Note:** the weights are *gated* on Hugging Face. Before first use:
 
-1. Aceite a licença em https://huggingface.co/stabilityai/stable-fast-3d
-2. `pip install huggingface_hub` e depois `huggingface-cli login` com um
-   token de https://huggingface.co/settings/tokens
+1. Accept the license at https://huggingface.co/stabilityai/stable-fast-3d
+2. `pip install huggingface_hub` and then `huggingface-cli login` with a
+   token from https://huggingface.co/settings/tokens
 
-Sem isso o download falha com erro 401, que parece bug do app mas é permissão.
+Without this the download fails with a 401 error, which looks like an
+app bug but is actually a permissions issue.
 
 ### InstantMesh — 8 GB+
 
@@ -122,142 +122,147 @@ git clone https://github.com/TencentARC/InstantMesh
 pip install -r InstantMesh/requirements.txt
 ```
 
-Maior qualidade dos três, e o mais pesado.
+Highest quality of the three, and the heaviest.
 
-### Sobre os pesos
+### About the weights
 
-Baixam sozinhos na **primeira geração**, não na instalação — a primeira vez
-demora vários minutos e alguns GB. Ficam em cache (`~/.cache/huggingface`) e
-não voltam a baixar. Nada disso entra no Git.
+They download on their own on the **first generation**, not at install
+time — the first time takes several minutes and a few GB. They're
+cached (`~/.cache/huggingface`) and won't download again. None of this
+goes into Git.
 
-**Verificar:** suba o app, escolha o motor instalado, mande uma imagem com
-fundo limpo e clique em Gerar. Se aparecer erro de dependência, ele diz o
-comando exato que falta.
+**Verify:** start the app, choose the installed engine, send an image
+with a clean background and click Generate. If a dependency error
+shows up, it tells you the exact command that's missing.
 
 ---
 
-## 4. Blender — para `.fbx`, `.usdz` e afins
+## 4. Blender — for `.fbx`, `.usdz` and similar
 
-Só é preciso se você quiser exportar para Unity/Unreal (`.fbx`), AR do iPhone
-(`.usdz`), USD (`.usdc`/`.usda`), `.dae` ou `.blend`. Os formatos de web e
-impressão 3D não dependem dele.
+Only needed if you want to export to Unity/Unreal (`.fbx`), iPhone AR
+(`.usdz`), USD (`.usdc`/`.usda`), `.dae` or `.blend`. The web and 3D
+printing formats don't depend on it.
 
-1. Baixe em https://www.blender.org/download/ (grátis)
-2. Se não estiver no PATH, aponte:
+1. Download it at https://www.blender.org/download/ (free)
+2. If it's not on the PATH, point to it:
 
 ```bash
 set BLENDER_BIN=C:\Program Files\Blender Foundation\Blender 4.2\blender.exe   # Windows
-export BLENDER_BIN=/caminho/para/blender                                       # Linux / macOS
+export BLENDER_BIN=/path/to/blender                                           # Linux / macOS
 ```
 
-**Verificar:** a faixa passa a mostrar `Blender: encontrado`, e os formatos
-que estavam marcados com "requer Blender" ficam utilizáveis.
+**Verify:** the bar now shows `Blender: found`, and the formats that
+were marked "requires Blender" become usable.
 
-Para `.vrm` (avatar VR) ainda falta instalar o add-on VRM dentro do Blender.
+For `.vrm` (VR avatar) you still need to install the VRM add-on inside
+Blender.
 
 ---
 
-## 5. Agente — Ollama
+## 5. Agent — Ollama
 
-Sem isso a aba Agente **não quebra**: ela cai num interpretador por
-palavras-chave que entende "separado", "alta qualidade", ".fbx", "8000
-polígonos". O LLM só melhora a interpretação.
+Without this the Agent tab **doesn't break**: it falls back to a
+keyword parser that understands "separated", "high quality", ".fbx",
+"8000 polygons". The LLM only improves the interpretation.
 
-1. Instale de https://ollama.com
-2. Baixe um modelo:
+1. Install from https://ollama.com
+2. Download a model:
 
 ```bash
-ollama pull gemma3:4b      # 3,3 GB — enxerga imagens
-# ou
-ollama pull qwen2.5:3b     # 2,0 GB — mais leve, não enxerga imagens
+ollama pull gemma3:4b      # 3.3 GB — sees images
+# or
+ollama pull qwen2.5:3b     # 2.0 GB — lighter, doesn't see images
 ```
 
-3. O Ollama precisa estar **rodando**. No Windows ele sobe como serviço depois
-   da instalação; no Linux, `ollama serve`.
+3. Ollama needs to be **running**. On Windows it comes up as a service
+   after install; on Linux, `ollama serve`.
 
-**Verificar:**
+**Verify:**
 
 ```bash
 curl http://localhost:11434/api/tags
 ```
 
-Deve listar o modelo. Na faixa do app aparece `Ollama: 1 modelo(s)`, e no
-seletor "Cérebro" da aba Agente o modelo aparece como **instalado**.
+Should list the model. In the app's bar `Ollama: 1 model(s)` appears,
+and in the "Brain" selector on the Agent tab the model shows up as
+**installed**.
 
-> **Deixe "Rodar na CPU" ligado.** O agente só monta um JSON pequeno; jogando
-> ele na CPU, a VRAM inteira sobra para o gerador 3D — que é onde ela faz
-> falta. Com 8 GB ou menos, LLM e modelo 3D na mesma GPU fazem os dois falharem.
+> **Keep "Run on CPU" enabled.** The agent only builds a small JSON
+> object; putting it on the CPU leaves the whole VRAM budget for the 3D
+> generator — which is where it's actually needed. With 8 GB or less,
+> LLM and 3D model on the same GPU make both fail.
 
-Se o Ollama estiver em outra máquina ou porta: `set OLLAMA_HOST=http://ip:porta`.
+If Ollama is on another machine or port: `set OLLAMA_HOST=http://ip:port`.
 
-### Alternativa sem download: nuvem gratuita
+### Download-free alternative: free cloud tier
 
 ```bash
 set GROQ_API_KEY=...          # https://console.groq.com
 set OPENROUTER_API_KEY=...    # https://openrouter.ai
 ```
 
-Aparecem no mesmo seletor. Têm limite diário e mandam o texto do seu pedido
-para fora — a imagem não sai da máquina, mas o pedido sim.
+These show up in the same selector. They have a daily limit and send
+your request's text outside — the image never leaves the machine, but
+the request does.
 
 ---
 
-## 6. Extras opcionais
+## 6. Optional extras
 
-| Recurso | Instalação | O que muda |
+| Feature | Installation | What changes |
 |---|---|---|
-| **Dividir em partes** | `pip install segment-anything` + baixar o checkpoint `vit_b` (~360 MB) para `checkpoints/sam_vit_b.pth` | Xícara e pires saem como dois objetos |
-| **Melhorar imagem** | `pip install realesrgan basicsr` | Upscale com IA; sem isso usa reamostragem Lanczos |
-| **Pose e esqueleto** | [UniRig](https://github.com/VAST-AI-Research/UniRig) | Libera T-Pose, A-Pose e pose por texto |
-| **Pose por foto** | `pip install mediapipe` | Copia os ângulos do corpo de uma foto |
+| **Split into parts** | `pip install segment-anything` + download the `vit_b` checkpoint (~360 MB) to `checkpoints/sam_vit_b.pth` | Cup and saucer come out as two objects |
+| **Enhance image** | `pip install realesrgan basicsr` | AI upscale; without it, uses Lanczos resampling |
+| **Pose and skeleton** | [UniRig](https://github.com/VAST-AI-Research/UniRig) | Unlocks T-Pose, A-Pose and pose from text |
+| **Pose from photo** | `pip install mediapipe` | Copies the body angles from a photo |
 
-Checkpoint do SAM:
+SAM checkpoint:
 https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
-(renomeie para `sam_vit_b.pth` e coloque em `checkpoints/`).
+(rename it to `sam_vit_b.pth` and put it in `checkpoints/`).
 
 ---
 
-## Checklist final
+## Final checklist
 
-Rode o app e confira a faixa de status:
+Run the app and check the status bar:
 
-- [ ] `GPU: X GB VRAM` — se disser "Sem GPU CUDA", volte à etapa 2
-- [ ] `Blender: encontrado` — se precisar de `.fbx`/`.usdz`
-- [ ] `Ollama: N modelo(s)` — se quiser o agente com LLM
-- [ ] Aba **Imagem → 3D**: gerar uma imagem simples ponta a ponta
-- [ ] Aba **Meus modelos**: o modelo gerado aparece na galeria
-- [ ] `pytest -q` → 79 testes passando
+- [ ] `GPU: X GB VRAM` — if it says "No CUDA GPU", go back to step 2
+- [ ] `Blender: found` — if you need `.fbx`/`.usdz`
+- [ ] `Ollama: N model(s)` — if you want the LLM-powered agent
+- [ ] **Image → 3D** tab: generate a simple image end to end
+- [ ] **My models** tab: the generated model shows up in the gallery
+- [ ] `pytest -q` → 79 tests passing
 
 ---
 
-## Problemas comuns
+## Common issues
 
-| Sintoma | Causa | Solução |
+| Symptom | Cause | Fix |
 |---|---|---|
-| `ModuleNotFoundError: espresso3d` | Faltou o `pip install -e .` | Rode na raiz do repositório, com a venv ativa |
-| Geração lentíssima, GPU parada | PyTorch CPU instalado | Etapa 2, com `--index-url` |
-| `torch.cuda.is_available()` → False | Mesma coisa, ou driver desatualizado | Reinstale o torch; confira `nvidia-smi` |
-| `CUDA out of memory` | Motor pesado demais, ou LLM ocupando a VRAM | Troque para TripoSR, baixe a contagem de polígonos, desligue textura, e ligue "Rodar na CPU" no agente |
-| Erro 401 ao baixar pesos | Licença do Stable Fast 3D não aceita | Etapa 3, aceite a licença e faça `huggingface-cli login` |
-| `Blender não encontrado` mas está instalado | Fora do PATH | Defina `BLENDER_BIN` |
-| Agente não responde | Ollama parado | `ollama serve` e confira `curl localhost:11434/api/tags` |
-| Modelo 3D sem textura no arquivo | Formato não carrega textura | `.stl` não guarda cor; use `.glb`. O app avisa antes de exportar |
-| Pose sumiu no arquivo exportado | Formato não carrega esqueleto | Use `.glb`, `.fbx`, `.usdz` ou `.vrm` |
+| `ModuleNotFoundError: espresso3d` | Missing `pip install -e .` | Run it at the repository root, with the venv active |
+| Extremely slow generation, GPU idle | CPU PyTorch installed | Step 2, with `--index-url` |
+| `torch.cuda.is_available()` → False | Same thing, or outdated driver | Reinstall torch; check `nvidia-smi` |
+| `CUDA out of memory` | Engine too heavy, or LLM using up the VRAM | Switch to TripoSR, lower the polygon count, turn off texture, and enable "Run on CPU" on the agent |
+| 401 error downloading weights | Stable Fast 3D license not accepted | Step 3, accept the license and run `huggingface-cli login` |
+| `Blender not found` but it's installed | Not on the PATH | Set `BLENDER_BIN` |
+| Agent doesn't respond | Ollama stopped | `ollama serve` and check `curl localhost:11434/api/tags` |
+| 3D model has no texture in the file | Format doesn't carry texture | `.stl` doesn't store color; use `.glb`. The app warns before exporting |
+| Pose disappeared in the exported file | Format doesn't carry a skeleton | Use `.glb`, `.fbx`, `.usdz` or `.vrm` |
 
 ---
 
-## O que fica onde
+## What lives where
 
 ```
 espresso-3d/
-├── outputs/          # seus modelos gerados (ignorado pelo Git)
-├── checkpoints/      # pesos baixados manualmente, ex. SAM (ignorado)
-├── .venv/            # ambiente virtual (ignorado)
-└── src/espresso3d/   # o código
+├── outputs/          # your generated models (ignored by Git)
+├── checkpoints/      # manually downloaded weights, e.g. SAM (ignored)
+├── .venv/            # virtual environment (ignored)
+└── src/espresso3d/   # the code
 ```
 
-Os pesos dos motores ficam fora do projeto, no cache do Hugging Face
-(`~/.cache/huggingface`), compartilhado entre projetos.
+The engines' weights live outside the project, in the Hugging Face
+cache (`~/.cache/huggingface`), shared across projects.
 
-Para desinstalar tudo: apague a pasta do repositório e, se quiser recuperar
-os GB dos modelos, o cache do Hugging Face.
+To uninstall everything: delete the repository folder and, if you want
+to reclaim the GB used by the models, the Hugging Face cache too.

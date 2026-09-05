@@ -1,69 +1,70 @@
-"""Interface comum dos motores de geração 3D."""
+"""Common interface for the 3D generation engines."""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from ..config import Licenca, PipelineConfig
+from ..config import License, PipelineConfig
 
 
-class DependenciaFaltando(RuntimeError):
-    """Erro com instrução de instalação, em vez de um ImportError seco."""
+class MissingDependency(RuntimeError):
+    """Error with installation instructions, instead of a bare ImportError."""
 
-    def __init__(self, pacote: str, como_instalar: str):
+    def __init__(self, package: str, how_to_install: str):
         super().__init__(
-            f"'{pacote}' não está instalado.\n\nPara instalar:\n  {como_instalar}"
+            f"'{package}' is not installed.\n\nTo install:\n  {how_to_install}"
         )
-        self.pacote = pacote
-        self.como_instalar = como_instalar
+        self.package = package
+        self.how_to_install = how_to_install
 
 
 @dataclass(frozen=True)
-class InfoMotor:
-    """Metadados que a interface mostra antes de o motor ser carregado."""
+class EngineInfo:
+    """Metadata the UI shows before the engine is loaded."""
 
     id: str
-    nome: str
-    descricao: str
+    name: str
+    description: str
     vram_min_gb: float
-    licenca_pesos: str
-    uso_comercial: bool
+    weights_license: str
+    commercial_use: bool
     pbr: bool
     repo: str
 
 
-class Motor(ABC):
-    """Um gerador de malha 3D a partir de uma imagem.
+class Engine(ABC):
+    """A 3D mesh generator from an image.
 
-    Os pesos são pesados (GB) e as dependências são específicas de cada
-    projeto, então tudo é importado só na hora de gerar — assim o app abre
-    normalmente numa máquina sem nada instalado e explica o que falta.
+    The weights are heavy (GB) and the dependencies are specific to each
+    project, so everything is imported only at generation time — that way
+    the app opens normally on a machine with nothing installed and explains
+    what's missing.
     """
 
-    info: InfoMotor
+    info: EngineInfo
 
     @abstractmethod
-    def _gerar(self, imagem, cfg: PipelineConfig):
-        """Devolve uma ``trimesh.Trimesh``. Implementado por cada motor."""
+    def _generate(self, image, cfg: PipelineConfig):
+        """Returns a ``trimesh.Trimesh``. Implemented by each engine."""
 
-    def gerar(self, imagem, cfg: PipelineConfig):
-        vram_livre = _vram()
-        if vram_livre is not None and vram_livre + 0.5 < self.info.vram_min_gb:
+    def generate(self, image, cfg: PipelineConfig):
+        free_vram = _vram()
+        if free_vram is not None and free_vram + 0.5 < self.info.vram_min_gb:
             raise RuntimeError(
-                f"{self.info.nome} precisa de ~{self.info.vram_min_gb:g} GB de VRAM "
-                f"e a sua GPU tem {vram_livre:g} GB. "
-                "Escolha um motor mais leve na lista."
+                f"{self.info.name} needs ~{self.info.vram_min_gb:g} GB of VRAM "
+                f"and your GPU has {free_vram:g} GB. "
+                "Choose a lighter engine from the list."
             )
-        return self._gerar(imagem, cfg)
+        return self._generate(image, cfg)
 
-    def compativel_com(self, licenca: Licenca) -> bool:
-        if licenca is Licenca.COMERCIAL:
-            return self.info.uso_comercial
+    def compatible_with(self, license: License) -> bool:
+        if license is License.COMMERCIAL:
+            return self.info.commercial_use
         return True
 
-    def __repr__(self) -> str:  # pragma: no cover - conveniência de debug
-        return f"<Motor {self.info.id}>"
+    def __repr__(self) -> str:  # pragma: no cover - debug convenience
+        return f"<Engine {self.info.id}>"
 
 
 def _vram() -> float | None:

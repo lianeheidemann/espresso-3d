@@ -1,77 +1,77 @@
 from espresso3d.pipeline import rigging
 
-OSSOS = rigging.OSSOS_HUMANOIDES
+BONES = rigging.HUMANOID_BONES
 
 
-def test_aceita_rotacao_valida():
-    limpo = rigging.validar_rotacoes({"head": [0, 25, 0]}, OSSOS)
-    assert limpo == {"head": [0.0, 25.0, 0.0]}
+def test_accepts_valid_rotation():
+    clean = rigging.validate_rotations({"head": [0, 25, 0]}, BONES)
+    assert clean == {"head": [0.0, 25.0, 0.0]}
 
 
-def test_descarta_osso_que_nao_existe_no_rig():
-    limpo = rigging.validar_rotacoes(
-        {"asa_esquerda": [0, 0, 0], "head": [1, 2, 3]}, OSSOS
+def test_discards_bone_that_does_not_exist_in_the_rig():
+    clean = rigging.validate_rotations(
+        {"left_wing": [0, 0, 0], "head": [1, 2, 3]}, BONES
     )
-    assert list(limpo) == ["head"]
+    assert list(clean) == ["head"]
 
 
-def test_limita_angulo_absurdo():
-    limpo = rigging.validar_rotacoes({"right_upper_arm": [900, -900, 0]}, OSSOS)
-    assert limpo["right_upper_arm"] == [180.0, -180.0, 0.0]
+def test_clamps_absurd_angle():
+    clean = rigging.validate_rotations({"right_upper_arm": [900, -900, 0]}, BONES)
+    assert clean["right_upper_arm"] == [180.0, -180.0, 0.0]
 
 
-def test_descarta_formato_errado():
-    bruto = {
-        "head": [1, 2],           # faltando um eixo
-        "neck": "muito girado",   # nem é lista
-        "spine": [1, 2, "x"],     # valor não numérico
-        "hips": [0, 10, 0],       # este é o único bom
+def test_discards_wrong_format():
+    raw = {
+        "head": [1, 2],            # missing one axis
+        "neck": "very twisted",    # not even a list
+        "spine": [1, 2, "x"],      # non-numeric value
+        "hips": [0, 10, 0],        # this is the only good one
     }
-    assert list(rigging.validar_rotacoes(bruto, OSSOS)) == ["hips"]
+    assert list(rigging.validate_rotations(raw, BONES)) == ["hips"]
 
 
-def test_normaliza_o_nome_do_osso():
-    limpo = rigging.validar_rotacoes({"Right Upper Arm": [0, 0, 10]}, OSSOS)
-    assert "right_upper_arm" in limpo
+def test_normalizes_the_bone_name():
+    clean = rigging.validate_rotations({"Right Upper Arm": [0, 0, 10]}, BONES)
+    assert "right_upper_arm" in clean
 
 
-def test_entrada_vazia():
-    assert rigging.validar_rotacoes({}, OSSOS) == {}
-    assert rigging.validar_rotacoes(None, OSSOS) == {}
+def test_empty_input():
+    assert rigging.validate_rotations({}, BONES) == {}
+    assert rigging.validate_rotations(None, BONES) == {}
 
 
-def test_extrai_json_puro():
-    assert rigging.extrair_json('{"head": [0, 0, 0]}') == {"head": [0, 0, 0]}
+def test_extracts_plain_json():
+    assert rigging.extract_json('{"head": [0, 0, 0]}') == {"head": [0, 0, 0]}
 
 
-def test_extrai_json_de_bloco_de_codigo():
-    texto = '```json\n{"neck": [1, 2, 3]}\n```'
-    assert rigging.extrair_json(texto) == {"neck": [1, 2, 3]}
+def test_extracts_json_from_code_block():
+    text = '```json\n{"neck": [1, 2, 3]}\n```'
+    assert rigging.extract_json(text) == {"neck": [1, 2, 3]}
 
 
-def test_extrai_json_com_conversa_em_volta():
-    texto = 'Claro! Segue: {"hips": [0, 0, 5]} — espero que ajude!'
-    assert rigging.extrair_json(texto) == {"hips": [0, 0, 5]}
+def test_extracts_json_with_chatter_around_it():
+    text = 'Sure! Here you go: {"hips": [0, 0, 5]} — hope that helps!'
+    assert rigging.extract_json(text) == {"hips": [0, 0, 5]}
 
 
-def test_extrai_json_de_texto_sem_json():
-    assert rigging.extrair_json("não consegui fazer isso") == {}
-    assert rigging.extrair_json("") == {}
+def test_extracts_json_from_text_with_no_json():
+    assert rigging.extract_json("couldn't do that") == {}
+    assert rigging.extract_json("") == {}
 
 
-def test_pose_por_texto_ponta_a_ponta():
-    class Cerebro:
-        def completar(self, prompt):
-            assert "right_upper_arm" in prompt  # recebeu a lista de ossos real
-            return '{"right_upper_arm": [0, 0, -75], "asa": [1, 1, 1]}'
+def test_pose_from_text_end_to_end():
+    class Brain:
+        def complete(self, prompt):
+            assert "right_upper_arm" in prompt  # received the real bone list
+            return '{"right_upper_arm": [0, 0, -75], "wing": [1, 1, 1]}'
 
-    pose = rigging.pose_por_texto("braço direito levantado", OSSOS, Cerebro())
+    pose = rigging.pose_from_text("right arm raised", BONES, Brain())
     assert pose == {"right_upper_arm": [0.0, 0.0, -75.0]}
 
 
-def test_pose_por_texto_vazio_nao_chama_o_llm():
-    class NuncaChamado:
-        def completar(self, prompt):
-            raise AssertionError("não deveria chamar o LLM com descrição vazia")
+def test_pose_from_empty_text_does_not_call_the_llm():
+    class NeverCalled:
+        def complete(self, prompt):
+            raise AssertionError("shouldn't call the LLM with an empty description")
 
-    assert rigging.pose_por_texto("   ", OSSOS, NuncaChamado()) == {}
+    assert rigging.pose_from_text("   ", BONES, NeverCalled()) == {}

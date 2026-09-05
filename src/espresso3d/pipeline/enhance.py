@@ -1,4 +1,4 @@
-"""Melhoria da imagem antes da geração 3D (Real-ESRGAN)."""
+"""Image enhancement before 3D generation (Real-ESRGAN)."""
 
 from __future__ import annotations
 
@@ -6,34 +6,34 @@ import logging
 
 log = logging.getLogger(__name__)
 
-#: Acima disso não vale a pena melhorar — o motor 3D reduz a imagem mesmo.
-_LADO_MAXIMO = 1024
+#: Above this it's not worth enhancing — the 3D engine downsizes the image anyway.
+_MAX_SIDE = 1024
 
 
-def melhorar(imagem, escala: int = 2):
-    """Aumenta e limpa a imagem. Devolve a original se o upscaler faltar.
+def enhance(image, scale: int = 2):
+    """Upscales and cleans the image. Returns the original if the upscaler is missing.
 
-    Falhar aqui não pode impedir a geração: imagem melhorada é um extra,
-    não um requisito.
+    Failing here must not block generation: an enhanced image is a bonus,
+    not a requirement.
     """
-    largura, altura = imagem.size
-    if max(largura, altura) >= _LADO_MAXIMO:
-        return imagem
+    width, height = image.size
+    if max(width, height) >= _MAX_SIDE:
+        return image
 
     try:
-        return _real_esrgan(imagem, escala)
+        return _real_esrgan(image, scale)
     except Exception as exc:
-        log.info("Real-ESRGAN indisponível (%s) — seguindo com a imagem original.", exc)
-        return _reamostrar(imagem, escala)
+        log.info("Real-ESRGAN unavailable (%s) — continuing with the original image.", exc)
+        return _resample(image, scale)
 
 
-def _real_esrgan(imagem, escala: int):  # pragma: no cover - precisa de download
+def _real_esrgan(image, scale: int):  # pragma: no cover - depends on download
     import numpy as np
     import torch
     from basicsr.archs.rrdbnet_arch import RRDBNet
     from realesrgan import RealESRGANer
 
-    modelo = RRDBNet(
+    model = RRDBNet(
         num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=4
     )
     upsampler = RealESRGANer(
@@ -42,20 +42,20 @@ def _real_esrgan(imagem, escala: int):  # pragma: no cover - precisa de download
             "https://github.com/xinntao/Real-ESRGAN/releases/download/"
             "v0.1.0/RealESRGAN_x4plus.pth"
         ),
-        model=modelo,
+        model=model,
         half=torch.cuda.is_available(),
     )
-    saida, _ = upsampler.enhance(np.array(imagem.convert("RGB")), outscale=escala)
+    output, _ = upsampler.enhance(np.array(image.convert("RGB")), outscale=scale)
 
     from PIL import Image
 
-    return Image.fromarray(saida)
+    return Image.fromarray(output)
 
 
-def _reamostrar(imagem, escala: int):
-    """Plano B honesto: reamostragem Lanczos, sem IA nenhuma."""
+def _resample(image, scale: int):
+    """Honest fallback: Lanczos resampling, no AI at all."""
     from PIL import Image
 
-    largura, altura = imagem.size
-    novo = (min(largura * escala, _LADO_MAXIMO), min(altura * escala, _LADO_MAXIMO))
-    return imagem.resize(novo, Image.LANCZOS)
+    width, height = image.size
+    new_size = (min(width * scale, _MAX_SIDE), min(height * scale, _MAX_SIDE))
+    return image.resize(new_size, Image.LANCZOS)

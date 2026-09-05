@@ -1,13 +1,13 @@
-"""Esqueleto e pose.
+"""Skeleton and pose.
 
-O rig automático vem do UniRig. A pose personalizada é traduzida do texto
-do usuário para rotações de ossos pelo mesmo LLM local que move a aba
-Agente — sem baixar modelo nenhum a mais.
+The automatic rig comes from UniRig. The custom pose is translated from
+the user's text into bone rotations by the same local LLM that powers
+the Agent tab — no extra model download needed.
 
-A saída do LLM nunca é aplicada crua: passa por :func:`validar_rotacoes`,
-que descarta osso inexistente e limita ângulo fora da faixa. Um JSON
-alucinado vira, no pior caso, uma pose parcial — nunca um personagem com
-o braço girado 900°.
+The LLM's output is never applied raw: it goes through
+:func:`validate_rotations`, which discards nonexistent bones and clamps
+angles outside the allowed range. A hallucinated JSON becomes, in the
+worst case, a partial pose — never a character with an arm rotated 900°.
 """
 
 from __future__ import annotations
@@ -20,11 +20,11 @@ from ..config import Pose
 
 log = logging.getLogger(__name__)
 
-#: Limite por eixo, em graus. Junta humana não passa disso.
-LIMITE_GRAUS = 180.0
+#: Limit per axis, in degrees. No human joint goes past this.
+DEGREE_LIMIT = 180.0
 
-#: Ossos de um rig humanoide padrão (nomenclatura Mixamo/UniRig simplificada).
-OSSOS_HUMANOIDES = [
+#: Bones of a standard humanoid rig (simplified Mixamo/UniRig naming).
+HUMANOID_BONES = [
     "hips", "spine", "chest", "neck", "head",
     "left_shoulder", "left_upper_arm", "left_lower_arm", "left_hand",
     "right_shoulder", "right_upper_arm", "right_lower_arm", "right_hand",
@@ -32,117 +32,117 @@ OSSOS_HUMANOIDES = [
     "right_upper_leg", "right_lower_leg", "right_foot",
 ]
 
-_PROMPT = """Você converte descrições de pose em rotações de ossos.
+_PROMPT = """You convert pose descriptions into bone rotations.
 
-Ossos disponíveis neste esqueleto:
-{ossos}
+Bones available in this skeleton:
+{bones}
 
-Descrição da pose: "{descricao}"
+Pose description: "{description}"
 
-Responda APENAS um objeto JSON mapeando nome do osso para [x, y, z] em graus.
-Use somente ossos da lista. Omita os ossos que não mudam.
-Exemplo: {{"right_upper_arm": [0, 0, -75], "head": [0, 25, 0]}}"""
-
-
-class RigIndisponivel(RuntimeError):
-    """Levantado quando não há esqueleto humanoide para posar."""
+Respond with ONLY a JSON object mapping bone name to [x, y, z] in degrees.
+Use only bones from the list. Omit bones that don't change.
+Example: {{"right_upper_arm": [0, 0, -75], "head": [0, 25, 0]}}"""
 
 
-def validar_rotacoes(bruto: dict, ossos_validos: list[str]) -> dict[str, list[float]]:
-    """Filtra e limita o que o LLM devolveu.
+class RigUnavailable(RuntimeError):
+    """Raised when there's no humanoid skeleton to pose."""
 
-    Osso desconhecido é descartado (com log), valor não numérico é
-    descartado, ângulo fora de faixa é limitado. O que sobra é seguro
-    de aplicar.
+
+def validate_rotations(raw: dict, valid_bones: list[str]) -> dict[str, list[float]]:
+    """Filters and clamps what the LLM returned.
+
+    An unknown bone is discarded (with a log entry), a non-numeric value
+    is discarded, an out-of-range angle is clamped. What's left is safe
+    to apply.
     """
-    validos = set(ossos_validos)
-    limpo: dict[str, list[float]] = {}
+    valid = set(valid_bones)
+    clean: dict[str, list[float]] = {}
 
-    for osso, angulos in (bruto or {}).items():
-        chave = str(osso).strip().lower().replace(" ", "_").replace("-", "_")
-        if chave not in validos:
-            log.debug("Osso ignorado (não existe neste rig): %s", osso)
+    for bone, angles in (raw or {}).items():
+        key = str(bone).strip().lower().replace(" ", "_").replace("-", "_")
+        if key not in valid:
+            log.debug("Bone ignored (doesn't exist in this rig): %s", bone)
             continue
-        if not isinstance(angulos, (list, tuple)) or len(angulos) != 3:
-            log.debug("Rotação ignorada (formato inesperado) em %s: %r", osso, angulos)
+        if not isinstance(angles, (list, tuple)) or len(angles) != 3:
+            log.debug("Rotation ignored (unexpected format) for %s: %r", bone, angles)
             continue
         try:
-            eixos = [float(a) for a in angulos]
+            axes = [float(a) for a in angles]
         except (TypeError, ValueError):
-            log.debug("Rotação ignorada (valor não numérico) em %s: %r", osso, angulos)
+            log.debug("Rotation ignored (non-numeric value) for %s: %r", bone, angles)
             continue
-        limpo[chave] = [max(-LIMITE_GRAUS, min(LIMITE_GRAUS, a)) for a in eixos]
+        clean[key] = [max(-DEGREE_LIMIT, min(DEGREE_LIMIT, a)) for a in axes]
 
-    return limpo
+    return clean
 
 
-def extrair_json(texto: str) -> dict:
-    """Pega o objeto JSON de uma resposta que pode vir com conversa em volta.
+def extract_json(text: str) -> dict:
+    """Pulls the JSON object out of a response that may have chatter around it.
 
-    Modelos pequenos gostam de responder "Claro! Aqui está: {...}", e às
-    vezes embrulham em bloco de código.
+    Small models like to answer "Sure! Here it is: {...}", and sometimes
+    wrap it in a code block.
     """
-    if not texto:
+    if not text:
         return {}
-    limpo = re.sub(r"^```(?:json)?|```$", "", texto.strip(), flags=re.MULTILINE).strip()
+    clean = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE).strip()
     try:
-        return json.loads(limpo)
+        return json.loads(clean)
     except json.JSONDecodeError:
         pass
-    inicio, fim = limpo.find("{"), limpo.rfind("}")
-    if inicio != -1 and fim > inicio:
+    start, end = clean.find("{"), clean.rfind("}")
+    if start != -1 and end > start:
         try:
-            return json.loads(limpo[inicio : fim + 1])
+            return json.loads(clean[start : end + 1])
         except json.JSONDecodeError:
             pass
-    log.warning("Resposta do LLM não continha JSON válido.")
+    log.warning("The LLM's response didn't contain valid JSON.")
     return {}
 
 
-def pose_por_texto(descricao: str, ossos: list[str], backend) -> dict[str, list[float]]:
-    """Traduz a descrição do usuário em rotações validadas."""
-    if not descricao.strip():
+def pose_from_text(description: str, bones: list[str], backend) -> dict[str, list[float]]:
+    """Translates the user's description into validated rotations."""
+    if not description.strip():
         return {}
-    prompt = _PROMPT.format(ossos=", ".join(ossos), descricao=descricao.strip())
-    resposta = backend.completar(prompt)
-    return validar_rotacoes(extrair_json(resposta), ossos)
+    prompt = _PROMPT.format(bones=", ".join(bones), description=description.strip())
+    response = backend.complete(prompt)
+    return validate_rotations(extract_json(response), bones)
 
 
-def pose_por_imagem(caminho_foto: str, ossos: list[str]) -> dict[str, list[float]]:
-    """Copia os ângulos do corpo de uma foto de referência (MediaPipe)."""
-    try:  # pragma: no cover - depende de download
+def pose_from_image(photo_path: str, bones: list[str]) -> dict[str, list[float]]:
+    """Copies body angles from a reference photo (MediaPipe)."""
+    try:  # pragma: no cover - depends on download
         import mediapipe as mp  # noqa: F401
     except ImportError as exc:
-        raise RigIndisponivel(
-            "Para usar foto de referência instale o MediaPipe:\n"
+        raise RigUnavailable(
+            "To use a reference photo install MediaPipe:\n"
             "  pip install mediapipe"
         ) from exc
-    raise RigIndisponivel(  # pragma: no cover
-        "Extração de pose por foto ainda não implementada nesta versão. "
-        "Use a descrição em texto."
+    raise RigUnavailable(  # pragma: no cover
+        "Pose extraction from a photo isn't implemented yet in this version. "
+        "Use the text description."
     )
 
 
-def aplicar_rig(malha, cfg, backend=None):
-    """Gera o esqueleto e aplica a pose escolhida.
+def apply_rig(mesh, cfg, backend=None):
+    """Generates the skeleton and applies the chosen pose.
 
-    Sem UniRig instalado, devolve a malha sem rig e explica o que falta —
-    não trava a geração inteira por causa da pose.
+    Without UniRig installed, returns the mesh without a rig and
+    explains what's missing — it doesn't block the whole generation
+    because of the pose.
     """
-    if cfg.pose is Pose.NENHUM:
-        return malha, None
+    if cfg.pose is Pose.NONE:
+        return mesh, None
 
-    try:  # pragma: no cover - depende de download
+    try:  # pragma: no cover - depends on download
         import unirig  # type: ignore  # noqa: F401
     except ImportError as exc:
-        raise RigIndisponivel(
-            "Pose e esqueleto precisam do UniRig:\n"
+        raise RigUnavailable(
+            "Pose and skeleton need UniRig:\n"
             "  git clone https://github.com/VAST-AI-Research/UniRig\n"
             "  pip install -e UniRig\n"
-            "O modelo é gerado normalmente sem rig se você escolher Pose: Nenhum."
+            "The model is generated normally without a rig if you choose Pose: None."
         ) from exc
 
-    raise RigIndisponivel(  # pragma: no cover
-        "UniRig encontrado, mas a integração de rig ainda não está completa "
-        "nesta versão."
+    raise RigUnavailable(  # pragma: no cover
+        "UniRig found, but rig integration isn't complete yet in this version."
     )

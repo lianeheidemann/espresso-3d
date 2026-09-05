@@ -1,8 +1,8 @@
-"""Biblioteca dos modelos gerados.
+"""Library of generated models.
 
-O sistema de arquivos é a fonte da verdade: a lista vem de varrer
-``outputs/*/meta.json``. Não existe banco de dados para dessincronizar —
-o usuário pode mover, copiar ou apagar pastas por fora que nada quebra.
+The filesystem is the source of truth: the list comes from scanning
+``outputs/*/meta.json``. There's no database to get out of sync — the
+user can move, copy or delete folders from outside and nothing breaks.
 """
 
 from __future__ import annotations
@@ -16,23 +16,23 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-RAIZ = Path("outputs")
+ROOT = Path("outputs")
 META = "meta.json"
 
 
 @dataclass
 class Item:
-    """Um modelo gerado, montado a partir do meta.json da pasta."""
+    """A generated model, built from the folder's meta.json."""
 
-    pasta: Path
-    nome: str
-    criado_em: str
-    motor: str
+    folder: Path
+    name: str
+    created_at: str
+    engine: str
     faces: int
-    formatos: list[str]
-    partes: int
+    formats: list[str]
+    parts: int
     bytes: int
-    avisos: list[str]
+    warnings: list[str]
 
     @property
     def mb(self) -> float:
@@ -40,112 +40,112 @@ class Item:
 
     @property
     def preview(self) -> Path | None:
-        for candidato in sorted(self.pasta.glob("*.glb")):
-            return candidato
+        for candidate in sorted(self.folder.glob("*.glb")):
+            return candidate
         return None
 
     @property
-    def imagem_origem(self) -> Path | None:
-        origem = self.pasta / "source.png"
-        return origem if origem.exists() else None
+    def source_image(self) -> Path | None:
+        source = self.folder / "source.png"
+        return source if source.exists() else None
 
 
-def registrar(resultado, cfg, nome: str) -> Path:
-    """Escreve o ``meta.json`` que faz a pasta aparecer na biblioteca."""
+def register(result, cfg, name: str) -> Path:
+    """Writes the ``meta.json`` that makes the folder show up in the library."""
     meta = {
-        "nome": nome,
-        "criado_em": datetime.now().isoformat(timespec="seconds"),
-        "motor": cfg.engine,
-        "faces": resultado.estatisticas.get("faces", 0),
-        "formatos": sorted({a.suffix.lstrip(".") for a in resultado.arquivos}),
-        "partes": resultado.partes,
-        "duracao_s": resultado.duracao_s,
-        "avisos": resultado.avisos,
-        "config": cfg.como_dict(),
+        "name": name,
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "engine": cfg.engine,
+        "faces": result.stats.get("faces", 0),
+        "formats": sorted({a.suffix.lstrip(".") for a in result.files}),
+        "parts": result.parts,
+        "duration_s": result.duration_s,
+        "warnings": result.warnings,
+        "config": cfg.to_dict(),
     }
-    caminho = Path(resultado.pasta) / META
-    caminho.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
-    return caminho
+    path = Path(result.folder) / META
+    path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+    return path
 
 
-def listar(raiz: Path = RAIZ) -> list[Item]:
-    """Todos os modelos, do mais novo para o mais antigo."""
-    raiz = Path(raiz)
-    if not raiz.exists():
+def list_items(root: Path = ROOT) -> list[Item]:
+    """All models, from newest to oldest."""
+    root = Path(root)
+    if not root.exists():
         return []
 
-    itens: list[Item] = []
-    for pasta in sorted(raiz.iterdir(), reverse=True):
-        if not pasta.is_dir():
+    items: list[Item] = []
+    for folder in sorted(root.iterdir(), reverse=True):
+        if not folder.is_dir():
             continue
-        item = _ler(pasta)
+        item = _read(folder)
         if item is not None:
-            itens.append(item)
-    return itens
+            items.append(item)
+    return items
 
 
-def _ler(pasta: Path) -> Item | None:
-    caminho = pasta / META
-    if not caminho.exists():
+def _read(folder: Path) -> Item | None:
+    path = folder / META
+    if not path.exists():
         return None
     try:
-        meta = json.loads(caminho.read_text(encoding="utf-8"))
+        meta = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as exc:
-        log.warning("meta.json ilegível em %s: %s", pasta, exc)
+        log.warning("Unreadable meta.json in %s: %s", folder, exc)
         return None
 
     return Item(
-        pasta=pasta,
-        nome=meta.get("nome", pasta.name),
-        criado_em=meta.get("criado_em", ""),
-        motor=meta.get("motor", "?"),
+        folder=folder,
+        name=meta.get("name", folder.name),
+        created_at=meta.get("created_at", ""),
+        engine=meta.get("engine", "?"),
         faces=int(meta.get("faces", 0) or 0),
-        formatos=list(meta.get("formatos", [])),
-        partes=int(meta.get("partes", 1) or 1),
-        bytes=tamanho(pasta),
-        avisos=list(meta.get("avisos", [])),
+        formats=list(meta.get("formats", [])),
+        parts=int(meta.get("parts", 1) or 1),
+        bytes=folder_size(folder),
+        warnings=list(meta.get("warnings", [])),
     )
 
 
-def tamanho(pasta: Path) -> int:
-    """Bytes ocupados por uma pasta de modelo."""
-    return sum(f.stat().st_size for f in Path(pasta).rglob("*") if f.is_file())
+def folder_size(folder: Path) -> int:
+    """Bytes occupied by a model folder."""
+    return sum(f.stat().st_size for f in Path(folder).rglob("*") if f.is_file())
 
 
-def espaco_total(raiz: Path = RAIZ) -> tuple[int, int]:
-    """(quantidade de modelos, bytes no disco)."""
-    itens = listar(raiz)
-    return len(itens), sum(i.bytes for i in itens)
+def total_space(root: Path = ROOT) -> tuple[int, int]:
+    """(number of models, bytes on disk)."""
+    items = list_items(root)
+    return len(items), sum(i.bytes for i in items)
 
 
-def apagar(pasta: Path, para_lixeira: bool = True) -> bool:
-    """Remove uma pasta de modelo.
+def delete(folder: Path, to_trash: bool = True) -> bool:
+    """Removes a model folder.
 
-    Por padrão manda para a lixeira do sistema, que é recuperável.
-    Apagar arquivo de usuário sem volta é coisa que só se faz quando a
-    pessoa pede explicitamente.
+    Sends it to the system trash by default, which is recoverable.
+    Permanently deleting a user's file is something done only when the
+    person explicitly asks for it.
     """
-    pasta = Path(pasta)
-    if not pasta.exists():
+    folder = Path(folder)
+    if not folder.exists():
         return False
 
-    if para_lixeira:
+    if to_trash:
         try:
             from send2trash import send2trash
 
-            send2trash(str(pasta))
+            send2trash(str(folder))
             return True
         except ImportError:
             log.warning(
-                "send2trash não instalado — apagando definitivamente. "
-                "Instale com: pip install send2trash"
+                "send2trash not installed — deleting permanently. "
+                "Install with: pip install send2trash"
             )
         except Exception as exc:
-            log.warning("Lixeira indisponível (%s) — apagando definitivamente.", exc)
+            log.warning("Trash unavailable (%s) — deleting permanently.", exc)
 
-    shutil.rmtree(pasta)
+    shutil.rmtree(folder)
     return True
 
 
-def apagar_varios(pastas: list[Path], para_lixeira: bool = True) -> int:
-    return sum(1 for p in pastas if apagar(p, para_lixeira))
+def delete_many(folders: list[Path], to_trash: bool = True) -> int:
+    return sum(1 for p in folders if delete(p, to_trash))

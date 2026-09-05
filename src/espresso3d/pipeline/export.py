@@ -1,11 +1,11 @@
-"""Exportação para todos os formatos, por dois caminhos.
+"""Export to every format, via two paths.
 
-* **trimesh** (puro Python): glb, gltf, obj, ply, stl, 3mf — sempre disponível.
-* **Blender headless**: fbx, usdz, usdc, usda, dae, blend, vrm — precisa do
-  Blender instalado, que é grátis mas é uma instalação à parte.
+* **trimesh** (pure Python): glb, gltf, obj, ply, stl, 3mf — always available.
+* **Headless Blender**: fbx, usdz, usdc, usda, dae, blend, vrm — needs
+  Blender installed, which is free but a separate install.
 
-O caminho é escolhido pelo catálogo em :data:`espresso3d.config.FORMATOS`,
-não por ``if`` espalhado pelo código.
+The path is chosen by the catalog in :data:`espresso3d.config.FORMATS`,
+not by ``if`` statements scattered through the code.
 """
 
 from __future__ import annotations
@@ -19,147 +19,147 @@ from pathlib import Path
 
 import trimesh
 
-from ..config import FORMATOS
-from ..hardware import blender as achar_blender
+from ..config import FORMATS
+from ..hardware import blender as find_blender
 
 log = logging.getLogger(__name__)
 
-#: Formatos que geram arquivos soltos (textura, .mtl) e por isso vão zipados.
-_ZIPAR = {"obj", "gltf"}
+#: Formats that produce loose files (texture, .mtl) and are therefore zipped.
+_ZIP = {"obj", "gltf"}
 
 
-class BlenderNaoEncontrado(RuntimeError):
-    def __init__(self, formatos: list[str]):
-        exts = ", ".join(f".{f}" for f in formatos)
+class BlenderNotFound(RuntimeError):
+    def __init__(self, formats: list[str]):
+        exts = ", ".join(f".{f}" for f in formats)
         super().__init__(
-            f"Para exportar {exts} é preciso ter o Blender instalado.\n"
-            "Baixe em https://www.blender.org/download/ (grátis) ou aponte "
-            "a variável BLENDER_BIN para o executável.\n"
-            "Os formatos .glb, .gltf, .obj, .ply, .stl e .3mf não precisam dele."
+            f"To export {exts} you need Blender installed.\n"
+            "Download it at https://www.blender.org/download/ (free) or point "
+            "the BLENDER_BIN variable to the executable.\n"
+            "The .glb, .gltf, .obj, .ply, .stl and .3mf formats don't need it."
         )
 
 
-def exportar(
-    malha: trimesh.Trimesh,
-    destino: Path,
-    formatos: list[str],
-    nome: str = "model",
+def export(
+    mesh: trimesh.Trimesh,
+    destination: Path,
+    formats: list[str],
+    name: str = "model",
 ) -> list[Path]:
-    """Escreve ``malha`` em cada formato pedido dentro de ``destino``."""
-    destino = Path(destino)
-    destino.mkdir(parents=True, exist_ok=True)
+    """Writes ``mesh`` in each requested format inside ``destination``."""
+    destination = Path(destination)
+    destination.mkdir(parents=True, exist_ok=True)
 
-    desconhecidos = [f for f in formatos if f not in FORMATOS]
-    if desconhecidos:
-        raise ValueError(f"Formato desconhecido: {', '.join(desconhecidos)}")
+    unknown = [f for f in formats if f not in FORMATS]
+    if unknown:
+        raise ValueError(f"Unknown format: {', '.join(unknown)}")
 
-    via_trimesh = [f for f in formatos if FORMATOS[f].backend == "trimesh"]
-    via_blender = [f for f in formatos if FORMATOS[f].backend == "blender"]
+    via_trimesh = [f for f in formats if FORMATS[f].backend == "trimesh"]
+    via_blender = [f for f in formats if FORMATS[f].backend == "blender"]
 
-    gerados: list[Path] = []
+    generated: list[Path] = []
     for fmt in via_trimesh:
-        gerados.append(_exportar_trimesh(malha, destino, fmt, nome))
+        generated.append(_export_trimesh(mesh, destination, fmt, name))
 
     if via_blender:
-        gerados.extend(_exportar_blender(malha, destino, via_blender, nome))
+        generated.extend(_export_blender(mesh, destination, via_blender, name))
 
-    return gerados
+    return generated
 
 
-def _exportar_trimesh(
-    malha: trimesh.Trimesh, destino: Path, fmt: str, nome: str
+def _export_trimesh(
+    mesh: trimesh.Trimesh, destination: Path, fmt: str, name: str
 ) -> Path:
-    if fmt in _ZIPAR:
-        return _exportar_zipado(malha, destino, fmt, nome)
-    caminho = destino / f"{nome}.{fmt}"
-    malha.export(caminho)
-    return caminho
+    if fmt in _ZIP:
+        return _export_zipped(mesh, destination, fmt, name)
+    path = destination / f"{name}.{fmt}"
+    mesh.export(path)
+    return path
 
 
-def _exportar_zipado(
-    malha: trimesh.Trimesh, destino: Path, fmt: str, nome: str
+def _export_zipped(
+    mesh: trimesh.Trimesh, destination: Path, fmt: str, name: str
 ) -> Path:
-    """.obj e .gltf espalham arquivos — entrega tudo num zip só."""
+    """.obj and .gltf spread files around — deliver everything in one zip."""
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
-        malha.export(tmp_path / f"{nome}.{fmt}")
-        zip_path = destino / f"{nome}_{fmt}.zip"
+        mesh.export(tmp_path / f"{name}.{fmt}")
+        zip_path = destination / f"{name}_{fmt}.zip"
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-            for arquivo in sorted(tmp_path.rglob("*")):
-                if arquivo.is_file():
-                    z.write(arquivo, arquivo.relative_to(tmp_path))
+            for file in sorted(tmp_path.rglob("*")):
+                if file.is_file():
+                    z.write(file, file.relative_to(tmp_path))
     return zip_path
 
 
-def _exportar_blender(
-    malha: trimesh.Trimesh, destino: Path, formatos: list[str], nome: str
+def _export_blender(
+    mesh: trimesh.Trimesh, destination: Path, formats: list[str], name: str
 ) -> list[Path]:
-    exe = achar_blender()
+    exe = find_blender()
     if not exe:
-        raise BlenderNaoEncontrado(formatos)
+        raise BlenderNotFound(formats)
 
     with tempfile.TemporaryDirectory() as tmp:
-        ponte = Path(tmp) / "ponte.glb"
-        malha.export(ponte)
+        bridge = Path(tmp) / "bridge.glb"
+        mesh.export(bridge)
 
-        saidas = {fmt: destino / f"{nome}.{fmt}" for fmt in formatos}
+        outputs = {fmt: destination / f"{name}.{fmt}" for fmt in formats}
         script = Path(tmp) / "converter.py"
         script.write_text(
-            _SCRIPT_BLENDER.format(
-                entrada=repr(str(ponte)),
-                saidas=repr({k: str(v) for k, v in saidas.items()}),
+            _BLENDER_SCRIPT.format(
+                input_path=repr(str(bridge)),
+                outputs=repr({k: str(v) for k, v in outputs.items()}),
             ),
             encoding="utf-8",
         )
 
-        resultado = subprocess.run(
+        result = subprocess.run(
             [exe, "--background", "--factory-startup", "--python", str(script)],
             capture_output=True,
             text=True,
             timeout=600,
         )
-        if resultado.returncode != 0:
-            log.error("Blender falhou: %s", resultado.stderr[-2000:])
+        if result.returncode != 0:
+            log.error("Blender failed: %s", result.stderr[-2000:])
             raise RuntimeError(
-                "O Blender não conseguiu converter os formatos "
-                f"{', '.join(formatos)}. Detalhe: {resultado.stderr.strip()[-400:]}"
+                "Blender couldn't convert the formats "
+                f"{', '.join(formats)}. Detail: {result.stderr.strip()[-400:]}"
             )
 
-    return [caminho for caminho in saidas.values() if caminho.exists()]
+    return [path for path in outputs.values() if path.exists()]
 
 
-#: Roda dentro do Blender, não no interpretador do app.
-_SCRIPT_BLENDER = '''
+#: Runs inside Blender, not the app's interpreter.
+_BLENDER_SCRIPT = '''
 import bpy, sys
 
-entrada = {entrada}
-saidas = {saidas}
+input_path = {input_path}
+outputs = {outputs}
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
-bpy.ops.import_scene.gltf(filepath=entrada)
+bpy.ops.import_scene.gltf(filepath=input_path)
 
-for fmt, caminho in saidas.items():
+for fmt, path in outputs.items():
     try:
         if fmt == "fbx":
-            bpy.ops.export_scene.fbx(filepath=caminho, path_mode="COPY", embed_textures=True)
+            bpy.ops.export_scene.fbx(filepath=path, path_mode="COPY", embed_textures=True)
         elif fmt == "dae":
-            bpy.ops.wm.collada_export(filepath=caminho)
+            bpy.ops.wm.collada_export(filepath=path)
         elif fmt == "blend":
-            bpy.ops.wm.save_as_mainfile(filepath=caminho)
+            bpy.ops.wm.save_as_mainfile(filepath=path)
         elif fmt in {{"usdz", "usdc", "usda"}}:
-            bpy.ops.wm.usd_export(filepath=caminho, export_textures=True)
+            bpy.ops.wm.usd_export(filepath=path, export_textures=True)
         elif fmt == "vrm":
-            # Depende do addon VRM instalado no Blender; sem ele, avisa e segue.
-            bpy.ops.export_scene.vrm(filepath=caminho)
+            # Depends on the VRM add-on installed in Blender; without it, warns and continues.
+            bpy.ops.export_scene.vrm(filepath=path)
     except Exception as exc:
-        print("ESPRESSO3D_FALHA %s: %s" % (fmt, exc), file=sys.stderr)
+        print("ESPRESSO3D_FAILURE %s: %s" % (fmt, exc), file=sys.stderr)
 '''
 
 
-def blender_disponivel() -> bool:
-    return achar_blender() is not None
+def blender_available() -> bool:
+    return find_blender() is not None
 
 
-def limpar_saida(pasta: Path) -> None:
-    """Apaga uma pasta de saída pela metade (usado quando a geração falha)."""
-    shutil.rmtree(pasta, ignore_errors=True)
+def clear_output(folder: Path) -> None:
+    """Deletes a half-finished output folder (used when generation fails)."""
+    shutil.rmtree(folder, ignore_errors=True)
