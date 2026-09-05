@@ -20,9 +20,6 @@
   </a>
 </p>
 
-<p align="center"><img width="190" height="34" alt="1000387888" src="https://github.com/user-attachments/assets/45995e1d-b9f0-4eff-b953-8c300c7c50e3" />
-</p>
-
 Espresso3D is a self-hosted image-to-3D generator. It runs entirely on your
 own hardware using open-source models — no subscription, no credit system,
 and your images never leave your machine.
