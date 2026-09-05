@@ -493,6 +493,15 @@
   }
   @media (max-width:1100px){.side-col{display:none;}}
   @media (max-width:820px){.chat-col{width:100%;border-right:none;}.agent-stage{display:none;}}
+  @media (max-width:900px){
+    .shell{height:auto;min-height:100vh;}
+    #view-single.active,#view-batch.active{flex-direction:column;}
+    #view-single .cfg-col,#view-batch .cfg-col{
+      width:100%;border-right:none;border-bottom:1px solid var(--border-soft);
+      overflow-y:visible;padding-bottom:18px;
+    }
+    #view-single .stage,#view-batch .stage{min-height:380px;}
+  }
 </style>
 
 <div class="shell">
