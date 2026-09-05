@@ -565,7 +565,7 @@
       </div>
 
       <div>
-        <div class="field-label">Polygon count <span class="hint">i</span><span class="val mono" id="poly-val">4000</span></div>
+        <div class="field-label">Polygon count <span class="val mono" id="poly-val">4000</span></div>
         <input type="range" min="500" max="20000" step="100" value="4000" id="poly-slider" aria-label="Polygon count">
       </div>
 
@@ -612,13 +612,8 @@
         </div>
       </div>
 
-      <div class="toggle-row"><span class="lbl">Split into parts <span class="hint">i</span></span><div class="switch" data-toggle role="switch" tabindex="0"></div></div>
+      <div class="toggle-row"><span class="lbl">Split into parts</span><div class="switch" data-toggle role="switch" tabindex="0"></div></div>
       <div class="toggle-row"><span class="lbl">Enhance image</span><div class="switch on" data-toggle role="switch" tabindex="0"></div></div>
-
-      <div>
-        <div class="field-label">Usage license</div>
-        <div class="seg" data-cfg="license"><button class="active">Private</button><button>Commercial</button></div>
-      </div>
 
       <div>
         <div class="field-label">Export as</div>
@@ -781,7 +776,6 @@
           <div class="inherit-row"><span>Pose</span><b id="sum-pose">None</b></div>
           <div class="inherit-row"><span>Split into parts</span><b id="sum-split">No</b></div>
           <div class="inherit-row"><span>Enhance image</span><b id="sum-enh">Yes</b></div>
-          <div class="inherit-row"><span>License</span><b id="sum-lic">Private</b></div>
           <div class="inherit-row"><span>Formats</span><b id="sum-fmt">.glb</b></div>
         </div>
       </div>
@@ -1157,7 +1151,6 @@
     $('#sum-pose').textContent = segVal('pose');
     $('#sum-split').textContent = splitOn ? 'Yes' : 'No';
     $('#sum-enh').textContent = enhOn ? 'Yes' : 'No';
-    $('#sum-lic').textContent = segVal('license');
     $('#sum-fmt').textContent = fmts.length ? fmts.join(' ') : '—';
   }
 

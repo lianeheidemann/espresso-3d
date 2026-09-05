@@ -16,7 +16,6 @@ from ..config import (
     MAX_BATCH_IMAGES,
     POLY_MAX,
     POLY_MIN,
-    License,
     PipelineConfig,
     Pose,
     TextureResolution,
@@ -34,7 +33,6 @@ _POSES = {
     "Custom": Pose.CUSTOM,
 }
 _TOPOLOGIES = {"High Detail": Topology.HIGH_DETAIL, "Smart Topology": Topology.SMART}
-_LICENSES = {"Private": License.PRIVATE, "Commercial": License.COMMERCIAL}
 _RESOLUTIONS = {"Standard": TextureResolution.STANDARD, "Ultra 2K": TextureResolution.ULTRA_2K}
 
 POSE_EXAMPLES = [
@@ -116,9 +114,6 @@ def build(state: gr.State):
 
                 split = gr.Checkbox(value=False, label="Split into parts")
                 enhance = gr.Checkbox(value=True, label="Enhance image")
-                license = gr.Radio(
-                    choices=list(_LICENSES), value="Private", label="Usage license"
-                )
 
                 with gr.Accordion("Export as", open=True):
                     format_groups: list[gr.CheckboxGroup] = []
@@ -170,12 +165,12 @@ def build(state: gr.State):
 
     controls = [
         engine, topology, poly, texture, resolution, pose, pose_prompt,
-        pose_ref, split, enhance, license, *format_groups,
+        pose_ref, split, enhance, *format_groups,
     ]
 
     def _build_config(*values) -> PipelineConfig:
         (v_engine, v_topology, v_poly, v_tex, v_res, v_pose, v_prompt,
-         v_ref, v_split, v_enhance, v_license, *v_formats) = values
+         v_ref, v_split, v_enhance, *v_formats) = values
         formats: list[str] = []
         for group in v_formats:
             formats += list(group or [])
@@ -190,7 +185,6 @@ def build(state: gr.State):
             pose_ref_image=v_ref,
             split_parts=bool(v_split),
             enhance_image=bool(v_enhance),
-            license=_LICENSES[v_license],
             formats=formats,
         )
 
@@ -259,7 +253,6 @@ def _summary_table(cfg: PipelineConfig) -> str:
         "Pose": cfg.pose.value.replace("_", "-"),
         "Split into parts": "Yes" if cfg.split_parts else "No",
         "Enhance image": "Yes" if cfg.enhance_image else "No",
-        "License": cfg.license.value,
         "Formats": ", ".join(f".{f}" for f in cfg.formats) or "—",
     }
     body = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in lines.items())
