@@ -1,10 +1,5 @@
 <p align="center">
-  <img width="208" height="150" alt="Espresso3D logo" src="https://github.com/user-attachments/assets/d153123b-6073-4439-81a0-988ce0607588" />
-</p>
-
-<h1 align="center">Espresso 3D</h1>
-
-<p align="center"><img width="190" height="34" alt="1000387888" src="https://github.com/user-attachments/assets/45995e1d-b9f0-4eff-b953-8c300c7c50e3" />
+  <img width="380"  alt="1000387925" src="https://github.com/user-attachments/assets/afb351ce-d138-4d6d-aec4-af133e80534d" />
 </p>
 
 <p align="center"><em>Turn a photo into a 3D model — on your own machine, with open-source models.</em></p>
@@ -19,6 +14,9 @@
   <a href="https://github.com/lianeheidemann/espresso-3d/actions/workflows/pages/pages-build-deployment">
     <img src="https://github.com/lianeheidemann/espresso-3d/actions/workflows/pages/pages-build-deployment/badge.svg" alt="Pages build and deployment status">
   </a>
+</p>
+
+<p align="center"><img width="190" height="34" alt="1000387888" src="https://github.com/user-attachments/assets/45995e1d-b9f0-4eff-b953-8c300c7c50e3" />
 </p>
 
 Espresso3D is a self-hosted image-to-3D generator. It runs entirely on your
