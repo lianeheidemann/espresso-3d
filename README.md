@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10 or newer">
   <img src="https://img.shields.io/badge/NVIDIA-CUDA-76B900?style=for-the-badge&logo=nvidia&logoColor=white" alt="Requires an NVIDIA CUDA GPU for generation">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-6F4E37?style=for-the-badge" alt="MIT License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-6D4587?style=for-the-badge" alt="MIT License"></a>
 </p>
 
 <p align="center">
