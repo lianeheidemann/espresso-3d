@@ -13,9 +13,7 @@
   <img src="https://img.shields.io/badge/Web-Interface-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white">
 </p>
 
-Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
-modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
-imagens para servidor nenhum.
+---
 
 <p align="center">
   <img src="https://img.shields.io/badge/Image%20→%203D-Model-8A2BE2?style=flat-square">
@@ -25,6 +23,12 @@ imagens para servidor nenhum.
   <img src="https://img.shields.io/badge/Rigging-Optional-FF9800?style=flat-square">
   <img src="https://img.shields.io/badge/Local-GPU-76B900?style=flat-square">
 </p>
+
+Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
+modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
+imagens para servidor nenhum.
+
+
 
 ## Interface
 
