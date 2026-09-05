@@ -4,7 +4,11 @@ Gerador de modelos 3D a partir de imagens, rodando **na sua máquina**, com
 modelos de código aberto. Sem assinatura, sem créditos, sem enviar suas
 imagens para servidor nenhum.
 
-**[Ver as telas →](https://lianeheidemann.github.io/espresso-3d/)** *(prévia visual;
+<p align="center">
+  <img src="assets/interface.jpg" alt="Interface do Espresso3D: painel de configuração à esquerda com motor, polígonos, textura, pose, licença e formatos de exportação; pré-visualização 3D à direita" width="420">
+</p>
+
+**[Ver as telas →](https://lianeheidemann.github.io/espresso-3d/)** *(prévia navegável;
 a geração 3D roda localmente)*
 
 ---
