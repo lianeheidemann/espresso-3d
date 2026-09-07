@@ -40,7 +40,7 @@ and your images never leave your machine.
 
 **Mobile**
 
-<img width="300" src="assets/gif/interface-4.gif" />
+<img width="300" src="assets/gif/interface-5.gif" />
 
 **[Live UI preview →](https://lianeheidemann.github.io/espresso-3d/)** *(interactive
 mockup of the screens, responsive on mobile; 3D generation itself runs locally)*
