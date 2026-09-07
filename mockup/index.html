@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   :root{
+    color-scheme:dark;
     --bg:#0a0c0f;
     --surface:#14171b;
     --surface-2:#1b1f24;
@@ -28,6 +29,17 @@
     font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;line-height:1.5;
   }
   ::selection{background:var(--accent-soft);color:var(--text);}
+
+  /* scrollbars — keep them dark instead of the light OS default */
+  *{scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{
+    background:var(--surface-3);border-radius:999px;
+    border:2px solid var(--bg);
+  }
+  ::-webkit-scrollbar-thumb:hover{background:var(--border);}
+  ::-webkit-scrollbar-corner{background:transparent;}
   h1,h2,h3,h4{font-family:'Manrope',system-ui,sans-serif;text-wrap:balance;margin:0;}
   .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
   button{font-family:inherit;}
