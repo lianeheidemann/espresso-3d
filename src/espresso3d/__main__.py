@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import logging
 
-from .ui import run
+from .software.interface import run
 
 
 def main() -> None:
