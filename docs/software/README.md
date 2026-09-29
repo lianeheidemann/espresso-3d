@@ -81,17 +81,17 @@ Em geral, valores menores são melhores para HD, CD, MSRE e LPIPS; valores maior
 
 A figura e as tabelas abaixo são reproduções em alta resolução do exemplo incluído na proposta original. Os modelos reconstruídos e os valores das tabelas são ilustrativos; não representam medições realizadas pelo Espresso3D.
 
-![Fluxo metodológico de reconstrução 3D e comparação do gato](imagens/fluxo-reconstrucao-gato-400dpi.jpg)
+![Fluxo metodológico de reconstrução 3D e comparação do gato](images-do-readme/fluxo-reconstrucao-gato-400dpi.jpg)
 
 **Figura —** fluxo proposto: objeto de referência, foto de entrada, reconstruções pelos três modelos, comparação geométrica e avaliação opcional de *novel views*.
 
 #### Comparação geométrica
 
-<a href="imagens/tabela-geometrica-gato.svg"><img src="imagens/tabela-geometrica-gato.svg" alt="Tabela redesenhada da comparação geométrica do gato, com HD, CD e MSRE" width="400"></a>
+<a href="images-do-readme/tabela-geometrica-gato.svg"><img src="images-do-readme/tabela-geometrica-gato.svg" alt="Tabela redesenhada da comparação geométrica do gato, com HD, CD e MSRE" width="400"></a>
 
 #### Avaliação de *novel views*
 
-<a href="imagens/tabela-novel-views-gato.svg"><img src="imagens/tabela-novel-views-gato.svg" alt="Tabela redesenhada da avaliação de novel views do gato, com LPIPS, PSNR e SSIM" width="400"></a>
+<a href="images-do-readme/tabela-novel-views-gato.svg"><img src="images-do-readme/tabela-novel-views-gato.svg" alt="Tabela redesenhada da avaliação de novel views do gato, com LPIPS, PSNR e SSIM" width="400"></a>
 
 ### Registro de desempenho e hardware
 
