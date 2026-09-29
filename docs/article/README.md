@@ -55,7 +55,7 @@ seguem o mesmo padrão, para nada se perder:
 
 ---
 
-## Nossos documentos
+## Nosso artigo
 
 Tudo o que a equipe produz para o artigo (propostas, rascunhos, figuras,
 versões submetidas) fica em [`nosso-artigo/`](nosso-artigo/),
@@ -81,9 +81,9 @@ número.
 
 ---
 
-## Imagens
+## Notas
 
-Imagens (prints e figuras) usadas como apoio, em [`notes/`](notes/).
+Imagens (prints e figuras) usadas como apoio, em [`notes/`](notes/), exibidas no [README da pasta](notes/README.md).
 
 | Nº | Imagem | Arquivo | Nota |
 |---|---|---|---|

@@ -77,6 +77,8 @@ Como extensão, comparar *novel views* — imagens renderizadas dos modelos em n
 
 Em geral, valores menores são melhores para HD, CD, MSRE e LPIPS; valores maiores são melhores para PSNR e SSIM.
 
+A explicação ilustrada de LPIPS, SSIM e PSNR está em [`notas/`](notas/).
+
 ### Exemplo visual dos resultados
 
 A figura e as tabelas abaixo são reproduções em alta resolução do exemplo incluído na proposta original. Os modelos reconstruídos e os valores das tabelas são ilustrativos; não representam medições realizadas pelo Espresso3D.
