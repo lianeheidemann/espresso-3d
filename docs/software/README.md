@@ -97,7 +97,7 @@ Ao tomar uma decisão, marque o item como concluído e registre abaixo a escolha
   Definir se cada modelo receberá uma única fotografia ou imagens de vários ângulos, como frente e costas.
 
 - [ ] **Qual será o formato dos modelos?**  
-  Definir entre FBX e GLB.
+  Definir entre FBX e GLB (ou se é melhor outro formato)
 
 - [ ] **Como será feita a comparação geométrica das malhas?**  
   Definir as ferramentas e o método para comparar as superfícies das reconstruções com o *ground truth*. Avaliar métricas geométricas, como HD e CD.
