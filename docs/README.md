@@ -9,6 +9,8 @@ A documentação deste repositório está separada por finalidade:
 
 Essa separação permite que a evolução do software seja documentada de forma independente da escrita acadêmica, embora ambos façam parte do mesmo projeto.
 
+---
+
 | Pasta | Para quê |
 |---|---|
 | [`software/`](software/) | Documentação do Espresso3D como software. Comece por [`software/SETUP.md`](software/SETUP.md) para instalar e rodar. |
