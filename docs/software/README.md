@@ -76,6 +76,12 @@ Como extensão, comparar *novel views* — imagens renderizadas dos modelos em n
 
 Em geral, valores menores são melhores para HD, CD, MSRE e LPIPS; valores maiores são melhores para PSNR e SSIM.
 
+### Exemplo visual dos resultados
+
+![Exemplo ilustrativo do benchmark de reconstrução 3D do gato](images/exemplo-benchmark-gato.png)
+
+*Exemplo ilustrativo da comparação entre o modelo de referência, a foto de entrada, as reconstruções, o erro geométrico e as vistas adicionais. As reconstruções, os mapas de erro e as vistas mostrados não são resultados medidos.*
+
 ### Resultado esperado
 
 O estudo deverá produzir:
