@@ -44,7 +44,7 @@ Preencher assim que o call for papers de 2027 sair:
 
 | Referência | Onde | Nota |
 |---|---|---|
-| *How Much 3D Can One Image Reveal?* (proposta) | [`references/How_Much_3D_Can_One_Image_Reveal.docx`](references/How_Much_3D_Can_One_Image_Reveal.docx) | Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
+| *How Much 3D Can One Image Reveal?* — proposta inicial do projeto, por Thiago Figueiró Ribeiro | [PDF](references/How_Much_3D_Can_One_Image_Reveal.pdf) · [DOCX](references/How_Much_3D_Can_One_Image_Reveal.docx) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
 | Artigo IV 2025 (IEEE CSDL) | <https://www.computer.org/csdl/proceedings-article/iv/2025/774100z006/2bggGgAVhbq> | Referência dos proceedings da IV 2025. |
 
 **Como adicionar uma referência:** coloque o arquivo em `references/` (nome
@@ -71,7 +71,7 @@ usado como referência do tipo de artigo aceito:
 | Resumo (Abstract) | | Não iniciado |
 | Introdução | | Não iniciado |
 | Trabalhos relacionados | | Não iniciado |
-| Metodologia | | Rascunho (na proposta) |
+| Metodologia | | Rascunho (na proposta inicial) |
 | Experimentos | | Não iniciado |
 | Resultados | | Não iniciado |
 | Discussão | | Não iniciado |
