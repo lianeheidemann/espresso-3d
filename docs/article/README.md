@@ -42,7 +42,7 @@ Preencher assim que o call for papers de 2027 sair:
 
 ## Como nomear os arquivos
 
-As três pastas abaixo (`nosso-artigo/`, `references/` e `imagens/`)
+As três pastas abaixo (`nosso-artigo/`, `references/` e `notes/`)
 seguem o mesmo padrão, para nada se perder:
 
 - Nome no formato `NN_descricao-curta_Titulo.ext`, sem espaços
@@ -83,11 +83,11 @@ número.
 
 ## Imagens
 
-Imagens (prints e figuras) usadas como apoio, em [`imagens/`](imagens/).
+Imagens (prints e figuras) usadas como apoio, em [`notes/`](notes/).
 
 | Nº | Imagem | Arquivo | Nota |
 |---|---|---|---|
-| 01 | Trecho do sumário dos anais da IV 2025 | [JPG](imagens/01_sumario-anais-IV2025_IV-App.jpg) | Mostra um trabalho de 3D aceito (*Evaluation of 2.5D and 3D Perspective Scale Breaks in Bar Charts with Outliers*) e a trilha IV-App. Complementa a referência 01. |
+| 01 | Trecho do sumário dos anais da IV 2025 | [JPG](notes/01_sumario-anais-IV2025_IV-App.jpg) | Mostra um trabalho de 3D aceito (*Evaluation of 2.5D and 3D Perspective Scale Breaks in Bar Charts with Outliers*) e a trilha IV-App. Complementa a referência 01. |
 
 ---
 
