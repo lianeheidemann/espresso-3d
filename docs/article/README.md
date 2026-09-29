@@ -17,7 +17,7 @@ construído a partir do Espresso3D.
 A escrita acontece nestes documentos. O repositório guarda só a organização
 e as referências.
 
-- [Modelos de IA para Geração - Outros Registros](https://docs.google.com/document/d/1poDc_deXliMhNq3C-wGayzVEpKDgyadrlTICl-ehsXA/edit?usp=drivesdk)
+- [Modelos de IA para Geração - Artigo](https://docs.google.com/document/d/1poDc_deXliMhNq3C-wGayzVEpKDgyadrlTICl-ehsXA/edit?usp=drivesdk)
 - [Modelos de IA para Geração 3D - Documentação](https://docs.google.com/document/d/18NzJn0rGdpOQDcMBZqf0_p-OWwCp9N7cLGt8CAy3VPs/edit?usp=drivesdk)
 
 ---
