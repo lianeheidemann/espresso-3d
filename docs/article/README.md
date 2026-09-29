@@ -40,6 +40,21 @@ Preencher assim que o call for papers de 2027 sair:
 
 ---
 
+## Como nomear os arquivos
+
+As três pastas abaixo (`nossos-documentos/`, `references/` e `screenshots/`)
+seguem o mesmo padrão, para nada se perder:
+
+- Nome no formato `NN_descricao-curta_Titulo.ext`, sem espaços
+  (ex.: `02_rascunho-v1_How_Much_3D.docx`).
+- `NN` é o próximo número livre **da própria pasta**, com dois dígitos.
+- Versões diferentes do mesmo arquivo (PDF e DOCX) usam o mesmo número.
+- Nunca reaproveite nem renumere um número já usado.
+- Ao adicionar um arquivo, adicione também uma linha na tabela da seção
+  correspondente abaixo.
+
+---
+
 ## Nossos documentos
 
 Tudo o que a equipe produz para o artigo (propostas, rascunhos, figuras,
@@ -50,12 +65,6 @@ numerado em ordem de criação para nada se perder.
 |---|---|---|---|
 | 01 | *How Much 3D Can One Image Reveal?* — proposta inicial, por Thiago Figueiró Ribeiro | [PDF](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
 
-**Como adicionar um documento:** use o próximo número livre, com dois
-dígitos, no formato `NN_descricao-curta_Titulo.ext` (ex.:
-`02_rascunho-v1_How_Much_3D.docx`). Versões diferentes do mesmo documento
-(PDF e DOCX) usam o mesmo número. Nunca reaproveite nem renumere um número
-já usado; adicione uma linha nesta tabela.
-
 ---
 
 ## Referências
@@ -63,13 +72,22 @@ já usado; adicione uma linha nesta tabela.
 Material de terceiros usado como base de pesquisa, em
 [`references/`](references/).
 
-| Referência | Onde | Nota |
-|---|---|---|
-| Sumário dos anais da IV 2025 (29th International Conference Information Visualisation, 5–8 ago. 2025) | [PDF](references/IV2025_Table_of_Contents.pdf) · [IEEE CSDL](https://www.computer.org/csdl/proceedings-article/iv/2025/774100z006/2bggGgAVhbq) | Lista os artigos aceitos por trilha (incluindo IV-App). Útil para ver o tipo de trabalho aceito e levantar trabalhos relacionados. DOI 10.1109/IV68685.2025.00004. |
+| Nº | Referência | Onde | Nota |
+|---|---|---|---|
+| 01 | Sumário dos anais da IV 2025 (29th International Conference Information Visualisation, 5–8 ago. 2025) | [PDF](references/01_sumario-anais-IV2025_Table_of_Contents.pdf) · [IEEE CSDL](https://www.computer.org/csdl/proceedings-article/iv/2025/774100z006/2bggGgAVhbq) | Lista os artigos aceitos por trilha (incluindo IV-App). Útil para ver o tipo de trabalho aceito e levantar trabalhos relacionados. DOI 10.1109/IV68685.2025.00004. |
 
-**Como adicionar uma referência:** coloque o arquivo em `references/` (nome
-sem espaços, ex.: `Autor_Ano_Titulo.pdf`) e adicione uma linha nesta tabela.
-Referências só com link entram direto na tabela.
+Referências só com link (sem arquivo) também entram na tabela e recebem
+número.
+
+---
+
+## Capturas de tela
+
+Prints usados como apoio, em [`screenshots/`](screenshots/).
+
+| Nº | Captura | Arquivo | Nota |
+|---|---|---|---|
+| 01 | Trecho do sumário dos anais da IV 2025 | [JPG](screenshots/01_sumario-anais-IV2025_IV-App.jpg) | Mostra um trabalho de 3D aceito (*Evaluation of 2.5D and 3D Perspective Scale Breaks in Bar Charts with Outliers*) e a trilha IV-App. Complementa a referência 01. |
 
 ---
 
