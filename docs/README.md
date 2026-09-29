@@ -18,20 +18,6 @@ Essa separação permite que a evolução do software seja documentada de forma 
 
 ## Estrutura
 
-```
-docs/
-├── software/
-│   ├── README.md            # levantamento técnico, benchmark e decisões em aberto
-│   ├── SETUP.md             # instalação e configuração do ambiente
-│   ├── notas/               # explicação ilustrada das métricas LPIPS, SSIM e PSNR
-│   └── images-do-readme/    # imagens usadas no README de software (exemplo do gato)
-└── article/
-    ├── README.md            # organização da escrita do artigo
-    ├── nosso-artigo/        # documentos da equipe, numerados (proposta, rascunhos...)
-    ├── references/          # referências de terceiros, numeradas
-    └── notes/               # imagens de apoio (prints e figuras), com README
-```
-
 | Pasta | Conteúdo |
 |---|---|
 | [`software/notas/`](software/notas/) | Explicação ilustrada das métricas de comparação de imagens do benchmark (LPIPS, SSIM e PSNR). |
