@@ -40,6 +40,29 @@ A aba Agente recebe um pedido em linguagem natural (ex.: "modelo detalhado em GL
 | Groq (`llama-3.1-8b-instant`) e OpenRouter (`llama-3.1-8b-instruct:free`) | Nuvem (plano gratuito) | Precisam de chave de API e internet |
 | Modo básico (palavras-chave) | Local | Sem LLM: usado quando nenhum modelo está disponível |
 
+### Lista do que ele propõe para a comparação final
+
+1. Escolher 5 objetos 3D de alto impacto, como animais ou brinquedos.
+   
+2. Usar cada objeto como referência real (ground truth).
+   
+3. Tirar uma foto de cada objeto. Cada foto será a única entrada dos modelos.
+
+4. Reconstruir cada objeto com três modelos open source:
+- TripoSR
+- Stable Fast 3D
+- InstantMesh
+
+5. Comparar as malhas 3D geradas com o objeto de referência, usando:
+- Distância de Hausdorff (HD)
+- Distância de Chamfer (CD)
+- Mean Square Relative Error (MSRE)
+
+6. Como extensão opcional, comparar também novel views — novas imagens renderizadas dos modelos — usando:
+- LPIPS
+- PSNR
+- SSIM
+
 ## Decisões em aberto
 
 Pontos que a equipe ainda precisa decidir. Ao fechar um item, marque-o e registre a decisão (e o motivo) logo abaixo dele.
