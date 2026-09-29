@@ -7,7 +7,7 @@ Esta pasta reúne a documentação técnica do **Espresso3D como software**. O o
 | Documento | Finalidade |
 |---|---|
 | [SETUP.md](SETUP.md) | Instalação e configuração do ambiente para executar o Espresso3D e gerar modelos 3D localmente. |
-| [imagens/METRICAS-DE-IMAGEM.md](imagens/METRICAS-DE-IMAGEM.md) | Explicação ilustrada das métricas de comparação de imagens do benchmark (LPIPS, SSIM e PSNR). |
+| [notas/METRICAS-DE-IMAGEM.md](notas/METRICAS-DE-IMAGEM.md) | Explicação ilustrada das métricas de comparação de imagens do benchmark (LPIPS, SSIM e PSNR). |
 
 ## Levantamento técnico
 
