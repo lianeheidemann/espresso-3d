@@ -17,11 +17,8 @@ construído a partir do Espresso3D.
 A escrita acontece nestes documentos. O repositório guarda só a organização
 e as referências.
 
-- [Documento 1](https://docs.google.com/document/d/1poDc_deXliMhNq3C-wGayzVEpKDgyadrlTICl-ehsXA/edit?usp=drivesdk)
-- [Documento 2](https://docs.google.com/document/d/18NzJn0rGdpOQDcMBZqf0_p-OWwCp9N7cLGt8CAy3VPs/edit?usp=drivesdk)
-
-> Renomeiem os rótulos acima conforme o papel de cada documento
-> (ex.: rascunho do artigo, notas de pesquisa).
+- [Modelos de IA para Geração - Outros Registros](https://docs.google.com/document/d/1poDc_deXliMhNq3C-wGayzVEpKDgyadrlTICl-ehsXA/edit?usp=drivesdk)
+- [Modelos de IA para Geração 3D - Documentação](https://docs.google.com/document/d/18NzJn0rGdpOQDcMBZqf0_p-OWwCp9N7cLGt8CAy3VPs/edit?usp=drivesdk)
 
 ---
 
@@ -82,7 +79,6 @@ usado como referência do tipo de artigo aceito:
 
 ## Próximos passos
 
-- [ ] Definir o papel de cada Google Doc e renomear os links acima
 - [ ] Escolher os 5 objetos ground truth
 - [ ] Adaptar o Espresso3D para rodar o benchmark (TripoSR, Stable Fast 3D, InstantMesh)
 - [ ] Implementar as métricas (HD, CD, MSRE; LPIPS, PSNR, SSIM)
