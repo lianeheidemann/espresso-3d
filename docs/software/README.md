@@ -86,11 +86,11 @@ A figura e as tabelas abaixo são reproduções em alta resolução do exemplo i
 
 #### Comparação geométrica
 
-<img src="images/tabela-erros-geometricos-gato.png" alt="Tabela de exemplo com HD, CD e MSRE para as reconstruções do gato" width="400">
+<a href="images/tabela-geometrica-gato.svg"><img src="images/tabela-geometrica-gato.svg" alt="Tabela redesenhada da comparação geométrica do gato, com HD, CD e MSRE" width="400"></a>
 
 #### Avaliação de *novel views*
 
-<img src="images/tabela-novel-views-gato.png" alt="Tabela de exemplo com LPIPS, PSNR e SSIM para as vistas do gato" width="400">
+<a href="images/tabela-novel-views-gato.svg"><img src="images/tabela-novel-views-gato.svg" alt="Tabela redesenhada da avaliação de novel views do gato, com LPIPS, PSNR e SSIM" width="400"></a>
 
 ### Resultado esperado
 
