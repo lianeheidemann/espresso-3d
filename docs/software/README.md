@@ -63,6 +63,13 @@ A aba Agente recebe um pedido em linguagem natural (ex.: "modelo detalhado em GL
 - PSNR
 - SSIM
 
+## O resultado esperado seria:
+
+1. Reconstruções 3D de cinco objetos feitas por TripoSR, Stable Fast 3D e InstantMesh.
+2. Uma comparação das malhas geradas com o ground truth, usando HD, CD e MSRE.
+3. Opcionalmente, uma comparação das imagens renderizadas (novel views) usando LPIPS, PSNR e SSIM.
+4. Uma conclusão baseada nos dados, indicando qual modelo teve melhor resultado e em quais aspectos.
+
 ## Decisões em aberto
 
 Pontos que a equipe ainda precisa decidir. Ao fechar um item, marque-o e registre a decisão (e o motivo) logo abaixo dele.
