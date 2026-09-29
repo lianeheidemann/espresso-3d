@@ -44,7 +44,8 @@ A aba Agente recebe um pedido em linguagem natural (ex.: "modelo detalhado em GL
 
 Pontos que a equipe ainda precisa decidir. Ao fechar um item, marque-o e registre a decisão (e o motivo) logo abaixo dele.
 
-- [ ] **Quais inputs?** Usar somente imagens ou aceitar outros tipos de entrada?
+- [x] **Quais inputs?**
+> Malhas e fotos das malhas. As recriações das malhas seram realizadas (usando os modelos de IA) serão feitas a partir de fotos de malhas iniciais já prontas que serão usadas posteriormente como parâmetro de comparação para avaliar a qualidade dos objetos 3D gerados.
 - [ ] **Quantos ângulos na reconstrução?** Reconstruir só a partir de fotos no mesmo ângulo, ou também com mais de um ângulo (ex.: frente e costas)?
 - [ ] **Formato do modelo: FBX ou GLB?**
 - [ ] **Como comparar as malhas geradas pelos diferentes modelos?** Que tecnologia usar: comparar renderizações/fotos em diferentes perspectivas, ou analisar a superfície com IA (talvez machine learning)?
