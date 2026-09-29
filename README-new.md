@@ -343,7 +343,7 @@ For installation and software-specific documentation, see:
 For the research article and related material, see:
 
 - [Article documentation](docs/article/)
-- [Initial research proposal](docs/article/nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf)
+- [Initial research proposal](docs/article/nosso-artigo/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf)
 
 ---
 

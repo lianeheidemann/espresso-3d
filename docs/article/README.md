@@ -42,7 +42,7 @@ Preencher assim que o call for papers de 2027 sair:
 
 ## Como nomear os arquivos
 
-As três pastas abaixo (`nossos-documentos/`, `references/` e `imagens/`)
+As três pastas abaixo (`nosso-artigo/`, `references/` e `imagens/`)
 seguem o mesmo padrão, para nada se perder:
 
 - Nome no formato `NN_descricao-curta_Titulo.ext`, sem espaços
@@ -58,12 +58,12 @@ seguem o mesmo padrão, para nada se perder:
 ## Nossos documentos
 
 Tudo o que a equipe produz para o artigo (propostas, rascunhos, figuras,
-versões submetidas) fica em [`nossos-documentos/`](nossos-documentos/),
+versões submetidas) fica em [`nosso-artigo/`](nosso-artigo/),
 numerado em ordem de criação para nada se perder.
 
 | Nº | Documento | Arquivos | Nota |
 |---|---|---|---|
-| 01 | *How Much 3D Can One Image Reveal?* — proposta inicial, por Thiago Figueiró Ribeiro | [PDF](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
+| 01 | *How Much 3D Can One Image Reveal?* — proposta inicial, por Thiago Figueiró Ribeiro | [PDF](nosso-artigo/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
 
 ---
 
