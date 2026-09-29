@@ -98,22 +98,34 @@ Além das métricas de qualidade, o benchmark deve registrar o **tempo de proces
 
 Recomenda-se separar os dados em dois arquivos:
 
-- `results/benchmark.csv`: uma linha por objeto, modelo e repetição, com:
-  - identificadores do objeto e da imagem de entrada;
-  - nome e versão do modelo;
-  - resolução da imagem;
-  - número da repetição;
-  - tempo de carregamento do modelo;
-  - tempo de pré-processamento, inferência e pós-processamento, quando disponíveis;
-  - tempo total para gerar a malha;
-  - dispositivo usado (`GPU` ou `CPU`) e pico de VRAM utilizada.
+<details>
+<summary><code>results/benchmark.csv</code> — dados de cada execução</summary>
 
-- `results/environment.json`: informações do ambiente que podem ser compartilhadas por todos os testes da mesma execução:
-  - modelo da GPU e quantidade de VRAM;
-  - versão do driver NVIDIA, CUDA e PyTorch;
-  - modelo do processador e quantidade de memória RAM;
-  - sistema operacional;
-  - data da execução e configurações relevantes.
+Uma linha por objeto, modelo e repetição, contendo:
+
+- identificadores do objeto e da imagem de entrada;
+- nome e versão do modelo;
+- resolução da imagem;
+- número da repetição;
+- tempo de carregamento do modelo;
+- tempo de pré-processamento, inferência e pós-processamento, quando disponíveis;
+- tempo total para gerar a malha;
+- dispositivo usado (<code>GPU</code> ou <code>CPU</code>) e pico de VRAM utilizada.
+
+</details>
+
+<details>
+<summary><code>results/environment.json</code> — configuração do ambiente</summary>
+
+Informações compartilhadas pelos testes da mesma execução:
+
+- modelo da GPU e quantidade de VRAM;
+- versão do driver NVIDIA, CUDA e PyTorch;
+- modelo do processador e quantidade de memória RAM;
+- sistema operacional;
+- data da execução e configurações relevantes.
+
+</details>
 
 Para uma comparação justa, os modelos devem receber as mesmas imagens e configurações. O download dos pesos não deve entrar no tempo de geração; registre o carregamento do modelo separadamente. Faça uma execução de aquecimento, exclua-a da análise e repita cada combinação de objeto e modelo pelo menos três vezes. Apresente a mediana do tempo de geração e, se útil, também a média e o desvio padrão.
 
