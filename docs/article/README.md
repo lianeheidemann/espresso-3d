@@ -53,22 +53,11 @@ Referências só com link entram direto na tabela.
 
 ---
 
-## Materiais
-
-Print do sumário dos proceedings da IV (trabalho de 3D e a trilha IV-App),
-usado como referência do tipo de artigo aceito:
-
-[`screenshots/iv-proceedings-toc.jpg`](screenshots/iv-proceedings-toc.jpg)
-
-<img src="screenshots/iv-proceedings-toc.jpg" width="600" alt="Sumário dos proceedings da IV com 'Evaluation of 2.5D and 3D Perspective Scale Breaks in Bar Charts with Outliers' e a seção IV-App – Applications of Information Visualization">
-
----
-
 ## Divisão das seções
 
 | Seção | Responsável | Status |
 |---|---|---|
-| Resumo (Abstract) | | Não iniciado |
+| Resumo (Abstract) | | Rascunho |
 | Introdução | | Não iniciado |
 | Trabalhos relacionados | | Não iniciado |
 | Metodologia | | Rascunho (na proposta) |
