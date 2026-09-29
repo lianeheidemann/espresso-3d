@@ -48,7 +48,7 @@ numerado em ordem de criação para nada se perder.
 
 | Nº | Documento | Arquivos | Nota |
 |---|---|---|---|
-| 01 | *How Much 3D Can One Image Reveal?* — proposta inicial, por Thiago Figueiró Ribeiro | [PDF](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf) · [DOCX](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.docx) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
+| 01 | *How Much 3D Can One Image Reveal?* — proposta inicial, por Thiago Figueiró Ribeiro | [PDF](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
 
 **Como adicionar um documento:** use o próximo número livre, com dois
 dígitos, no formato `NN_descricao-curta_Titulo.ext` (ex.:
