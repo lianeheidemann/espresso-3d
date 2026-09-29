@@ -91,6 +91,25 @@ Prints usados como apoio, em [`screenshots/`](screenshots/).
 
 ---
 
+## Decisões em aberto
+
+Pontos da metodologia que a equipe ainda precisa decidir. Ao fechar um item,
+marque-o e registre a decisão (e o motivo) logo abaixo dele.
+
+- [ ] **Quais inputs?** Usar somente imagens ou aceitar outros tipos de
+  entrada?
+- [ ] **Quantos ângulos na reconstrução?** Reconstruir só a partir de fotos no
+  mesmo ângulo, ou também com mais de um ângulo (ex.: frente e costas)?
+- [ ] **Formato do modelo: FBX ou GLB?**
+- [ ] **Como comparar as malhas geradas pelos diferentes modelos?** Que
+  tecnologia usar: comparar renderizações/fotos em diferentes perspectivas,
+  ou analisar a superfície com IA (talvez machine learning)?
+- [ ] **Métricas e visualização dos resultados.** Quais métricas de comparação
+  serão usadas como resultados? Como exibi-las: quais gráficos ou outros tipos
+  de comparação usar para representar visualmente os dados obtidos?
+
+---
+
 ## Divisão das seções
 
 | Seção | Responsável | Status |
