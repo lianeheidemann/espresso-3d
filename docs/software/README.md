@@ -92,6 +92,31 @@ A figura e as tabelas abaixo são reproduções em alta resolução do exemplo i
 
 <a href="images/tabela-novel-views-gato.svg"><img src="images/tabela-novel-views-gato.svg" alt="Tabela redesenhada da avaliação de novel views do gato, com LPIPS, PSNR e SSIM" width="400"></a>
 
+### Registro de desempenho e hardware
+
+Além das métricas de qualidade, o benchmark deve registrar o **tempo de processamento** de cada modelo. Como os testes serão executados em uma GPU local, também é necessário guardar as especificações do computador usado. Esses dados permitem comparar o desempenho e interpretar os resultados no contexto do hardware disponível.
+
+Recomenda-se separar os dados em dois arquivos:
+
+- `results/benchmark.csv`: uma linha por objeto, modelo e repetição, com:
+  - identificadores do objeto e da imagem de entrada;
+  - nome e versão do modelo;
+  - resolução da imagem;
+  - número da repetição;
+  - tempo de carregamento do modelo;
+  - tempo de pré-processamento, inferência e pós-processamento, quando disponíveis;
+  - tempo total para gerar a malha;
+  - dispositivo usado (`GPU` ou `CPU`) e pico de VRAM utilizada.
+
+- `results/environment.json`: informações do ambiente que podem ser compartilhadas por todos os testes da mesma execução:
+  - modelo da GPU e quantidade de VRAM;
+  - versão do driver NVIDIA, CUDA e PyTorch;
+  - modelo do processador e quantidade de memória RAM;
+  - sistema operacional;
+  - data da execução e configurações relevantes.
+
+Para uma comparação justa, os modelos devem receber as mesmas imagens e configurações. O download dos pesos não deve entrar no tempo de geração; registre o carregamento do modelo separadamente. Faça uma execução de aquecimento, exclua-a da análise e repita cada combinação de objeto e modelo pelo menos três vezes. Apresente a mediana do tempo de geração e, se útil, também a média e o desvio padrão.
+
 ### Resultado esperado
 
 O estudo deverá produzir:
