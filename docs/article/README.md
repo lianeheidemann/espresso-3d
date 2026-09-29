@@ -40,12 +40,32 @@ Preencher assim que o call for papers de 2027 sair:
 
 ---
 
+## Nossos documentos
+
+Tudo o que a equipe produz para o artigo (propostas, rascunhos, figuras,
+versões submetidas) fica em [`nossos-documentos/`](nossos-documentos/),
+numerado em ordem de criação para nada se perder.
+
+| Nº | Documento | Arquivos | Nota |
+|---|---|---|---|
+| 01 | *How Much 3D Can One Image Reveal?* — proposta inicial, por Thiago Figueiró Ribeiro | [PDF](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.pdf) · [DOCX](nossos-documentos/01_proposta-inicial_How_Much_3D_Can_One_Image_Reveal.docx) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
+
+**Como adicionar um documento:** use o próximo número livre, com dois
+dígitos, no formato `NN_descricao-curta_Titulo.ext` (ex.:
+`02_rascunho-v1_How_Much_3D.docx`). Versões diferentes do mesmo documento
+(PDF e DOCX) usam o mesmo número. Nunca reaproveite nem renumere um número
+já usado; adicione uma linha nesta tabela.
+
+---
+
 ## Referências
+
+Material de terceiros usado como base de pesquisa, em
+[`references/`](references/).
 
 | Referência | Onde | Nota |
 |---|---|---|
-| *How Much 3D Can One Image Reveal?* — proposta inicial do projeto, por Thiago Figueiró Ribeiro | [PDF](references/How_Much_3D_Can_One_Image_Reveal.pdf) · [DOCX](references/How_Much_3D_Can_One_Image_Reveal.docx) | Ponto de partida do artigo. Metodologia: 5 objetos ground truth, uma foto de cada, reconstrução com TripoSR, Stable Fast 3D e InstantMesh. Comparação das meshes por Hausdorff (HD), Chamfer (CD) e MSRE; novel views por LPIPS, PSNR e SSIM. |
-| Artigo IV 2025 (IEEE CSDL) | <https://www.computer.org/csdl/proceedings-article/iv/2025/774100z006/2bggGgAVhbq> | Referência dos proceedings da IV 2025. |
+| Sumário dos anais da IV 2025 (29th International Conference Information Visualisation, 5–8 ago. 2025) | [PDF](references/IV2025_Table_of_Contents.pdf) · [IEEE CSDL](https://www.computer.org/csdl/proceedings-article/iv/2025/774100z006/2bggGgAVhbq) | Lista os artigos aceitos por trilha (incluindo IV-App). Útil para ver o tipo de trabalho aceito e levantar trabalhos relacionados. DOI 10.1109/IV68685.2025.00004. |
 
 **Como adicionar uma referência:** coloque o arquivo em `references/` (nome
 sem espaços, ex.: `Autor_Ano_Titulo.pdf`) e adicione uma linha nesta tabela.
@@ -71,7 +91,7 @@ usado como referência do tipo de artigo aceito:
 | Resumo (Abstract) | | Não iniciado |
 | Introdução | | Não iniciado |
 | Trabalhos relacionados | | Não iniciado |
-| Metodologia | | Rascunho (na proposta inicial) |
+| Metodologia | | Rascunho (na proposta inicial, nº 01) |
 | Experimentos | | Não iniciado |
 | Resultados | | Não iniciado |
 | Discussão | | Não iniciado |
