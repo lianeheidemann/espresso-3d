@@ -9,3 +9,4 @@ O objetivo é manter, em um único local, as informações necessárias para ins
 | Documento | Finalidade |
 |---|---|
 | [SETUP.md](SETUP.md) | Guia de instalação e configuração do ambiente para executar o Espresso3D e gerar modelos 3D localmente. |
+| [LEVANTAMENTO-TECNICO.md](LEVANTAMENTO-TECNICO.md) | Levantamento das tecnologias usadas no Espresso3D, com uma breve explicação de cada uma e sua relevância para o projeto. |
