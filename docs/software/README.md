@@ -78,9 +78,19 @@ Em geral, valores menores são melhores para HD, CD, MSRE e LPIPS; valores maior
 
 ### Exemplo visual dos resultados
 
-![Exemplo ilustrativo do benchmark de reconstrução 3D do gato](images/exemplo-benchmark-gato.png)
+A figura e as tabelas abaixo são reproduções em alta resolução do exemplo incluído na proposta original. Os modelos reconstruídos e os valores das tabelas são ilustrativos; não representam medições realizadas pelo Espresso3D.
 
-*Exemplo ilustrativo da comparação entre o modelo de referência, a foto de entrada, as reconstruções, o erro geométrico e as vistas adicionais. As reconstruções, os mapas de erro e as vistas mostrados não são resultados medidos.*
+![Fluxo metodológico de reconstrução 3D e comparação do gato](images/fluxo-reconstrucao-gato-400dpi.jpg)
+
+**Figura —** fluxo proposto: objeto de referência, foto de entrada, reconstruções pelos três modelos, comparação geométrica e avaliação opcional de *novel views*.
+
+#### Comparação geométrica
+
+![Tabela de exemplo com HD, CD e MSRE para as reconstruções do gato](images/tabela-erros-geometricos-gato.png)
+
+#### Avaliação de *novel views*
+
+![Tabela de exemplo com LPIPS, PSNR e SSIM para as vistas do gato](images/tabela-novel-views-gato.png)
 
 ### Resultado esperado
 
