@@ -60,7 +60,7 @@ Referências só com link entram direto na tabela.
 | Resumo (Abstract) | | Rascunho |
 | Introdução | | Não iniciado |
 | Trabalhos relacionados | | Não iniciado |
-| Metodologia | | Rascunho (na proposta) |
+| Metodologia | | Não iniciado |
 | Experimentos | | Não iniciado |
 | Resultados | | Não iniciado |
 | Discussão | | Não iniciado |
