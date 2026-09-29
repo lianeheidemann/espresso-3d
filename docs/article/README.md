@@ -6,7 +6,7 @@ construído a partir do Espresso3D.
 | | |
 |---|---|
 | **Título provisório** | *How Much 3D Can One Image Reveal? A Quantitative Benchmark of Open-Source 3D Reconstruction Models* |
-| **Autores** | Thiago Figueiró Ribeiro, Liane Heidemann |
+| **Autores** | Liane Heidemann, Thiago Figueiró Ribeiro |
 | **Conferência alvo** | IV 2027 — International Conference Information Visualisation |
 | **Status** | Em planejamento |
 
