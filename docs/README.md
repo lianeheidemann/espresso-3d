@@ -20,7 +20,7 @@ Essa separação permite que a evolução do software seja documentada de forma 
 
 | Pasta | Conteúdo |
 |---|---|
-| [`software/notas/`](software/notas/) | Explicação ilustrada das métricas de comparação de imagens do benchmark (LPIPS, SSIM e PSNR). |
+| [`software/notas/`](software/notas/) | Explicação ilustrada das métricas de comparação de imagens do benchmark (LPIPS, SSIM e PSNR), de como ler um boxplot e dos mapas de distância entre malhas. |
 | [`software/images-do-readme/`](software/images-do-readme/) | Imagens exibidas no [README de software](software/README.md): fluxo de reconstrução e tabelas de resultados do exemplo do gato. |
 | [`article/nosso-artigo/`](article/nosso-artigo/) | Tudo o que a equipe produz para o artigo (propostas, rascunhos, figuras, versões submetidas). |
 | [`article/references/`](article/references/) | Material de terceiros usado como base de pesquisa. |
