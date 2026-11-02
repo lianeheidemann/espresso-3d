@@ -81,8 +81,7 @@ This gives you the full UI, mesh post-processing, export to the lightweight
 formats, and the model library. **To actually generate 3D models**, install
 PyTorch with CUDA and at least one engine below.
 
-> **Step-by-step setup guide:** [`docs/software/SETUP.md`](docs/software/SETUP.md) — installation
-> order, per-component verification, and the common failure modes.
+> **Step-by-step guides:** [`docs/software/GUIA-VSCODE-PT-BR.md`](docs/software/GUIA-VSCODE-PT-BR.md) (first run in VS Code, in Portuguese) · [`docs/software/SETUP.md`](docs/software/SETUP.md) (component installation and troubleshooting).
 
 ### 3D generation engines
 
