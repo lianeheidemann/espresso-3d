@@ -52,7 +52,8 @@ python -m espresso3d
 ```
 
 Open `http://localhost:7860`. For a guided Windows and VS Code setup, see
-[`docs/step-by-step-vscode.md`](docs/step-by-step-vscode.md).
+[`docs/step-by-step-vscode.md`](docs/step-by-step-vscode.md). See the
+[hardware requirements](docs/requisitos-hardware.md) before selecting a 3D engine.
 
 ### 3D generation
 
