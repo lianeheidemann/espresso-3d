@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10 or newer">
   <img src="https://img.shields.io/badge/Gradio-6.31.0-F97316?style=for-the-badge" alt="Gradio 6.31.0">
-  <img src="https://img.shields.io/badge/Trimesh-4.0%2B-475569?style=for-the-badge" alt="Trimesh 4.0 or newer">
+  <img src="https://img.shields.io/badge/Trimesh-4.0%2B-475569?style=for-the-badge" alt="Trimesh 4.0 or newer"><br>
   <img src="https://img.shields.io/badge/NumPy-1.24%2B-013243?style=for-the-badge&logo=numpy&logoColor=white" alt="NumPy 1.24 or newer">
   <img src="https://img.shields.io/badge/Pillow-10%2B-64748B?style=for-the-badge" alt="Pillow 10 or newer">
   <img src="https://img.shields.io/badge/SciPy-1.11%2B-245C87?style=for-the-badge&logo=scipy&logoColor=white" alt="SciPy 1.11 or newer">
