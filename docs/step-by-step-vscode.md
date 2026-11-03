@@ -10,7 +10,7 @@ A configuração registrada para seu notebook é Windows 11, NVIDIA GeForce RTX 
 
 A geração real exige PyTorch com CUDA e os pesos do motor. A interface pode abrir antes disso, mas abrir a interface não prova que a geração funciona.
 
-## 1. Preparar o computador
+## 1. Preparar o computador ✅
 
 Instale:
 
@@ -29,7 +29,7 @@ nvidia-smi
 
 Se o repositório continuar privado, entre no GitHub pelo navegador e autorize o Git Credential Manager quando o Git solicitar. Não coloque senha ou token dentro do endereço do clone.
 
-## 2. Baixar o repositório e abrir no VS Code
+## 2. Baixar o repositório e abrir no VS Code ✅
 
 No PowerShell, vá para a pasta onde guarda projetos e execute:
 
@@ -49,7 +49,7 @@ git switch -c test/primeira-execucao
 
 No VS Code, confira a árvore do projeto. O código Python está em `src/espresso3d/`; os testes estão em `tests/`; as instruções existentes estão em `docs/software/SETUP.md`.
 
-## 3. Criar um ambiente isolado
+## 3. Criar um ambiente isolado ✅
 
 No terminal integrado do VS Code (**Terminal > New Terminal**), confirme que o terminal é PowerShell e rode:
 
@@ -69,7 +69,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 No VS Code, pressione **Ctrl+Shift+P**, escolha **Python: Select Interpreter** e selecione o Python dentro de `espresso-3d\.venv`. Isso evita instalar pacotes em outro Python do computador.
 
-## 4. Instalar o projeto e abrir apenas a interface
+## 4. Instalar o projeto e abrir apenas a interface ✅
 
 Com o ambiente ativo:
 
@@ -89,7 +89,7 @@ Nesta primeira etapa, confira somente se:
 
 Sem PyTorch com CUDA e sem um motor instalado, ainda é esperado que a criação 3D não funcione. Não instale Blender, Ollama, SAM, UniRig ou ESRGAN ainda; eles são opcionais para o primeiro modelo.
 
-## 5. Rodar a verificação automatizada existente
+## 5. Rodar a verificação automatizada existente ✅
 
 O repositório já tem testes para configuração, registro de motores, exportação, redução de polígonos, biblioteca, parser do agente e validação de pose. Execute-os antes de começar a mudar o código:
 
