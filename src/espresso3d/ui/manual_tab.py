@@ -59,8 +59,8 @@ def build(state: gr.State):
     has_blender = find_blender() is not None
 
     with gr.Tab("Image → 3D"):
-        with gr.Row():
-            with gr.Column(scale=1, min_width=300):
+        with gr.Row(elem_id="e3d-main-layout"):
+            with gr.Column(scale=1, min_width=300, elem_id="e3d-config"):
                 engine = gr.Radio(
                     choices=[
                         (f"{m.info.name} — {m.info.description} ({m.info.vram_min_gb:g}GB+)",
@@ -69,12 +69,15 @@ def build(state: gr.State):
                     ],
                     value="stable_fast_3d",
                     label="Generation engine",
+                    elem_classes="e3d-engine-choice",
                 )
                 topology = gr.Radio(
-                    choices=list(_TOPOLOGIES), value="High Detail", label="Topology"
+                    choices=list(_TOPOLOGIES), value="High Detail", label="Topology",
+                    elem_classes="e3d-segmented",
                 )
                 image = gr.Image(
-                    label="Image", type="pil", height=220, sources=["upload", "clipboard"]
+                    label="Image", type="pil", height=220, sources=["upload", "clipboard"],
+                    elem_id="e3d-image-upload",
                 )
                 poly = gr.Slider(
                     POLY_MIN, POLY_MAX, value=4000, step=100,
@@ -84,8 +87,12 @@ def build(state: gr.State):
                 resolution = gr.Radio(
                     choices=list(_RESOLUTIONS), value="Standard",
                     label="Texture resolution",
+                    elem_classes="e3d-segmented",
                 )
-                pose = gr.Radio(choices=list(_POSES), value="None", label="Pose")
+                pose = gr.Radio(
+                    choices=list(_POSES), value="None", label="Pose",
+                    elem_classes="e3d-segmented",
+                )
 
                 with gr.Group(visible=False) as pose_panel:
                     pose_prompt = gr.Textbox(
@@ -136,10 +143,12 @@ def build(state: gr.State):
                     )
 
                 warnings = gr.Markdown("", elem_classes="e3d-warning")
-                button = gr.Button("▶ Generate 3D model", variant="primary")
+                button = gr.Button(
+                    "Generate 3D model", variant="primary", elem_id="e3d-generate"
+                )
 
-            with gr.Column(scale=2, min_width=380):
-                preview = gr.Model3D(label="Preview", height=460)
+            with gr.Column(scale=2, min_width=380, elem_id="e3d-stage"):
+                preview = gr.Model3D(label="Preview", height=460, elem_id="e3d-preview")
                 stats = gr.Markdown("")
                 files = gr.File(label="Generated files", file_count="multiple")
 

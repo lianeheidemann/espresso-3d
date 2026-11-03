@@ -11,7 +11,7 @@ from . import agent_tab, library_tab, manual_tab, theme
 
 def build_app() -> gr.Blocks:
     """Assembles the four tabs on top of a shared configuration."""
-    with gr.Blocks(title="Espresso3D", fill_width=True) as app:
+    with gr.Blocks(title="Espresso3D", fill_width=True, elem_id="e3d-app") as app:
         gr.HTML(theme.header(summary_text()))
 
         # A single configuration for the Image and Batch tabs — this is
@@ -19,7 +19,7 @@ def build_app() -> gr.Blocks:
         # its own form.
         state = gr.State(PipelineConfig().to_dict())
 
-        with gr.Tabs():
+        with gr.Tabs(elem_id="e3d-tabs"):
             manual_tab.build(state)
             agent_tab.build()
             library_tab.build()
