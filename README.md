@@ -21,7 +21,7 @@ requires CUDA-enabled PyTorch, an installed engine, and its model weights.
 ## Preview
 
 <p align="center">
-  <img src="assets/screenshots/interface-5.jpg" alt="Espresso3D desktop interface">
+  <img src="assets/screenshots/interface-4.jpg" alt="Espresso3D desktop interface">
 </p>
 
 [Open the interactive mockup](https://lianeheidemann.github.io/espresso-3d/) ·
