@@ -11,6 +11,10 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10 or newer">
   <img src="https://img.shields.io/badge/Gradio-6.31.0-F97316?style=for-the-badge" alt="Gradio 6.31.0">
+  <img src="https://img.shields.io/badge/Trimesh-4.0%2B-475569?style=for-the-badge" alt="Trimesh 4.0 or newer">
+  <img src="https://img.shields.io/badge/NumPy-1.24%2B-013243?style=for-the-badge&logo=numpy&logoColor=white" alt="NumPy 1.24 or newer">
+  <img src="https://img.shields.io/badge/Pillow-10%2B-64748B?style=for-the-badge" alt="Pillow 10 or newer">
+  <img src="https://img.shields.io/badge/SciPy-1.11%2B-245C87?style=for-the-badge&logo=scipy&logoColor=white" alt="SciPy 1.11 or newer">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-6D4587?style=for-the-badge" alt="MIT License"></a>
 </p>
 
@@ -26,6 +30,12 @@ requires CUDA-enabled PyTorch, an installed engine, and its model weights.
 
 [Open the interactive mockup](https://lianeheidemann.github.io/espresso-3d/) ·
 The mockup previews the interface; it does not generate 3D models.
+
+<p align="center">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+</p>
 
 ## Features
 
@@ -62,6 +72,14 @@ an NVIDIA GPU is recommended. CPU generation may be much slower. Engine adapters
 are present, but local image generation has not yet been validated for this
 project.
 
+<p align="center">
+  <img src="https://img.shields.io/badge/PyTorch-optional-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" alt="PyTorch, optional for the base app">
+  <img src="https://img.shields.io/badge/CUDA-required%20for%20GPU-76B900?style=for-the-badge&logo=nvidia&logoColor=white" alt="CUDA for GPU generation">
+  <img src="https://img.shields.io/badge/TripoSR-optional-475569?style=for-the-badge" alt="TripoSR optional engine">
+  <img src="https://img.shields.io/badge/Stable%20Fast%203D-optional-334155?style=for-the-badge" alt="Stable Fast 3D optional engine">
+  <img src="https://img.shields.io/badge/InstantMesh-optional-1E40AF?style=for-the-badge" alt="InstantMesh optional engine">
+</p>
+
 | Engine | Suggested VRAM | Notes |
 |---|---:|---|
 | TripoSR | 4 GB+ | Fast; no PBR textures |
@@ -72,6 +90,13 @@ Install only the engine you intend to use. Engine packages and model weights
 are maintained separately and may have their own requirements and licenses.
 
 ### Optional integrations
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Blender-optional-F5792A?style=for-the-badge&logo=blender&logoColor=white" alt="Blender optional integration">
+  <img src="https://img.shields.io/badge/Ollama-optional-374151?style=for-the-badge" alt="Ollama optional integration">
+  <img src="https://img.shields.io/badge/Segment%20Anything-optional-4158D0?style=for-the-badge" alt="Segment Anything optional integration">
+  <img src="https://img.shields.io/badge/Real--ESRGAN-optional-6D28D9?style=for-the-badge" alt="Real-ESRGAN optional integration">
+</p>
 
 | Integration | Purpose | Current status |
 |---|---|---|
@@ -85,6 +110,8 @@ are maintained separately and may have their own requirements and licenses.
 
 Install the development dependencies with `python -m pip install -e ".[dev]"`.
 Run the test suite with:
+
+<img src="https://img.shields.io/badge/pytest-8%2B-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white" alt="pytest 8 or newer">
 
 ```powershell
 python -m pytest -q
