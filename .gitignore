@@ -1,27 +1,40 @@
-# Saídas do app — os modelos gerados ficam aqui, não vão para o Git
+# Gerações locais e pesos de modelos
 outputs/
-
-# Pesos de modelo baixados (vários GB)
 checkpoints/
 *.ckpt
-*.safetensors
 *.pth
+*.pt
+*.safetensors
 
-# Python
-__pycache__/
-*.py[cod]
+# Ambientes e artefatos Python
 .venv/
 venv/
 env/
-*.egg-info/
-.pytest_cache/
-
-# Sistema
-.DS_Store
-Thumbs.db
-.env
-
-# Instalação editável (pip install -e .)
+__pycache__/
+*.py[cod]
 *.egg-info/
 build/
 dist/
+
+# Testes, cobertura e caches de ferramentas
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.hypothesis/
+.ipynb_checkpoints/
+
+# Configuração local e segredos
+.env
+.env.*
+!.env.example
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

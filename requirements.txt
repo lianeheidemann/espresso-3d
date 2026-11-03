@@ -1,6 +1,9 @@
 # ---------------------------------------------------------------------------
 # Espresso3D — dependências
 #
+# Os limites antes dos comentários continuam sendo os mínimos suportados.
+# As versões após “verificado” são o snapshot instalado em .venv em 2026-11-03.
+#
 # O básico aqui já dá um app funcional: interface, malha, exportação para
 # .glb/.gltf/.obj/.ply/.stl/.3mf e biblioteca de modelos.
 #
@@ -9,19 +12,19 @@
 # vários GB — não faz sentido baixar tudo para quem só quer abrir o app.
 # ---------------------------------------------------------------------------
 
-gradio>=6.0                 # interface web local
-trimesh>=4.0                # malha, exportação glb/gltf/obj/ply/stl/3mf
-numpy>=1.24
-pillow>=10.0                # leitura das imagens
-scipy>=1.11                 # separar partes (componentes conexos da malha)
-fast-simplification>=0.1.7  # reduzir até a contagem de polígonos alvo
-send2trash>=1.8             # apagar modelos para a lixeira, não de vez
+gradio>=6.0                 # interface web local; verificado: 6.31.0
+trimesh>=4.0                # malha/exportação glb, gltf, obj, ply, stl, 3mf; verificado: 5.2.0
+numpy>=1.24                 # processamento numérico; verificado: 2.4.6
+pillow>=10.0                # leitura das imagens; verificado: 12.3.0
+scipy>=1.11                 # componentes conexos da malha; verificado: 1.17.1
+fast-simplification>=0.1.7  # redução de polígonos; verificado: 0.2.0
+send2trash>=1.8             # mover modelos para a lixeira; verificado: 2.1.0
 
 # --- desenvolvimento -------------------------------------------------------
-pytest>=8.0
+pytest>=8.0                 # verificado: 9.2.0 (81 testes aprovados)
 
 # --- opcionais (instale só o que for usar) ---------------------------------
-# torch                     # necessário para QUALQUER motor de geração 3D
+# torch                     # PyTorch com CUDA ainda não instalado/verificado
 # git+https://github.com/VAST-AI-Research/TripoSR.git      # motor TripoSR
 # git+https://github.com/Stability-AI/stable-fast-3d.git   # motor Stable Fast 3D
 # segment-anything          # dividir em partes (precisa do checkpoint vit_b)
