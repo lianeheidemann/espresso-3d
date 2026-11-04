@@ -1,8 +1,8 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/logo-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="assets/brand/logo-light.png">
-    <img width="320" alt="Espresso3D" src="assets/brand/logo-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/logo-dark-v2.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/brand/logo-light-v2.png">
+    <img width="320" alt="Espresso3D" src="assets/brand/logo-light-v2.png">
   </picture>
 </p>
 
