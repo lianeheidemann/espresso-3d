@@ -9,7 +9,7 @@
 <p align="center"><em>Turn an image into a 3D model on your own machine.</em></p>
 
 <p align="center">
-  <img height="33" src="assets/badges/badge_em-construcao-orange-v1.svg"><br>
+  <img width="220" src="assets/badges/badge_em-construcao-orange-v1.svg"><br>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10 or newer">
   <img src="https://img.shields.io/badge/Gradio-6.31.0-F97316?style=for-the-badge" alt="Gradio 6.31.0">
   <img src="https://img.shields.io/badge/Trimesh-4.0%2B-475569?style=for-the-badge" alt="Trimesh 4.0 or newer"><br>
